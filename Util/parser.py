@@ -63,4 +63,4 @@ def segmentAndCreateJson(textInput) :
         languageOfInstution = studentInfo[3][studentInfo[3].find("Dil")+5:studentInfo[3].find("Öğrenci")-1]
         studentStatus = studentInfo[3][studentInfo[3].find("Öğrenci")+18:]
 
-    return [studentID, nationalID, studentName, studentSurname, facultyAndDepartment, programName, languageOfInstution, studentStatus]
+    return studentID, nationalID, studentName, studentSurname, facultyAndDepartment, programName, languageOfInstution, studentStatus

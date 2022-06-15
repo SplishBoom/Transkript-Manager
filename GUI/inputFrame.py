@@ -1,11 +1,8 @@
-from time import sleep
-from   tkinter  import ttk
-import tkinter  as tk
-from PIL import Image, ImageTk
-from itsdangerous import json
-from sqlalchemy import values
-import requests
-from bs4 import BeautifulSoup
+from    tkinter     import  ttk
+from    PIL         import  Image, ImageTk
+from    bs4         import  BeautifulSoup
+import  tkinter     as      tk
+import  requests
 
 class InputFrame(tk.Frame):
     def __init__(self, parent, root, *args, **kwargs):
@@ -17,9 +14,6 @@ class InputFrame(tk.Frame):
         self.username = tk.StringVar(value="memise")
         self.password = tk.StringVar(value="492v5fwu")
         self.errorMessage = tk.StringVar()
-
-        self.style = ttk.Style()
-        #self.style.configure("LoginButton.TButton", font=("Segoe UI", 14, "bold"), foreground="black", fillcolor="#27AE60", background="#27AE60", bgcolor="#27AE60")
 
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)

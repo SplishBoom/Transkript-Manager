@@ -1,7 +1,7 @@
-from    GUI import DisplayFrame, InputFrame
-from    Util import retrieveData, segmentAndCreateJson
+from    GUI             import DisplayFrame, InputFrame
+from    Util            import retrieveData, segmentAndCreateJson
 from    tkinter  import ttk
-import  tkinter  as tk
+import  tkinter  as     tk
 
 class Application(tk.Tk):
     def __init__(self, *args, **kwargs):
