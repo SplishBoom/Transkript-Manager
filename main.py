@@ -138,20 +138,22 @@ def calculateCGPA() :
 
     totalQualityPoints = 0
     totalCreditHours = 0
+    totalSuccessfulCreditHours = 0
     for courseValues in allCourses.values() :
         
         print(courseValues)
         if courseValues[-2] in ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "F"]:
             totalQualityPoints += float(courseValues[-1])
             totalCreditHours += int(courseValues[-3])
+            totalSuccessfulCreditHours += int(courseValues[-3])
         elif courseValues[-2] == "I":
             continue
         elif courseValues[-2] == "W":
-            pass
+            totalSuccessfulCreditHours += int(courseValues[-3])
 
     print(totalQualityPoints/totalCreditHours)
 
-getdata(False)
+getdata()
 formatData()
 generalInfo, studentInfo, semesterInfos = loadDataInfo()
 studentObject = initializeData(generalInfo, studentInfo, semesterInfos)
