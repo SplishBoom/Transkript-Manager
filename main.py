@@ -150,6 +150,8 @@ def calculateCGPA() :
             continue
         elif courseValues[-2] == "W":
             totalSuccessfulCreditHours += int(courseValues[-3])
+        else :
+            totalCreditHours += int(courseValues[-3])
 
     print(totalQualityPoints/totalCreditHours)
 
