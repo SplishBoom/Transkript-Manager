@@ -42,9 +42,9 @@ class Application(tk.Tk):
         
 if __name__ == "__main__":
     
-    secureStart()
+    #sssecureStart()
 
     app = Application()
     app.mainloop()
 
-    secureFinish()
+    #secureFinish()

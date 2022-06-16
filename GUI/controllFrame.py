@@ -9,8 +9,8 @@ class ControllFrame(tk.Frame) :
         self.root = root
         self.parent = parent
 
-        self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=1)
+        for columno in range(0, 6) :
+            self.columnconfigure(columno, weight=1)
 
         self.configure(bg="white", relief="sunken", borderwidth=1)
 

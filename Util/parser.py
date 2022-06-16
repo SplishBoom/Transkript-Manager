@@ -30,6 +30,7 @@ def segmentAndCreateJsons(textInput) :
             print(line)
 
     allCourses = {}
+    courseIndex = 0
     for line in xCleaned :
         line = line.split(" ")
         
@@ -43,8 +44,10 @@ def segmentAndCreateJsons(textInput) :
         courseNotation = line[-2]
         courseGrade = float(line[-1])
 
-        allCourses[courseCode] = [courseName, courseLanguage, courseEtcs, courseNotation, courseGrade]
+        allCourses[courseCode] = [courseName, courseLanguage, courseEtcs, courseNotation, courseGrade, courseIndex]
 
+        courseIndex += 1
+        
     # create temp folder if not exists
     if not os.path.exists("Temp"):
         os.makedirs("Temp")
