@@ -1,8 +1,7 @@
-from    tkinter     import  ttk
 from    PIL         import  Image, ImageTk
+from    tkinter     import  ttk
+from    Util        import  authenticate
 import  tkinter     as      tk
-import  requests
-
 
 class InputFrame(tk.Frame):
     def __init__(self, parent, root, *args, **kwargs):
@@ -13,7 +12,6 @@ class InputFrame(tk.Frame):
 
         self.username = tk.StringVar(value="memise")
         self.password = tk.StringVar(value="492v5fwu")
-        self.isLoginSuccesfull = False
         self.errorMessage = tk.StringVar()
 
         self.columnconfigure(0, weight=1)
@@ -45,28 +43,29 @@ class InputFrame(tk.Frame):
     def checkLogin(self, *event):
         
         if self.username.get() == "" or self.password.get() == "" or self.username.get() == " " or self.password.get() == " " :
-            self.errorMessage.set("Please fill in all fields !")
-            self.errorMessageLabel.config(foreground="red")
+            self.updateErrorMessage("Please fill in all fields !", "red")
             self.root.after(500, self.clearErrorMessage)
             return
         
-        if True :
-            logUrl = "https://sis.mef.edu.tr/auth/login/ln/tr"
-            secUrl = "https://sis.mef.edu.tr/"
+        isLoginSuccesfull = authenticate(self.username.get(), self.password.get())
 
-            payload = {"kullanici_adi": self.username.get(), "kullanici_sifre": self.password.get()}
+        if isLoginSuccesfull :
+            self.updateErrorMessage("Login succesfull! Retrieving transcript...", "green")
+            self.startRetrievalAndReportUser()
             
-            with requests.Session() as s:
-                s.post(logUrl, data=payload)
-                r = s.get(secUrl)
+        else :
+            self.updateErrorMessage("Wrong username or password !", "red")
+            self.root.after(750, self.clearErrorMessage)
+            
 
-                if r.url != secUrl:
-                    self.errorMessage.set("Wrong username or password !")
-                    self.errorMessageLabel.config(foreground="red")
-                    self.root.after(750, self.clearErrorMessage)
-                else :
-                    self.errorMessage.set("Login succesfull! Retrieving transcript...")
-                    self.errorMessageLabel.config(foreground="green")
-                    self.isLoginSuccesfull = True
+    def updateErrorMessage(self, message, messageColor) :
+        self.errorMessage.set(message)
+        self.errorMessageLabel.config(foreground=messageColor)
 
     def clearErrorMessage(self) : self.errorMessage.set("")
+
+    def startRetrievalAndReportUser(self) :
+
+        
+
+        self.root.retrieveTranscript()

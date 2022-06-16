@@ -1,6 +1,8 @@
 import  os
 import shutil
 
+import requests
+
 def secureStart() :
     neccessaryFolders = ("Assets", "GUI", "Sources", "Util")
 
@@ -22,3 +24,19 @@ def secureFinish() :
             shutil.rmtree(unncessaryFolder)
         except :
             pass
+
+def authenticate(username, password) :
+
+    logUrl = "https://sis.mef.edu.tr/auth/login/ln/tr"
+    secUrl = "https://sis.mef.edu.tr/"
+
+    payload = {"kullanici_adi": username, "kullanici_sifre": password}
+    
+    with requests.Session() as s:
+        s.post(logUrl, data=payload)
+        r = s.get(secUrl)
+
+        if r.url == secUrl:
+            return True
+
+    return False

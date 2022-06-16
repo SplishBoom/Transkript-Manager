@@ -1,4 +1,4 @@
-from    tkinter     import  ANCHOR, ttk
+from    tkinter     import  ttk
 import  tkinter     as      tk
 import  json
 
@@ -40,6 +40,7 @@ class DisplayFrame(ttk.Frame):
             currentNotation = tk.StringVar(value=courseValues[3])
             self.courseNotationComboBox = ttk.Combobox(self.scrollbarFrame, values=self.possibleNotations, textvariable=currentNotation, width=3)
             courseGradeLabel = tk.Label(self.scrollbarFrame, text=courseValues[4])
+            courseID = tk.Label(self.scrollbarFrame, text=courseValues[5])
 
             list.append([courseCodeLabel, courseNameLabel, courseLanguageLabel, courseEtcsLabel, currentNotation, courseGradeLabel])
 
@@ -66,17 +67,17 @@ class DisplayFrame(ttk.Frame):
 
         for courseValues in self.allCourses.values() :
 
-            if courseValues[-2] in ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "F"] :
-                self.totalQualityPoints += float(courseValues[-1])
-                self.totalCredits += float(courseValues[-3])
-                self.totalSuccessfulCredits += int(courseValues[-3])
-            elif courseValues[-2] == "I" :
+            if courseValues[-3] in ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "F"] :
+                self.totalQualityPoints += float(courseValues[-2])
+                self.totalCredits += float(courseValues[-4])
+                self.totalSuccessfulCredits += int(courseValues[-4])
+            elif courseValues[-3] == "I" :
                 continue
-            elif courseValues[-2] == "W" :
-                self.totalSuccessfulCredits += int(courseValues[-3])
+            elif courseValues[-3] == "W" :
+                self.totalSuccessfulCredits += int(courseValues[-5])
             else :
                 self.totalQualityPoints += 0
-                self.totalCredits += float(courseValues[-3])
+                self.totalCredits += float(courseValues[-4])
 
         self.CGPA = self.totalQualityPoints / self.totalCredits
 
@@ -84,12 +85,12 @@ class DisplayFrame(ttk.Frame):
         
         courseValues = self.allCourses[courseCode]
         
-        courseValues[-2] = newNotation
+        courseValues[-3] = newNotation
         try :
             weight = self.weights[newNotation]
         except KeyError :
             weight = 0
-        courseValues[-1] = weight * float(courseValues[-3])
+        courseValues[-3] = weight * float(courseValues[-3])
 
         self.allCourses[courseCode] = courseValues
 

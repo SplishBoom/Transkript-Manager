@@ -1,17 +1,16 @@
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium import webdriver
+from    selenium.webdriver.chrome.service  import Service
+from    selenium.webdriver.chrome.options  import Options
+from    selenium.webdriver.common.by       import By
+from    selenium                           import webdriver
 
-def retrieveData(username, password):
+def retrieveData(username, password, isHidden=False):
 
     mainUrl = "https://sis.mef.edu.tr/auth/login"
 
     class Web :
 
-        driverPath = "Sources\chromedriver.exe"
-
-        def __init__(self) :
-            self.browser = webdriver.Chrome(service=Service(executable_path=self.driverPath))
+        def __init__(self, driverOptions, driverPath="Sources\chromedriver.exe") :
+            self.browser = webdriver.Chrome(service=Service(executable_path=driverPath), options=driverOptions)
 
         def openWebPage(self,url) :
             self.browser.get(url)
@@ -43,7 +42,13 @@ def retrieveData(username, password):
                 except :
                     continue
 
-    client = Web()
+    if isHidden :
+        driverOptions = Options()
+        driverOptions.add_argument("--headless")
+    else :
+        driverOptions = Options()
+
+    client = Web(driverOptions)
 
     client.openWebPage(mainUrl)
 
@@ -68,5 +73,5 @@ def retrieveData(username, password):
     transkriptText = client.browser.find_element(By.TAG_NAME, "body").text
 
     client.browser.quit()
-
+    print("transkriptText")
     return transkriptText

@@ -3,7 +3,10 @@ from    Util            import retrieveData, segmentAndCreateJsons
 from    Util            import secureStart, secureFinish
 from    tkinter  import ttk
 import  tkinter  as     tk
-
+"""
+todo: gif add input screen
+multi threading input screen
+"""
 class Application(tk.Tk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -25,7 +28,7 @@ class Application(tk.Tk):
 
     def retrieveTranscript(self):
 
-        self.transcriptText = (retrieveData(self.inputSection.username.get(), self.inputSection.password.get()))
+        self.transcriptText = (retrieveData(self.inputSection.username.get(), self.inputSection.password.get(), True))
         
         segmentAndCreateJsons(self.transcriptText)
 
@@ -42,9 +45,9 @@ class Application(tk.Tk):
         
 if __name__ == "__main__":
     
-    #sssecureStart()
+    secureStart()
 
     app = Application()
     app.mainloop()
 
-    #secureFinish()
+    secureFinish()
