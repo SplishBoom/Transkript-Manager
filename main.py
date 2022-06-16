@@ -1,10 +1,8 @@
-from itsdangerous import json
 from    GUI             import DisplayFrame, InputFrame, InfoFrame, ControllFrame, ResultFrame
 from    Util            import retrieveData, segmentAndCreateJsons
 from    Util            import secureStart, secureFinish
 from    tkinter  import ttk
 import  tkinter  as     tk
-
 
 class Application(tk.Tk):
     def __init__(self, *args, **kwargs):
