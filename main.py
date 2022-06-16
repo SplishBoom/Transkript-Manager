@@ -1,7 +1,9 @@
-from    GUI             import DisplayFrame, InputFrame
+from    GUI             import DisplayFrame, InputFrame, InfoFrame, ControllFrame, ResultFrame
 from    Util            import retrieveData, segmentAndCreateJson
+from    Util            import secureStart, secureFinish
 from    tkinter  import ttk
 import  tkinter  as     tk
+
 
 class Application(tk.Tk):
     def __init__(self, *args, **kwargs):
@@ -29,12 +31,26 @@ class Application(tk.Tk):
         self.segmentText()
 
         self.inputSection.grid_forget()
+
+        self.infoSection = InfoFrame(self.container, self)
+        self.infoSection.grid(row=0, column=0, sticky="nsew", padx=self.generalPadding, pady=self.generalPadding)
+
+        self.controllSection = ControllFrame(self.container, self)
+        self.controllSection.grid(row=1, column=0, sticky="nsew", padx=self.generalPadding, pady=self.generalPadding)
+
         self.displaySection = DisplayFrame(self.container, self)
-        self.displaySection.grid(row=0, column=0, sticky="nsew", padx=self.generalPadding/2, pady=self.generalPadding/2, ipadx=self.generalPadding*2, ipady=self.generalPadding*2)
+        self.displaySection.grid(row=3, column=0, sticky="nsew", padx=self.generalPadding/2, pady=self.generalPadding/2, ipadx=self.generalPadding*2, ipady=self.generalPadding*2)
     
+
     def segmentText(self):
 
         self.studentID, self.nationalID, self.studentName, self.studentSurname, self.facultyAndDepartment, self.programName, self.languageOfInstution, self.studentStatus = segmentAndCreateJson(self.transcriptText)
         
-app = Application()
-app.mainloop()
+if __name__ == "__main__":
+    
+    secureStart()
+
+    app = Application()
+    app.mainloop()
+
+    secureFinish()

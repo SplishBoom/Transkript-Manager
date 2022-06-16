@@ -1,4 +1,5 @@
-import json
+import  json
+import  os
 
 def segmentAndCreateJson(textInput) :
 
@@ -43,6 +44,10 @@ def segmentAndCreateJson(textInput) :
         courseGrade = float(line[-1])
 
         allCourses[courseCode] = [courseName, courseLanguage, courseEtcs, courseNotation, courseGrade]
+
+    # create temp folder if not exists
+    if not os.path.exists("Temp"):
+        os.makedirs("Temp")
 
     with open ("Temp/transkriptData.json", "w", encoding="utf-8") as f:
         json.dump(allCourses, f, indent=4)
