@@ -1,5 +1,6 @@
 from    tkinter     import  ttk
 import  tkinter     as      tk
+import  json
 
 class InfoFrame(tk.Frame):
     def __init__(self, parent, root, *args, **kwargs):
@@ -13,14 +14,17 @@ class InfoFrame(tk.Frame):
 
         self.configure(bg="white", relief="sunken", borderwidth=1)
 
-        infoFirstLabel = tk.Label(self, text=self.root.studentID)
-        infoSecondLabel = tk.Label(self, text=self.root.nationalID)
-        infoThirdLabel = tk.Label(self, text=self.root.studentName)
-        infoFourthLabel = tk.Label(self, text=self.root.studentSurname)
-        infoFifthLabel = tk.Label(self, text=self.root.facultyAndDepartment)
-        infoSixthLabel = tk.Label(self, text=self.root.programName)
-        infoSeventhLabel = tk.Label(self, text=self.root.languageOfInstution)
-        infoEighthLabel = tk.Label(self, text=self.root.studentStatus)
+        with open ("Temp/studentData.json", "r", encoding="utf-8") as f:
+            studentID, nationalID, studentName, studentSurname, facultyAndDepartment, programName, languageOfInstution, studentStatus = json.load(f)
+
+        infoFirstLabel = tk.Label(self, text=studentID)
+        infoSecondLabel = tk.Label(self, text=nationalID)
+        infoThirdLabel = tk.Label(self, text=studentName)
+        infoFourthLabel = tk.Label(self, text=studentSurname)
+        infoFifthLabel = tk.Label(self, text=facultyAndDepartment)
+        infoSixthLabel = tk.Label(self, text=programName)
+        infoSeventhLabel = tk.Label(self, text=languageOfInstution)
+        infoEighthLabel = tk.Label(self, text=studentStatus)
         infoFirstLabel.grid(row=0, column=0)
         infoSecondLabel.grid(row=0, column=1)
         infoThirdLabel.grid(row=1, column=0)

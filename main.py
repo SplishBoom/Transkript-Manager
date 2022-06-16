@@ -1,5 +1,6 @@
+from itsdangerous import json
 from    GUI             import DisplayFrame, InputFrame, InfoFrame, ControllFrame, ResultFrame
-from    Util            import retrieveData, segmentAndCreateJson
+from    Util            import retrieveData, segmentAndCreateJsons
 from    Util            import secureStart, secureFinish
 from    tkinter  import ttk
 import  tkinter  as     tk
@@ -27,8 +28,8 @@ class Application(tk.Tk):
     def retrieveTranscript(self):
 
         self.transcriptText = (retrieveData(self.inputSection.username.get(), self.inputSection.password.get()))
-
-        self.segmentText()
+        
+        segmentAndCreateJsons(self.transcriptText)
 
         self.inputSection.grid_forget()
 
@@ -40,11 +41,6 @@ class Application(tk.Tk):
 
         self.displaySection = DisplayFrame(self.container, self)
         self.displaySection.grid(row=3, column=0, sticky="nsew", padx=self.generalPadding/2, pady=self.generalPadding/2, ipadx=self.generalPadding*2, ipady=self.generalPadding*2)
-    
-
-    def segmentText(self):
-
-        self.studentID, self.nationalID, self.studentName, self.studentSurname, self.facultyAndDepartment, self.programName, self.languageOfInstution, self.studentStatus = segmentAndCreateJson(self.transcriptText)
         
 if __name__ == "__main__":
     
@@ -53,4 +49,4 @@ if __name__ == "__main__":
     app = Application()
     app.mainloop()
 
-    secureFinish()
+    #secureFinish()
