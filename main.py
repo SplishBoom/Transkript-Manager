@@ -4,8 +4,16 @@ from    Util            import secureStart, secureFinish
 from    tkinter  import ttk
 import  tkinter  as     tk
 """
-todo: gif add input screen
-multi threading input screen
+todo:
+
+    Current:
+        updateCPGA
+        resetCPGA
+        sortCourses
+        will be optimized
+
+    Next:
+        dipslay the courses.
 """
 class Application(tk.Tk):
     def __init__(self, *args, **kwargs):
@@ -28,11 +36,13 @@ class Application(tk.Tk):
 
         self.inputSection.isDone = True
 
-        self.proccessTranscriptData()
+        self.segmentateTranscriptData()
 
-    def proccessTranscriptData(self):
-
+    def segmentateTranscriptData(self):
         segmentAndCreateJsons()
+        self.switchToManager()
+
+    def switchToManager(self):
 
         self.inputSection.grid_forget()
 
@@ -45,6 +55,8 @@ class Application(tk.Tk):
         self.displaySection = DisplayFrame(self.container, self)
         self.displaySection.grid(row=3, column=0, sticky="nsew", padx=self.generalPadding/2, pady=self.generalPadding/2, ipadx=self.generalPadding*2, ipady=self.generalPadding*2)
         
+        self.resultSection = ResultFrame(self.container, self)
+        self.resultSection.grid(row=4, column=0, sticky="nsew", padx=self.generalPadding/2, pady=self.generalPadding/2, ipadx=self.generalPadding*2, ipady=self.generalPadding*2)
 if __name__ == "__main__":
     
     secureStart()

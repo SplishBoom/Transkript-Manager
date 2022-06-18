@@ -1,6 +1,6 @@
 import  os
 import shutil
-
+import json
 import requests
 
 def secureStart() :
@@ -42,3 +42,31 @@ def authenticate(username, password) :
             return True
 
     return False
+
+def sortTrJsonDataByElement(element, isReverse=False) :
+
+    with open("Temp/transkriptData.json", "r") as f:
+        jsonDataIn = json.load(f)
+
+    allCourses = []
+
+    for currentCourseCode in jsonDataIn :
+        currentCourseValues = jsonDataIn[currentCourseCode]
+        currentCourseValues.insert(0, currentCourseCode)
+        allCourses.append(currentCourseValues)
+
+    if type(element) != type(int()) :
+        elementId = {"Course Code":0, "Course Name":1, "Course Language":2, "Course ETCS":3, "Course Notation":4, "Course Grade":5, "Reset":6}[element]
+    else :
+        elementId = element
+
+    allCourses.sort(key=lambda x: x[elementId], reverse=isReverse)
+
+    jsonDataOut = {}
+    for currentCourseList in allCourses :
+        currentCourseCode = currentCourseList[0]
+        currentCourseValues = currentCourseList[1:]
+        jsonDataOut[currentCourseCode] = currentCourseValues
+
+    with open("Temp/transkriptData.json", "w") as f:
+        json.dump(jsonDataOut, f, indent=4)
