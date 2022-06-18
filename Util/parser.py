@@ -1,7 +1,12 @@
 import  json
 import  os
 
-def segmentAndCreateJsons(textInput) :
+def segmentAndCreateJsons() :
+
+    with open("Temp/transkripText.txt", "r", encoding="utf-8") as f:
+        textInput = f.read()
+    
+    print(textInput)
 
     if textInput.startswith("MEF UNIVERSITY"):
         trannnskriptLanguage = "English"

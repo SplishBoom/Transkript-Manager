@@ -11,10 +11,12 @@ def secureStart() :
             print("Folder " + folder + " not found. Terminating application...")
             exit()
 
-    if os.path.exists("Temp"):
+    try :
+        os.makedirs("Temp")
+    except :
         shutil.rmtree("Temp")
         os.makedirs("Temp")
-
+        
 def secureFinish() :
 
     unncessaryFolders = ("Temp", "Util/__pycache__", "GUI/__pycache__")

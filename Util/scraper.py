@@ -73,5 +73,7 @@ def retrieveData(username, password, isHidden=False):
     transkriptText = client.browser.find_element(By.TAG_NAME, "body").text
 
     client.browser.quit()
-    print("transkriptText")
-    return transkriptText
+
+    with open ("Temp/transkripText.txt", "w", encoding="utf-8") as file :
+        file.write(transkriptText)
+        

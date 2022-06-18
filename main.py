@@ -11,9 +11,6 @@ class Application(tk.Tk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.transcriptText = ""
-        self.transcriptTextLanguage = ""
-
         self.title("Transkript Manager")
 
         self.columnconfigure(0, weight=1)
@@ -26,11 +23,16 @@ class Application(tk.Tk):
         self.inputSection = InputFrame(self.container, self)
         self.inputSection.grid(row=0, column=0, sticky="nsew", padx=self.generalPadding/2, pady=self.generalPadding/2, ipadx=self.generalPadding*2, ipady=self.generalPadding*2)
 
-    def retrieveTranscript(self):
+    def retrieveTranscriptData(self, username, password, statue) :
+        retrieveData(username, password, statue)
 
-        self.transcriptText = (retrieveData(self.inputSection.username.get(), self.inputSection.password.get(), True))
-        
-        segmentAndCreateJsons(self.transcriptText)
+        self.inputSection.isDone = True
+
+        self.proccessTranscriptData()
+
+    def proccessTranscriptData(self):
+
+        segmentAndCreateJsons()
 
         self.inputSection.grid_forget()
 

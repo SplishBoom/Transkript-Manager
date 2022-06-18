@@ -1,7 +1,11 @@
 from    PIL         import  Image, ImageTk
 from    tkinter     import  ttk
 from    Util        import  authenticate
+from    Util            import retrieveData
 import  tkinter     as      tk
+from tkinter import PhotoImage
+import threading
+import os
 
 class InputFrame(tk.Frame):
     def __init__(self, parent, root, *args, **kwargs):
@@ -9,6 +13,9 @@ class InputFrame(tk.Frame):
 
         self.root = root
         self.parent = parent
+
+        self.gifFrames = [PhotoImage(file='Assets/loader3.gif',format = 'gif -index %i' %(i)) for i in range(150)]
+        self.isDone = False
 
         self.username = tk.StringVar(value="memise")
         self.password = tk.StringVar(value="492v5fwu")
@@ -28,7 +35,9 @@ class InputFrame(tk.Frame):
         
         self.errorMessageLabel = ttk.Label(self, textvariable=self.errorMessage, font=("Segoe UI", 9, "bold"), foreground="red", anchor="center")
         
-        loginButton = tk.Button(self, text="Login", font=("Segoe UI", 14, "bold"), foreground="white", background="#27AE60", command=self.checkLogin)
+        self.loginButton = tk.Button(self, text="Login", font=("Segoe UI", 14, "bold"), foreground="white", background="#27AE60", command=self.checkLogin, disabledforeground="gray90")
+
+        self.gifLabel = ttk.Label(self, padding=(self.root.generalPadding), anchor="center")
 
         self.root.bind("<Return>", self.checkLogin)
 
@@ -38,7 +47,7 @@ class InputFrame(tk.Frame):
         passwordLabel.grid(row=3, column=0, sticky="nsew")
         passwordEntry.grid(row=4, column=0, sticky="nsew")
         self.errorMessageLabel.grid(row=5, column=0, sticky="nsew", pady=self.root.generalPadding/1.3)
-        loginButton.grid(row=6, column=0, sticky="nsew", ipadx=self.root.generalPadding*2, ipady=self.root.generalPadding/5)
+        self.loginButton.grid(row=6, column=0, sticky="nsew")
 
     def checkLogin(self, *event):
         
@@ -51,6 +60,8 @@ class InputFrame(tk.Frame):
 
         if isLoginSuccesfull :
             self.updateErrorMessage("Login succesfull! Retrieving transcript...", "green")
+            self.loginButton.config(state="disabled")
+            self.loginButton.config(text="Logged in")
             self.startRetrievalAndReportUser()
             
         else :
@@ -64,8 +75,27 @@ class InputFrame(tk.Frame):
 
     def clearErrorMessage(self) : self.errorMessage.set("")
 
+    def showGif(self, frameIndex) :
+
+        if self.isDone :
+            return
+
+        self.currentFrame = self.gifFrames[frameIndex]
+        frameIndex += 1
+
+        if frameIndex == 1 :
+            self.gifLabel.configure(image=self.currentFrame)
+            self.gifLabel.grid(row=7, column=0, sticky="nsew")
+        elif frameIndex == 150 :
+            frameIndex = 0
+    
+        self.gifLabel.configure(image=self.currentFrame)
+        
+        self.root.after(20, self.showGif, frameIndex)
+
     def startRetrievalAndReportUser(self) :
 
-        
+        self.root.after(0, self.showGif, 0)
 
-        self.root.retrieveTranscript()
+        retrievalT = threading.Thread(target=self.root.retrieveTranscriptData, args=(self.username.get(), self.password.get(), True))
+        retrievalT.start()
