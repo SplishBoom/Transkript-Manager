@@ -1,7 +1,7 @@
-from cmath import inf
-from    tkinter     import  ANCHOR, ttk
+
+from    tkinter     import  ttk
 import  tkinter     as      tk
-import  json
+
 
 class ResultFrame(tk.Frame):
     def __init__(self, parent, root, *args, **kwargs):
