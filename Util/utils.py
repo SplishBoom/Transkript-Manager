@@ -4,6 +4,8 @@ import json
 import requests
 
 def secureStart() :
+    os.system("cls")
+    
     neccessaryFolders = ("Assets", "GUI", "Sources", "Util")
 
     for folder in neccessaryFolders:
@@ -11,11 +13,11 @@ def secureStart() :
             print("Folder " + folder + " not found. Terminating application...")
             exit()
 
-    try :
+    """try :
         os.makedirs("Temp")
     except :
         shutil.rmtree("Temp")
-        os.makedirs("Temp")
+        os.makedirs("Temp")"""
         
 def secureFinish() :
 
@@ -45,7 +47,7 @@ def authenticate(username, password) :
 
 def sortTrJsonDataByElement(element, isReverse=False) :
 
-    with open("Temp/transkriptData.json", "r") as f:
+    with open("Temp/transcriptData.json", "r") as f:
         jsonDataIn = json.load(f)
 
     allCourses = []
@@ -56,7 +58,7 @@ def sortTrJsonDataByElement(element, isReverse=False) :
         allCourses.append(currentCourseValues)
 
     if type(element) != type(int()) :
-        elementId = {"Course Code":0, "Course Name":1, "Course Language":2, "Course ETCS":3, "Course Notation":4, "Course Grade":5, "Reset":6}[element]
+        elementId = {"Course Code":0, "Course Name":1, "Course Language":2, "Course ETCS":3, "Course Notation":4, "Course Grade":5, "Course Date":6}[element]
     else :
         elementId = element
 
@@ -68,5 +70,5 @@ def sortTrJsonDataByElement(element, isReverse=False) :
         currentCourseValues = currentCourseList[1:]
         jsonDataOut[currentCourseCode] = currentCourseValues
 
-    with open("Temp/transkriptData.json", "w") as f:
+    with open("Temp/transcriptData.json", "w") as f:
         json.dump(jsonDataOut, f, indent=4)

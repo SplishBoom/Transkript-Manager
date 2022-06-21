@@ -9,8 +9,11 @@ class InfoFrame(tk.Frame):
         self.root = root
         self.parent = parent
 
-        self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=1)
+        self.columnconfigure(0, weight=2)
+        self.columnconfigure(1, weight=3)
+
+        for i in range(0,4) :
+            self.rowconfigure(i, weight=1)
 
         self.configure(bg="white", relief="sunken", borderwidth=1)
 

@@ -7,12 +7,12 @@ from tkinter import PhotoImage
 import threading
 import os
 
-class InputFrame(tk.Frame):
+class InputFrame(ttk.Frame):
     def __init__(self, parent, root, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
-        self.root = root
         self.parent = parent
+        self.root = root
 
         self.gifFrames = [PhotoImage(file='Assets/loader3.gif',format = 'gif -index %i' %(i)) for i in range(150)]
         self.isDone = False

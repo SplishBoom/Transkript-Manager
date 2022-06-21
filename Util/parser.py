@@ -3,11 +3,9 @@ import  os
 
 def segmentAndCreateJsons() :
 
-    with open("Temp/transkripText.txt", "r", encoding="utf-8") as f:
+    with open("Temp/transcriptText.txt", "r", encoding="utf-8") as f:
         textInput = f.read()
     
-    print(textInput)
-
     if textInput.startswith("MEF UNIVERSITY"):
         trannnskriptLanguage = "English"
     elif textInput.startswith("T.C."):
@@ -32,7 +30,6 @@ def segmentAndCreateJsons() :
     for line in textInput :
         if not any(semesterBraces in line for semesterBraces in semesterBraces):
             xCleaned.append(line)
-            print(line)
 
     allCourses = {}
     courseIndex = 0
@@ -57,7 +54,9 @@ def segmentAndCreateJsons() :
     if not os.path.exists("Temp"):
         os.makedirs("Temp")
 
-    with open ("Temp/transkriptData.json", "w", encoding="utf-8") as f:
+    with open ("Temp/transcriptData.json", "w", encoding="utf-8") as f:
+        json.dump(allCourses, f, indent=4)
+    with open ("Temp/transcriptDataInit.json", "w", encoding="utf-8") as f:
         json.dump(allCourses, f, indent=4)
 
     studentID = studentInfo[0][studentInfo[0].find("0"):studentInfo[0].find("0")+9]

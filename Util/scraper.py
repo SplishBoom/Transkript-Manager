@@ -74,6 +74,6 @@ def retrieveData(username, password, isHidden=False):
 
     client.browser.quit()
 
-    with open ("Temp/transkripText.txt", "w", encoding="utf-8") as file :
+    with open ("Temp/transcriptText.txt", "w", encoding="utf-8") as file :
         file.write(transkriptText)
         
