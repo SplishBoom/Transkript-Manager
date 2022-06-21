@@ -1,8 +1,8 @@
-from    tkinter     import  ANCHOR, ttk
+
 import  tkinter     as      tk
 import  json
+import  random
 
-from click import command
 from    Util        import sortTrJsonDataByElement
 
 class ControllFrame(tk.Frame) :
@@ -39,12 +39,16 @@ class ControllFrame(tk.Frame) :
         courseNotationSortButton.grid(row=0, column=5, sticky="WE")
         courseGradeSortButton.grid(row=0, column=6, sticky="WE")
 
-        resetButton = tk.Button(self, text="Reset Transcript", command=self.resetData)
-        refreshButton = tk.Button(self, text="", state="disabled")
+        resetButton = tk.Button(self, text="Reset", command=self.resetData)
+        magicButton = tk.Button(self, text="Suprise", command=self.doSomeMagic)
+        dummy = tk.Button(self, text="", state="disabled")
+        restartButton = tk.Button(self, text="Restart", command=self.root.restartProgram)
         exitButton = tk.Button(self, text="Exit", command = self.root.destroy)
 
         resetButton.grid(row=1, column=0, columnspan=2, sticky="WE")
-        refreshButton.grid(row=1, column=2, columnspan=3, sticky="WE")
+        magicButton.grid(row=1, column=2, sticky="WE")
+        dummy.grid(row=1, column=3, sticky="WE")
+        restartButton.grid(row=1, column=4, sticky="WE")
         exitButton.grid(row=1, column=5, columnspan=2, sticky="WE")
 
         for label in self.winfo_children():
@@ -55,9 +59,10 @@ class ControllFrame(tk.Frame) :
         sortTrJsonDataByElement(element, self.sortCombines[element])
         self.sortCombines[element] = not self.sortCombines[element]
         self.lastSortCombine = element
-        self.root.displaySection.gridCoursesOnCanvas()
+        self.updateData()
 
     def resetData(self, *event) :
+        self.lastSortCombine = None
         with open ("Temp/transcriptDataInit.json", "r", encoding="utf-8") as f :
             with open ("Temp/transcriptData.json", "w", encoding="utf-8") as f2 :
                 f2.write(f.read())
@@ -68,3 +73,25 @@ class ControllFrame(tk.Frame) :
 
     def confirmValues(self, *event) :
         self.root.displaySection.updateCGPA()
+
+    # I knew you were wondering wtf was this method doing. It does nothing. It just used to fills the empty spaces ... (sory)
+    def doSomeMagic(self) :
+        self.lastSortCombine = None
+
+        luckyNotation = random.choice(self.root.displaySection.possibleNotations)
+
+        with open ("Temp/transcriptData.json", "r", encoding="utf-8") as f :
+            data = json.load(f)
+
+        for courseValues in data.values() :
+            courseValues[-3] = luckyNotation
+            try :
+                weight = self.root.displaySection.weights[luckyNotation]
+            except KeyError :
+                weight = 0
+            courseValues[-2] = weight * float(courseValues[-4])
+
+        with open ("Temp/transcriptData.json", "w", encoding="utf-8") as f :
+            json.dump(data, f, indent=4)
+
+        self.updateData()

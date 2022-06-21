@@ -3,20 +3,9 @@ from    Util            import retrieveData, segmentAndCreateJsons
 from    Util            import secureStart, secureFinish
 from    tkinter  import ttk
 import  tkinter  as     tk
-"""
-todo:
 
-    Current:
-        updateCPGA
-        resetCPGA
-        sortCourses
-        will be optimized
-
-    Next:
-        dipslay the courses.
-"""
 class Application(tk.Tk):
-    def __init__(self, debug, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         self.title("Transcript Manager")
@@ -31,8 +20,7 @@ class Application(tk.Tk):
         self.inputSection = InputFrame(self.container, self)
         self.inputSection.grid(row=0, column=0, sticky="nsew", padx=self.generalPadding/2, pady=self.generalPadding/2, ipadx=self.generalPadding*2, ipady=self.generalPadding*2)
 
-        if debug :
-            self.switchToManager()
+        self.rotateApplicationWindow()
 
     def retrieveTranscriptData(self, username, password, statue) :
         retrieveData(username, password, statue)
@@ -57,17 +45,38 @@ class Application(tk.Tk):
         self.displaySection.grid(row=2, column=0, sticky="nsew", padx=self.generalPadding/2, pady=self.generalPadding/2, ipadx=self.generalPadding*2, ipady=self.generalPadding*2)
 
         self.resultSection = ResultFrame(self.container, self)
-        self.resultSection.grid(row=3, column=0, sticky="nsew", padx=self.generalPadding/2, pady=self.generalPadding/2, ipadx=self.generalPadding*2, ipady=self.generalPadding*2)
+        self.resultSection.grid(row=3, column=0, sticky="nsew", padx=self.generalPadding/2, pady=self.generalPadding/2, ipadx=self.generalPadding*2, ipady=self.generalPadding/2)
+
+        self.rotateApplicationWindow()
 
     def closeProgram(self) :
         self.destroy()
+
+    def restartProgram(self) :
+        self.infoSection.grid_forget()
+        self.controllSection.grid_forget()
+        self.displaySection.grid_forget()
+        self.resultSection.grid_forget()
+
+        self.inputSection = InputFrame(self.container, self)
+        self.inputSection.grid(row=0, column=0, sticky="nsew", padx=self.generalPadding/2, pady=self.generalPadding/2, ipadx=self.generalPadding*2, ipady=self.generalPadding*2)
+
+    def rotateApplicationWindow(self) :
+        self.update()
+
+        windowWidth = self.winfo_reqwidth()
+        windowHeight = self.winfo_reqheight()
+
+        positionRight = int(self.winfo_screenwidth()/2 - windowWidth/2)
+        positionDown = int(self.winfo_screenheight()/2 - windowHeight/2)
+        
+        self.geometry("+{}+{}".format(positionRight, positionDown))
 
 if __name__ == "__main__":
     
     secureStart()
 
-    app = Application(True)
-    app.eval('tk::PlaceWindow . center')
+    app = Application()
     app.mainloop()
 
-    #secureFinish()
+    secureFinish()

@@ -17,8 +17,8 @@ class InputFrame(ttk.Frame):
         self.gifFrames = [PhotoImage(file='Assets/loader3.gif',format = 'gif -index %i' %(i)) for i in range(150)]
         self.isDone = False
 
-        self.username = tk.StringVar(value="memise")
-        self.password = tk.StringVar(value="492v5fwu")
+        self.username = tk.StringVar(value="")
+        self.password = tk.StringVar(value="")
         self.errorMessage = tk.StringVar()
 
         self.columnconfigure(0, weight=1)

@@ -3,17 +3,19 @@ import  tkinter     as      tk
 import  json
 
 class DisplayFrame(ttk.Frame):
-    def __init__(self, parent, root, canv_w = 940, canv_h = 410, *args, **kwargs):
+    def __init__(self, parent, root, canv_w = 930, canv_h = 425, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.root = root
         self.parent = parent
 
-        self.possibleNotations = ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "F", "I", "W"]
+        self.possibleNotations = ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "F", "I", "W", "S"]
         self.weights = {"A":4.00, "A-":3.70, "B+":3.30, "B":3.00, "B-":2.70, "C+":2.30, "C":2.00, "C-":1.70, "D+":1.30, "D":1.00, "F":0.00}
         self.courseNotations = {}
         self.courseLabels = {}
         self.courseNotationComboboxes = []
+
+        self.saveInitialData = True
         
         self.canvas = tk.Canvas(self, width=canv_w, height=canv_h, bg="white")
         scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
@@ -48,15 +50,14 @@ class DisplayFrame(ttk.Frame):
 
             usedFont = ("Helvetica", 11, "bold")
 
-            courseIdLabel = tk.Label(self.scrollable_frame, text=currentCourseValues[-1], font=usedFont, width=6, height=2, anchor="center")
-            courseCodeLabel = tk.Label(self.scrollable_frame, text=currentCourseCode, font=usedFont, width=15, height=2, anchor="center")
-            courseNameLabel = tk.Label(self.scrollable_frame, text=currentCourseValues[-6], font=usedFont, width=50, height=2, anchor="center")
-            courseLanguageLabel = tk.Label(self.scrollable_frame, text=currentCourseValues[-5], font=usedFont, width=5, height=2, anchor="center")
-            courseETCSLabel = tk.Label(self.scrollable_frame, text=currentCourseValues[-4], font=usedFont, width=10, height=2, anchor="center")
-            courseNotationCombobox = ttk.Combobox(self.scrollable_frame, textvariable=(self.courseNotations[currentCourseCode]), values=self.possibleNotations, width=5, font=usedFont)
+            courseIdLabel = tk.Label(self.scrollable_frame, text=str(currentCourseValues[-1]), font=usedFont, width=6, height=2, anchor="center")
+            courseCodeLabel = tk.Label(self.scrollable_frame, text=str(currentCourseCode), font=usedFont, width=15, height=2, anchor="center")
+            courseNameLabel = tk.Label(self.scrollable_frame, text=str(currentCourseValues[-6]), font=usedFont, width=50, height=2, anchor="center")
+            courseLanguageLabel = tk.Label(self.scrollable_frame, text=str(currentCourseValues[-5]), font=usedFont, width=5, height=2, anchor="center")
+            courseETCSLabel = tk.Label(self.scrollable_frame, text=str(currentCourseValues[-4]), font=usedFont, width=10, height=2, anchor="center")
+            courseNotationCombobox = ttk.Combobox(self.scrollable_frame, textvariable=(self.courseNotations[currentCourseCode]), values=self.possibleNotations, width=4, font=usedFont)
             courseGradeLabel = tk.Label(self.scrollable_frame, text=str(round(float(currentCourseValues[-2]),2)), font=usedFont, width=12, height=2, anchor="center")
             
- 
             self.courseLabels[courseIdLabel] = [rowStart, 0, "w"]
             self.courseLabels[courseCodeLabel] = [rowStart, 1, "w"]
             self.courseLabels[courseNameLabel] = [rowStart, 2, "w"]
@@ -69,7 +70,12 @@ class DisplayFrame(ttk.Frame):
 
             rowStart += 1
 
+        cathcByWidth = {"Course Code":15, "Course Name":50, "Course Language":5, "Course ETCS":10, "Course Notation":4, "Course Grade":12, "Course Date":6, None:0}
+
         for currentCourseLabel, currentCourseValues in self.courseLabels.items() :
+            if currentCourseLabel["width"] == cathcByWidth[self.root.controllSection.lastSortCombine] :
+                currentCourseLabel["foreground"] = "blue"
+
             currentCourseLabel.grid(row=currentCourseValues[0], column=currentCourseValues[1], sticky=currentCourseValues[2])
 
         for currentCourseCode, currentCourseNotationCombobox in self.courseNotationComboboxes :
@@ -120,16 +126,34 @@ class DisplayFrame(ttk.Frame):
             else :
                 pass
 
-
-        self.CGPA = self.totalQualityPoints / self.creditsIncludedInCPGA
+        try :
+            self.CGPA = self.totalQualityPoints / self.creditsIncludedInCPGA
+        except ZeroDivisionError :
+            self.CGPA = 0
 
         self.loadCourseNotations()
 
-        """print("self.totalQualityPoints  =", self.totalQualityPoints)
-        print("self.creditsAttempted    =", self.creditsAttempted)
-        print("self.creditsSuccesfull   =", self.creditsSuccesfull)
-        print("self.creditsIncludedInCPGA   =", self.creditsIncludedInCPGA)
-        print("self.CGPA    =", self.CGPA)"""
+        seperator = "   \u279C   "
+        if self.saveInitialData :
+            self.saveInitialData = False
+
+            self.totalQualityPointsInit = self.totalQualityPoints 
+            self.creditsAttemptedInit = self.creditsAttempted 
+            self.creditsSuccesfullInit = self.creditsSuccesfull 
+            self.creditsIncludedInCPGAInit = self.creditsIncludedInCPGA 
+            self.CGPAInit = self.CGPA 
+
+            self.creditsAttemptedVar = tk.StringVar(value=(str(self.creditsAttemptedInit)+seperator+str(self.creditsAttempted)))
+            self.creditsSuccesfullVar = tk.StringVar(value=(str(self.creditsSuccesfullInit)+seperator+str(self.creditsSuccesfull)))
+            self.creditsIncludedInCPGAVar = tk.StringVar(value=(str(self.creditsIncludedInCPGAInit)+seperator+str(self.creditsIncludedInCPGA)))
+            self.totalQualityPointsVar = tk.StringVar(value=(str(round(self.totalQualityPointsInit,2))+seperator+str(round(self.totalQualityPoints,2))))
+            self.CGPAVar = tk.StringVar(value=(str(round(self.CGPAInit,2))+seperator+str(round(self.CGPA,2))))
+        else :
+            self.creditsAttemptedVar.set(str(self.creditsAttemptedInit)+seperator+str(self.creditsAttempted))
+            self.creditsSuccesfullVar.set(str(self.creditsSuccesfullInit)+seperator+str(self.creditsSuccesfull))
+            self.creditsIncludedInCPGAVar.set(str(self.creditsIncludedInCPGAInit)+seperator+str(self.creditsIncludedInCPGA))
+            self.totalQualityPointsVar.set(str(round(self.totalQualityPointsInit,2))+seperator+str(round(self.totalQualityPoints,2)))
+            self.CGPAVar.set(str(round(self.CGPAInit,2))+seperator+str(round(self.CGPA,2)))
         
 
     def updateCGPA(self, courseCode, newNotation, *event) :
