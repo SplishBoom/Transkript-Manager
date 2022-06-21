@@ -13,11 +13,11 @@ def secureStart() :
             print("Folder " + folder + " not found. Terminating application...")
             exit()
 
-    """try :
+    try :
         os.makedirs("Temp")
     except :
         shutil.rmtree("Temp")
-        os.makedirs("Temp")"""
+        os.makedirs("Temp")
         
 def secureFinish() :
 
