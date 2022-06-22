@@ -8,6 +8,8 @@ class Application(tk.Tk):
     def __init__(self, debug=False, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.iconbitmap("Assets/icon.ico")
+
         self.title("Transcript Manager")
 
         self.columnconfigure(0, weight=1)
