@@ -1,6 +1,7 @@
 from    tkinter     import  ttk
 import  tkinter     as      tk
 import  json
+import  os
 
 class InfoFrame(tk.Frame):
     
@@ -16,9 +17,7 @@ class InfoFrame(tk.Frame):
         for i in range(0,4) :
             self.rowconfigure(i, weight=1)
 
-        self.configure(bg="white", relief="sunken", borderwidth=1)
-
-        with open ("Temp/studentData.json", "r", encoding="utf-8") as f:
+        with open (os.path.abspath("Temp/studentData.json"), "r", encoding="utf-8") as f:
             studentID, nationalID, studentName, studentSurname, facultyAndDepartment, programName, languageOfInstution, studentStatus = json.load(f)
 
         infoFirstLabel = tk.Label(self, text=studentID)

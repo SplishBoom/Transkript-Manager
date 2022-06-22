@@ -4,6 +4,8 @@ from    tkinter     import  PhotoImage
 from    tkinter     import  ttk
 import  tkinter     as      tk
 import  threading
+import  json
+import  os
 
 class InputFrame(ttk.Frame):
     
@@ -13,32 +15,33 @@ class InputFrame(ttk.Frame):
         self.parent = parent
         self.root = root
 
-        self.gifFrames = [PhotoImage(file='Assets/loader3.gif',format = 'gif -index %i' %(i)) for i in range(150)]
+        self.gifFrames = [PhotoImage(file=os.path.abspath('Assets/loader.gif'),format = 'gif -index %i' %(i)) for i in range(150)]
         self.isDone = False
+        self.autoLogin = False
+        self.loadedFromPayload = True
 
-        self.username = tk.StringVar(value="")
-        self.password = tk.StringVar(value="")
+        self._loadPayload()
         self.errorMessage = tk.StringVar()
 
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
 
-        self.logoImg = ImageTk.PhotoImage(Image.open("Assets\mefLogo.png").resize((194, 126), Image.ANTIALIAS))
+        self.logoImg = ImageTk.PhotoImage(Image.open(os.path.abspath("Assets\mefLogo.png")).resize((194, 126), Image.ANTIALIAS))
         logoLabel = ttk.Label(self, image=self.logoImg, padding=(self.root.generalPadding), anchor="center")
 
         usernameLabel = ttk.Label(self, text="User Name", font=("Segoe UI", 13, "bold"), foreground="#4E5963")
-        usernameEntry = ttk.Entry(self, font=("Segoe UI", 11, "bold"), foreground="gray38", textvariable=self.username)
+        usernameEntry = ttk.Entry(self, font=("Segoe UI", 11, "bold"), foreground="gray38", textvariable=self._username)
 
         passwordLabel = ttk.Label(self, text="Password", font=("Segoe UI", 13, "bold"), foreground="#4E5963")
-        passwordEntry = ttk.Entry(self, show="*", font=("Segoe UI", 11, "bold"), foreground="gray38", textvariable=self.password)
+        passwordEntry = ttk.Entry(self, show="*", font=("Segoe UI", 11, "bold"), foreground="gray38", textvariable=self._password)
         
         self.errorMessageLabel = ttk.Label(self, textvariable=self.errorMessage, font=("Segoe UI", 9, "bold"), foreground="red", anchor="center")
         
-        self.loginButton = tk.Button(self, text="Login", font=("Segoe UI", 14, "bold"), foreground="white", background="#27AE60", command=self.checkLogin, disabledforeground="gray90")
+        self.loginButton = tk.Button(self, text="Login", font=("Segoe UI", 14, "bold"), foreground="white", background="#27AE60", command=self._checkLogin, disabledforeground="gray90")
 
         self.gifLabel = ttk.Label(self, padding=(self.root.generalPadding), anchor="center")
 
-        self.root.bind("<Return>", self.checkLogin)
+        self.root.bind("<Return>", self._checkLogin)
 
         logoLabel.grid(row=0, column=0, sticky="nsew")
         usernameLabel.grid(row=1, column=0, sticky="nsew")
@@ -48,32 +51,64 @@ class InputFrame(ttk.Frame):
         self.errorMessageLabel.grid(row=5, column=0, sticky="nsew", pady=self.root.generalPadding/1.3)
         self.loginButton.grid(row=6, column=0, sticky="nsew")
 
-    def checkLogin(self, *event):
+        if self.autoLogin :
+            print("Auto login is enabled, logging in automatically...")
+            self.after(150, self._checkLogin)
+
+    def _loadPayload(self) :
         
-        if self.username.get() == "" or self.password.get() == "" or self.username.get() == " " or self.password.get() == " " :
-            self.updateErrorMessage("Please fill in all fields !", "red")
-            self.root.after(500, self.clearErrorMessage)
+        try :
+            with open(os.path.abspath("Sources/payload.json"), "r", encoding="utf-8") as payloadFile :
+                payload = json.load(payloadFile)
+
+            self._username = tk.StringVar(value=payload["username"])
+            self._password = tk.StringVar(value=payload["password"])
+
+            print("Payload loaded successfully. Your credentials are entered automatically.")
+
+            self.autoLogin = payload["autoLogin"]
+
+            self.loadedFromPayload = True
+        except :
+            print("Could not load ./Sources/payload file, you have to enter your credentials manually.")
+            self._username = tk.StringVar(value="")
+            self._password = tk.StringVar(value="")
+
+    def _checkLogin(self, *event):
+        
+        if self._username.get() == "" or self._password.get() == "" or self._username.get() == " " or self._password.get() == " " :
+            if self.loadedFromPayload :
+                self._updateErrorMessage("Please check payload file !", "red")
+            else :
+                self._updateErrorMessage("Please fill in all fields !", "red")
+            self.root.after(500, self._clearErrorMessage)
             return
         
-        isLoginSuccesfull = authenticate(self.username.get(), self.password.get())
+        isLoginSuccesfull = authenticate(self._username.get(), self._password.get())
 
         if isLoginSuccesfull :
-            self.updateErrorMessage("Login succesfull! Retrieving transcript...", "green")
+            if self.loadedFromPayload :
+                self._updateErrorMessage("Payload succesfull! Retrieving transcript...", "green")
+            else :
+                self._updateErrorMessage("Login succesfull! Retrieving transcript...", "green")
             self.loginButton.config(state="disabled")
             self.loginButton.config(text="Logged in")
-            self.startRetrievalAndReportUser()
+            self._startRetrievalAndReportUser()
         else :
-            self.updateErrorMessage("Wrong username or password !", "red")
-            self.root.after(750, self.clearErrorMessage)
+            if self.loadedFromPayload :
+                self._updateErrorMessage("Please check payload file !", "red")
+            else :
+                self._updateErrorMessage("Wrong username or password !", "red")
+            self.root.after(750, self._clearErrorMessage)
             
-    def updateErrorMessage(self, message, messageColor) :
+    def _updateErrorMessage(self, message, messageColor) :
         self.errorMessage.set(message)
         self.errorMessageLabel.config(foreground=messageColor)
 
-    def clearErrorMessage(self) : 
+    def _clearErrorMessage(self) : 
         self.errorMessage.set("")
 
-    def showGif(self, frameIndex) :
+    def _showGif(self, frameIndex) :
 
         if self.isDone :
             return
@@ -89,11 +124,11 @@ class InputFrame(ttk.Frame):
     
         self.gifLabel.configure(image=self.currentFrame)
         
-        self.root.after(20, self.showGif, frameIndex)
+        self.root.after(20, self._showGif, frameIndex)
 
-    def startRetrievalAndReportUser(self) :
+    def _startRetrievalAndReportUser(self) :
 
-        self.root.after(0, self.showGif, 0)
+        self.root.after(0, self._showGif, 0)
 
-        retrievalT = threading.Thread(target=self.root.retrieveTranscriptData, args=(self.username.get(), self.password.get(), True))
+        retrievalT = threading.Thread(target=self.root.retrieveTranscriptData, args=(self._username.get(), self._password.get(), True))
         retrievalT.start()

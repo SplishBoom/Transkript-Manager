@@ -2,6 +2,7 @@ from    selenium.webdriver.chrome.service  import Service
 from    selenium.webdriver.chrome.options  import Options
 from    selenium.webdriver.common.by       import By
 from    selenium                           import webdriver
+import  os
 
 def retrieveData(username, password, isHidden=False):
 
@@ -16,24 +17,14 @@ def retrieveData(username, password, isHidden=False):
             self.browser.get(url)
 
         def createElement(self,xPath) :
-            if type(xPath) == str :
-                createdElement = None
-                while (createdElement == None) :
-                    try :
-                        createdElement = self.browser.find_element(By.XPATH, xPath)
-                    except :
-                        continue
-                return createdElement
-            else :
-                createdElement = None
-                while (createdElement == None) :
-                    for xpath in xPath :
-                        try :
-                            createdElement = self.browser.find_element(By.XPATH, xPath)
-                            break
-                        except :
-                            continue
-                return createdElement
+            createdElement = None
+            while (createdElement == None) :
+                try :
+                    createdElement = self.browser.find_element(By.XPATH, xPath)
+                except :
+                    continue
+            return createdElement
+
         def clickOnElement(self, element) :
             while (True) :
                 try :
@@ -74,6 +65,5 @@ def retrieveData(username, password, isHidden=False):
 
     client.browser.quit()
 
-    with open ("Temp/transcriptText.txt", "w", encoding="utf-8") as file :
+    with open (os.path.abspath("Temp/transcriptText.txt"), "w", encoding="utf-8") as file :
         file.write(transkriptText)
-        

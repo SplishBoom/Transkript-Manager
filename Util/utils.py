@@ -1,27 +1,24 @@
+import  requests
+import  shutil
+import  json
 import  os
-import shutil
-import json
-import requests
 
 def secureStart(passed=False) :
-    os.system("cls")
-    
     neccessaryFolders = ("Assets", "GUI", "Sources", "Util")
 
     for folder in neccessaryFolders:
-        if not os.path.exists(folder):
+        if not os.path.exists(os.path.abspath(folder)):
             print("Folder " + folder + " not found. Terminating application...")
             exit()
 
     if not passed :
         try :
-            os.makedirs("Temp")
+            os.makedirs(os.path.abspath("Temp"))
         except :
-            shutil.rmtree("Temp")
-            os.makedirs("Temp")
+            shutil.rmtree(os.path.abspath("Temp"))
+            os.makedirs(os.path.abspath("Temp"))
         
 def secureFinish(passed=False) :
-
     if passed :
         unncessaryFolders = ("Util/__pycache__", "GUI/__pycache__")
     else :
@@ -29,7 +26,7 @@ def secureFinish(passed=False) :
 
     for unncessaryFolder in unncessaryFolders:
         try :
-            shutil.rmtree(unncessaryFolder)
+            shutil.rmtree(os.path.abspath(unncessaryFolder))
         except :
             pass
 
@@ -51,7 +48,7 @@ def authenticate(username, password) :
 
 def sortTrJsonDataByElement(element, isReverse=False) :
 
-    with open("Temp/transcriptData.json", "r") as f:
+    with open(os.path.abspath("Temp/transcriptData.json"), "r") as f:
         jsonDataIn = json.load(f)
 
     allCourses = []
@@ -74,5 +71,5 @@ def sortTrJsonDataByElement(element, isReverse=False) :
         currentCourseValues = currentCourseList[1:]
         jsonDataOut[currentCourseCode] = currentCourseValues
 
-    with open("Temp/transcriptData.json", "w") as f:
+    with open(os.path.abspath("Temp/transcriptData.json"), "w") as f:
         json.dump(jsonDataOut, f, indent=4)

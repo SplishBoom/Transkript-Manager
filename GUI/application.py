@@ -2,13 +2,14 @@ from    GUI         import ControllFrame, DisplayFrame, InfoFrame, InputFrame, R
 from    Util        import retrieveData, segmentAndCreateJsons
 from    tkinter     import ttk
 import  tkinter     as     tk
+import  os
 
 class Application(tk.Tk):
     
     def __init__(self, debug=False, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.iconbitmap("Assets/icon.ico")
+        self.iconbitmap(os.path.abspath("Assets/icon.ico"))
 
         self.title("Transcript Manager")
 

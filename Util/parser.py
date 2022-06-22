@@ -3,7 +3,7 @@ import  os
 
 def segmentAndCreateJsons() :
 
-    with open("Temp/transcriptText.txt", "r", encoding="utf-8") as f:
+    with open(os.path.abspath("Temp/transcriptText.txt"), "r", encoding="utf-8") as f:
         textInput = f.read()
     
     if textInput.startswith("MEF UNIVERSITY"):
@@ -50,13 +50,9 @@ def segmentAndCreateJsons() :
 
         courseIndex += 1
         
-    # create temp folder if not exists
-    if not os.path.exists("Temp"):
-        os.makedirs("Temp")
-
-    with open ("Temp/transcriptData.json", "w", encoding="utf-8") as f:
+    with open (os.path.abspath("Temp/transcriptData.json"), "w", encoding="utf-8") as f:
         json.dump(allCourses, f, indent=4)
-    with open ("Temp/transcriptDataInit.json", "w", encoding="utf-8") as f:
+    with open (os.path.abspath("Temp/transcriptDataInit.json"), "w", encoding="utf-8") as f:
         json.dump(allCourses, f, indent=4)
 
     studentID = studentInfo[0][studentInfo[0].find("0"):studentInfo[0].find("0")+9]
@@ -76,5 +72,5 @@ def segmentAndCreateJsons() :
         languageOfInstution = studentInfo[3][studentInfo[3].find("Dil")+5:studentInfo[3].find("Öğrenci")-1]
         studentStatus = studentInfo[3][studentInfo[3].find("Öğrenci")+18:]
 
-    with open ("Temp/studentData.json", "w", encoding="utf-8") as f:
+    with open (os.path.abspath("Temp/studentData.json"), "w", encoding="utf-8") as f:
         json.dump([studentID, nationalID, studentName, studentSurname, facultyAndDepartment, programName, languageOfInstution, studentStatus], f, ensure_ascii=False, indent=4)

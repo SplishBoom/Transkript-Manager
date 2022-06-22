@@ -14,14 +14,14 @@ class ResultFrame(tk.Frame):
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
 
-        self.createWidgets()
+        self._createWidgets()
 
-        self.gridWidgets()
+        self._gridWidgets()
 
         for label in self.winfo_children():
             label.grid_configure(padx=1, pady=1)
 
-    def createWidgets(self) :
+    def _createWidgets(self) :
         font = ("Arial", 10, "bold")
         self.infoLabel1 = tk.Label(self, font=font, text="Attempted Credits")
         self.infoLabel2 = tk.Label(self, font=font, text="Successful Credits")
@@ -36,9 +36,9 @@ class ResultFrame(tk.Frame):
         self.totalQualityPointsInfo = ttk.Label(self, font=font, textvariable=self.root.displaySection.totalQualityPointsVar, anchor="center")
         self.CGPAInfo = ttk.Label(self, font=font, textvariable=self.root.displaySection.CGPAVar, anchor="center")
 
-        self.root.displaySection.CGPAVar.trace("w", self.awareChanges)
+        self.root.displaySection.CGPAVar.trace("w", self._awareChanges)
 
-    def gridWidgets(self) :
+    def _gridWidgets(self) :
         self.infoLabel1.grid(row=0, column=0, sticky="WE")
         self.infoLabel2.grid(row=0, column=1, sticky="WE")
         self.infoLabel3.grid(row=0, column=2, sticky="WE")
@@ -51,12 +51,12 @@ class ResultFrame(tk.Frame):
         self.totalQualityPointsInfo.grid(row=1, column=3, sticky="WE")
         self.CGPAInfo.grid(row=1, column=4, sticky="WE")
 
-    def awareChanges(self, *event) :
-        self.creditsAttemptedInfo.configure(foreground=self.colorize(self.root.displaySection.creditsAttemptedVar.get().split()))
-        self.creditsSuccesfullInfo.configure(foreground=self.colorize(self.root.displaySection.creditsSuccesfullVar.get().split()))
-        self.creditsIncludedInCPGAInfo.configure(foreground=self.colorize(self.root.displaySection.creditsIncludedInCPGAVar.get().split()))
-        self.totalQualityPointsInfo.configure(foreground=self.colorize(self.root.displaySection.totalQualityPointsVar.get().split()))
-        self.CGPAInfo.configure(foreground=self.colorize(self.root.displaySection.CGPAVar.get().split()))
+    def _awareChanges(self, *event) :
+        self.creditsAttemptedInfo.configure(foreground=self._colorize(self.root.displaySection.creditsAttemptedVar.get().split()))
+        self.creditsSuccesfullInfo.configure(foreground=self._colorize(self.root.displaySection.creditsSuccesfullVar.get().split()))
+        self.creditsIncludedInCPGAInfo.configure(foreground=self._colorize(self.root.displaySection.creditsIncludedInCPGAVar.get().split()))
+        self.totalQualityPointsInfo.configure(foreground=self._colorize(self.root.displaySection.totalQualityPointsVar.get().split()))
+        self.CGPAInfo.configure(foreground=self._colorize(self.root.displaySection.CGPAVar.get().split()))
 
-    def colorize(self, splitedVar) :
+    def _colorize(self, splitedVar) :
         return ("red" if splitedVar[0] > splitedVar[2] else ("green" if splitedVar[0] < splitedVar[2] else "black"))

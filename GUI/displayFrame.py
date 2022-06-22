@@ -1,10 +1,11 @@
 from    tkinter     import  ttk
 import  tkinter     as      tk
 import  json
+import  os
 
 class DisplayFrame(ttk.Frame):
     
-    def __init__(self, parent, root, canv_w = 930, canv_h = 425, *args, **kwargs):
+    def __init__(self, parent, root, canv_w = 930, canv_h = 10, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.root = root
@@ -23,7 +24,7 @@ class DisplayFrame(ttk.Frame):
         scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
         self.scrollable_frame = ttk.Frame(self.canvas)
 
-        self.root.bind("<MouseWheel>", self.onWheel)
+        self.root.bind("<MouseWheel>", self._onWheel)
         self.scrollable_frame.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
         
         self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
@@ -40,7 +41,7 @@ class DisplayFrame(ttk.Frame):
         if self.allCourses[courseCode][-3] != newNotation :
             self.coursesShouldBeHighlighted.append(courseCode)
 
-        self.updateCGPA(courseCode, newNotation)
+        self._updateCGPA(courseCode, newNotation)
 
     def gridCoursesOnCanvas(self) :
 
@@ -64,7 +65,7 @@ class DisplayFrame(ttk.Frame):
             courseETCSLabel = tk.Label(self.scrollable_frame, text=str(currentCourseValues[-4]), font=usedFont, width=10, height=2, anchor="center")
             courseNotationCombobox = ttk.Combobox(self.scrollable_frame, textvariable=(self.courseNotations[currentCourseCode]), values=self.possibleNotations, width=4, font=usedFont)
             courseGradeLabel = tk.Label(self.scrollable_frame, text=str(round(float(currentCourseValues[-2]),2)), font=usedFont, width=12, height=2, anchor="center")
-            
+
             self.courseLabels.append(
                 [
                     [courseIdLabel, rowStart, 0, "w", currentCourseCode],
@@ -95,19 +96,20 @@ class DisplayFrame(ttk.Frame):
 
         for currentCourseCode, currentCourseNotationCombobox in self.courseNotationComboboxes :
             currentCourseNotationCombobox.bind("<<ComboboxSelected>>", lambda event, courseCode=currentCourseCode: self.handleCombobox(courseCode, event.widget.get()))
+            currentCourseNotationCombobox.unbind_class("TCombobox", "<MouseWheel>")
 
-    def onWheel(self, event) :
+    def _onWheel(self, event) :
         self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
-    def loadData(self):
-        with open ("Temp/transcriptData.json", "r", encoding="utf-8") as f :
+    def _loadData(self):
+        with open (os.path.abspath("Temp/transcriptData.json"), "r", encoding="utf-8") as f :
             self.allCourses = json.load(f)
 
-    def uploadData(self) :
-        with open ("Temp/transcriptData.json", "w", encoding="utf-8") as f :
+    def _uploadData(self) :
+        with open (os.path.abspath("Temp/transcriptData.json"), "w", encoding="utf-8") as f :
             json.dump(self.allCourses, f, ensure_ascii=False, indent=4)
 
-    def loadCourseNotations(self) :
+    def _loadCourseNotations(self) :
         for courseCode, courseValues in self.allCourses.items() :
             self.courseNotations[courseCode] = tk.StringVar(value=courseValues[-3])
 
@@ -119,7 +121,7 @@ class DisplayFrame(ttk.Frame):
         self.creditsIncludedInCPGA = 0
         self.CGPA = 0
 
-        self.loadData()
+        self._loadData()
 
         for courseCode, courseValues in self.allCourses.items() :
 
@@ -146,7 +148,7 @@ class DisplayFrame(ttk.Frame):
         except ZeroDivisionError :
             self.CGPA = 0
 
-        self.loadCourseNotations()
+        self._loadCourseNotations()
 
         seperator = "   \u279C   "
         if self.saveInitialData :
@@ -170,7 +172,7 @@ class DisplayFrame(ttk.Frame):
             self.totalQualityPointsVar.set(str(round(self.totalQualityPointsInit,2))+seperator+str(round(self.totalQualityPoints,2)))
             self.CGPAVar.set(str(round(self.CGPAInit,2))+seperator+str(round(self.CGPA,2)))
         
-    def updateCGPA(self, courseCode, newNotation, *event) :
+    def _updateCGPA(self, courseCode, newNotation, *event) :
         
         courseValues = self.allCourses[courseCode]
         
@@ -183,6 +185,6 @@ class DisplayFrame(ttk.Frame):
 
         self.allCourses[courseCode] = courseValues
 
-        self.uploadData()
+        self._uploadData()
 
         self.gridCoursesOnCanvas()
