@@ -3,6 +3,7 @@ import  tkinter     as      tk
 import  json
 
 class InfoFrame(tk.Frame):
+    
     def __init__(self, parent, root, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 

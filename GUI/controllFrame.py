@@ -1,11 +1,10 @@
-
+from    Util        import  sortTrJsonDataByElement
 import  tkinter     as      tk
-import  json
 import  random
-
-from    Util        import sortTrJsonDataByElement
+import  json
 
 class ControllFrame(tk.Frame) :
+    
     def __init__(self, parent, root, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
@@ -63,6 +62,7 @@ class ControllFrame(tk.Frame) :
 
     def resetData(self, *event) :
         self.lastSortCombine = None
+        self.root.displaySection.coursesShouldBeHighlighted.clear()
         with open ("Temp/transcriptDataInit.json", "r", encoding="utf-8") as f :
             with open ("Temp/transcriptData.json", "w", encoding="utf-8") as f2 :
                 f2.write(f.read())
@@ -78,7 +78,9 @@ class ControllFrame(tk.Frame) :
     def doSomeMagic(self) :
         self.lastSortCombine = None
 
-        luckyNotation = random.choice(self.root.displaySection.possibleNotations)
+        luckyNotation = random.choice(self.root.displaySection.possibleNotations[:-3])
+
+        self.root.displaySection.coursesShouldBeHighlighted = [courseCode for courseCode in self.root.displaySection.allCourses]
 
         with open ("Temp/transcriptData.json", "r", encoding="utf-8") as f :
             data = json.load(f)

@@ -1,13 +1,12 @@
 from    PIL         import  Image, ImageTk
-from    tkinter     import  ttk
 from    Util        import  authenticate
-from    Util            import retrieveData
+from    tkinter     import  PhotoImage
+from    tkinter     import  ttk
 import  tkinter     as      tk
-from tkinter import PhotoImage
-import threading
-import os
+import  threading
 
 class InputFrame(ttk.Frame):
+    
     def __init__(self, parent, root, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
@@ -63,17 +62,16 @@ class InputFrame(ttk.Frame):
             self.loginButton.config(state="disabled")
             self.loginButton.config(text="Logged in")
             self.startRetrievalAndReportUser()
-            
         else :
             self.updateErrorMessage("Wrong username or password !", "red")
             self.root.after(750, self.clearErrorMessage)
             
-
     def updateErrorMessage(self, message, messageColor) :
         self.errorMessage.set(message)
         self.errorMessageLabel.config(foreground=messageColor)
 
-    def clearErrorMessage(self) : self.errorMessage.set("")
+    def clearErrorMessage(self) : 
+        self.errorMessage.set("")
 
     def showGif(self, frameIndex) :
 

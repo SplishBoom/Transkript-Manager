@@ -3,7 +3,7 @@ import shutil
 import json
 import requests
 
-def secureStart() :
+def secureStart(passed=False) :
     os.system("cls")
     
     neccessaryFolders = ("Assets", "GUI", "Sources", "Util")
@@ -13,15 +13,19 @@ def secureStart() :
             print("Folder " + folder + " not found. Terminating application...")
             exit()
 
-    try :
-        os.makedirs("Temp")
-    except :
-        shutil.rmtree("Temp")
-        os.makedirs("Temp")
+    if not passed :
+        try :
+            os.makedirs("Temp")
+        except :
+            shutil.rmtree("Temp")
+            os.makedirs("Temp")
         
-def secureFinish() :
+def secureFinish(passed=False) :
 
-    unncessaryFolders = ("Temp", "Util/__pycache__", "GUI/__pycache__")
+    if passed :
+        unncessaryFolders = ("Util/__pycache__", "GUI/__pycache__")
+    else :
+        unncessaryFolders = ("Temp", "Util/__pycache__", "GUI/__pycache__")
 
     for unncessaryFolder in unncessaryFolders:
         try :
