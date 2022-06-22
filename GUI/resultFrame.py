@@ -1,16 +1,13 @@
-
 from    tkinter     import  ttk
 import  tkinter     as      tk
 
-
 class ResultFrame(tk.Frame):
+    
     def __init__(self, parent, root, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.root = root
         self.parent = parent
-
-        self.configure(bg="white", relief="sunken", borderwidth=1)
 
         for i in range(0, 5):
             self.columnconfigure(i, weight=1)
@@ -55,38 +52,11 @@ class ResultFrame(tk.Frame):
         self.CGPAInfo.grid(row=1, column=4, sticky="WE")
 
     def awareChanges(self, *event) :
+        self.creditsAttemptedInfo.configure(foreground=self.colorize(self.root.displaySection.creditsAttemptedVar.get().split()))
+        self.creditsSuccesfullInfo.configure(foreground=self.colorize(self.root.displaySection.creditsSuccesfullVar.get().split()))
+        self.creditsIncludedInCPGAInfo.configure(foreground=self.colorize(self.root.displaySection.creditsIncludedInCPGAVar.get().split()))
+        self.totalQualityPointsInfo.configure(foreground=self.colorize(self.root.displaySection.totalQualityPointsVar.get().split()))
+        self.CGPAInfo.configure(foreground=self.colorize(self.root.displaySection.CGPAVar.get().split()))
 
-        if float(self.root.displaySection.creditsAttemptedVar.get().split()[0]) > float(self.root.displaySection.creditsAttemptedVar.get().split()[2]) :
-            self.creditsAttemptedInfo.configure(foreground="red")
-        elif float(self.root.displaySection.creditsAttemptedVar.get().split()[0]) < float(self.root.displaySection.creditsAttemptedVar.get().split()[2]) :
-            self.creditsAttemptedInfo.configure(foreground="green")
-        elif float(self.root.displaySection.creditsAttemptedVar.get().split()[0]) == float(self.root.displaySection.creditsAttemptedVar.get().split()[2]) :
-            self.creditsAttemptedInfo.configure(foreground="black")
-
-        if float(self.root.displaySection.creditsSuccesfullVar.get().split()[0]) > float(self.root.displaySection.creditsSuccesfullVar.get().split()[2]) :
-            self.creditsSuccesfullInfo.configure(foreground="red")
-        elif float(self.root.displaySection.creditsSuccesfullVar.get().split()[0]) < float(self.root.displaySection.creditsSuccesfullVar.get().split()[2]) :
-            self.creditsSuccesfullInfo.configure(foreground="green")
-        elif float(self.root.displaySection.creditsSuccesfullVar.get().split()[0]) == float(self.root.displaySection.creditsSuccesfullVar.get().split()[2]) :
-            self.creditsSuccesfullInfo.configure(foreground="black")
-
-        if float(self.root.displaySection.creditsIncludedInCPGAVar.get().split()[0]) > float(self.root.displaySection.creditsIncludedInCPGAVar.get().split()[2]) :
-            self.creditsIncludedInCPGAInfo.configure(foreground="red")
-        elif float(self.root.displaySection.creditsIncludedInCPGAVar.get().split()[0]) < float(self.root.displaySection.creditsIncludedInCPGAVar.get().split()[2]) :
-            self.creditsIncludedInCPGAInfo.configure(foreground="green")
-        elif float(self.root.displaySection.creditsIncludedInCPGAVar.get().split()[0]) == float(self.root.displaySection.creditsIncludedInCPGAVar.get().split()[2]) :
-            self.creditsIncludedInCPGAInfo.configure(foreground="black")
-
-        if float(self.root.displaySection.totalQualityPointsVar.get().split()[0]) > float(self.root.displaySection.totalQualityPointsVar.get().split()[2]) :
-            self.totalQualityPointsInfo.configure(foreground="red")
-        elif float(self.root.displaySection.totalQualityPointsVar.get().split()[0]) < float(self.root.displaySection.totalQualityPointsVar.get().split()[2]) :
-            self.totalQualityPointsInfo.configure(foreground="green")
-        elif float(self.root.displaySection.totalQualityPointsVar.get().split()[0]) == float(self.root.displaySection.totalQualityPointsVar.get().split()[2]) :
-            self.totalQualityPointsInfo.configure(foreground="black")
-
-        if float(self.root.displaySection.CGPAVar.get().split()[0]) > float(self.root.displaySection.CGPAVar.get().split()[2]) :
-            self.CGPAInfo.configure(foreground="red")
-        elif float(self.root.displaySection.CGPAVar.get().split()[0]) < float(self.root.displaySection.CGPAVar.get().split()[2]) :
-            self.CGPAInfo.configure(foreground="green")
-        elif float(self.root.displaySection.CGPAVar.get().split()[0]) == float(self.root.displaySection.CGPAVar.get().split()[2]) :
-            self.CGPAInfo.configure(foreground="black")
+    def colorize(self, splitedVar) :
+        return ("red" if splitedVar[0] > splitedVar[2] else ("green" if splitedVar[0] < splitedVar[2] else "black"))
