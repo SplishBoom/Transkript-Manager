@@ -1,16 +1,21 @@
 from    Util        import  sortTrJsonDataByElement
 import  tkinter     as      tk
+from    tkinter     import  ttk
 import  random
 import  json
 import  os
 
-class ControllFrame(tk.Frame) :
+class ControllFrame(ttk.Frame) :
     
     def __init__(self, parent, root, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.root = root
         self.parent = parent
+
+        self["style"] = "ControllFrame.TFrame"
+
+        self.configure(relief="flat", borderwidth=1)
 
         self.rowconfigure(0, weight=1)
         self.rowconfigure(1, weight=1)
@@ -21,13 +26,13 @@ class ControllFrame(tk.Frame) :
         self.sortCombines = {"Course Code":False, "Course Name":False, "Course Language":False, "Course ETCS":False, "Course Notation":False, "Course Grade":False, "Course Code":False, "Course Date":False}
         self.lastSortCombine = None
 
-        orderSortButton = tk.Button(self, text="Sort by Date", command=lambda : self._sortData("Course Date"))
-        courseCodeSortButton = tk.Button(self, text="Sort by Code", command=lambda : self._sortData("Course Code"))
-        courseNameSortButton = tk.Button(self, text="Sort by Name", command=lambda : self._sortData("Course Name"))
-        courseLanguageSortButton = tk.Button(self, text="Sort by Language", command=lambda : self._sortData("Course Language"))
-        courseEtcsSortButton = tk.Button(self, text="Sort by ETCS", command=lambda : self._sortData("Course ETCS"))
-        courseNotationSortButton = tk.Button(self, text="Sort by Notation", command=lambda : self._sortData("Course Notation"))
-        courseGradeSortButton = tk.Button(self, text="Sort by Grade", command=lambda : self._sortData("Course Grade"))
+        orderSortButton = ttk.Button(self, text="Sort by Date", command=lambda : self._sortData("Course Date"), style="ControllFrameSortButton.TButton")
+        courseCodeSortButton = ttk.Button(self, text="Sort by Code", command=lambda : self._sortData("Course Code"), style="ControllFrameSortButton.TButton")
+        courseNameSortButton = ttk.Button(self, text="Sort by Name", command=lambda : self._sortData("Course Name"), style="ControllFrameSortButton.TButton")
+        courseLanguageSortButton = ttk.Button(self, text="Sort by Language", command=lambda : self._sortData("Course Language"), style="ControllFrameSortButton.TButton")
+        courseEtcsSortButton = ttk.Button(self, text="Sort by ETCS", command=lambda : self._sortData("Course ETCS"), style="ControllFrameSortButton.TButton")
+        courseNotationSortButton = ttk.Button(self, text="Sort by Notation", command=lambda : self._sortData("Course Notation"), style="ControllFrameSortButton.TButton")
+        courseGradeSortButton = ttk.Button(self, text="Sort by Grade", command=lambda : self._sortData("Course Grade"), style="ControllFrameSortButton.TButton")
 
         orderSortButton.grid(row=0, column=0, sticky="WE")
         courseCodeSortButton.grid(row=0, column=1, sticky="WE")
@@ -37,11 +42,11 @@ class ControllFrame(tk.Frame) :
         courseNotationSortButton.grid(row=0, column=5, sticky="WE")
         courseGradeSortButton.grid(row=0, column=6, sticky="WE")
 
-        resetButton = tk.Button(self, text="Reset", command=self._resetData)
-        magicButton = tk.Button(self, text="Suprise", command=self._doSomeMagic)
-        dummy = tk.Button(self, text="", state="disabled")
-        restartButton = tk.Button(self, text="Restart", command=self.root.restartProgram)
-        exitButton = tk.Button(self, text="Exit", command = self.root.destroy)
+        resetButton = ttk.Button(self, text="Reset", command=self._resetData, style="ControllFrameSettButton.TButton")
+        magicButton = ttk.Button(self, text="Suprise", command=self._doSomeMagic, style="ControllFrameSettButton.TButton")
+        dummy = ttk.Button(self, text="", state="disabled", style="ControllFrameDummyButton.TButton")
+        restartButton = ttk.Button(self, text="Restart", command=self.root.restartProgram, style="ControllFrameSettButton.TButton")
+        exitButton = ttk.Button(self, text="Exit", command = self.root.destroy, style="ControllFrameSettButton.TButton")
 
         resetButton.grid(row=1, column=0, columnspan=2, sticky="WE")
         magicButton.grid(row=1, column=2, sticky="WE")
@@ -50,7 +55,7 @@ class ControllFrame(tk.Frame) :
         exitButton.grid(row=1, column=5, columnspan=2, sticky="WE")
 
         for label in self.winfo_children():
-            label.configure(font=("Segoe UI", 11, "bold"), foreground="black")
+            label["cursor"] = "hand2"
             label.grid_configure(padx=1)
 
     def _sortData(self, element, *event) :

@@ -1,3 +1,4 @@
+from    Util        import  BLACK_COLOR, GREEN_COLOR, YELLOW_COLOR
 from    tkinter     import  ttk
 import  tkinter     as      tk
 import  json
@@ -5,11 +6,14 @@ import  os
 
 class DisplayFrame(ttk.Frame):
     
-    def __init__(self, parent, root, canv_w = 930, canv_h = 10, *args, **kwargs):
+    def __init__(self, parent, root, canv_w = 930, canv_h = 380, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.root = root
         self.parent = parent
+
+        self["style"] = "DisplayFrame.TFrame"
+        self.configure(relief="flat", borderwidth=1)
 
         self.possibleNotations = ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "F", "I", "W", "S"]
         self.weights = {"A":4.00, "A-":3.70, "B+":3.30, "B":3.00, "B-":2.70, "C+":2.30, "C":2.00, "C-":1.70, "D+":1.30, "D":1.00, "F":0.00}
@@ -22,7 +26,7 @@ class DisplayFrame(ttk.Frame):
         
         self.canvas = tk.Canvas(self, width=canv_w, height=canv_h, bg="white")
         scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
-        self.scrollable_frame = ttk.Frame(self.canvas)
+        self.scrollable_frame = ttk.Frame(self.canvas, style="DisplayFrame.TFrame")
 
         self.root.bind("<MouseWheel>", self._onWheel)
         self.scrollable_frame.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
@@ -33,6 +37,8 @@ class DisplayFrame(ttk.Frame):
 
         self.canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
+
+        self.scrollable_frame.winfo_toplevel()
 
         self.gridCoursesOnCanvas()
 
@@ -63,7 +69,7 @@ class DisplayFrame(ttk.Frame):
             courseNameLabel = tk.Label(self.scrollable_frame, text=str(currentCourseValues[-6]), font=usedFont, width=50, height=2, anchor="center")
             courseLanguageLabel = tk.Label(self.scrollable_frame, text=str(currentCourseValues[-5]), font=usedFont, width=5, height=2, anchor="center")
             courseETCSLabel = tk.Label(self.scrollable_frame, text=str(currentCourseValues[-4]), font=usedFont, width=10, height=2, anchor="center")
-            courseNotationCombobox = ttk.Combobox(self.scrollable_frame, textvariable=(self.courseNotations[currentCourseCode]), values=self.possibleNotations, width=4, font=usedFont)
+            courseNotationCombobox = ttk.Combobox(self.scrollable_frame, textvariable=(self.courseNotations[currentCourseCode]), justify=tk.CENTER, values=self.possibleNotations, width=4, height=14, style="DisplayFrameNormalCombobox.TCombobox", font=("Helvetica", 13, "bold"))
             courseGradeLabel = tk.Label(self.scrollable_frame, text=str(round(float(currentCourseValues[-2]),2)), font=usedFont, width=12, height=2, anchor="center")
 
             self.courseLabels.append(
@@ -73,7 +79,7 @@ class DisplayFrame(ttk.Frame):
                     [courseNameLabel, rowStart, 2, "w", currentCourseCode], 
                     [courseLanguageLabel, rowStart, 3, "w", currentCourseCode], 
                     [courseETCSLabel, rowStart, 4, "w", currentCourseCode], 
-                    [courseNotationCombobox, rowStart, 5, "w", currentCourseCode], 
+                    [courseNotationCombobox, rowStart, 5, "nsew", currentCourseCode], 
                     [courseGradeLabel, rowStart, 6, "w", currentCourseCode]
                 ]
             )
@@ -86,11 +92,22 @@ class DisplayFrame(ttk.Frame):
 
         for currentCourseElements in self.courseLabels :
             for currentCourse in currentCourseElements :
-                if currentCourse[0]["width"] == cathcByWidth[self.root.controllSection.lastSortCombine] :
-                    currentCourse[0].config(foreground="blue")
-        
                 if currentCourse[4] in self.coursesShouldBeHighlighted :
-                    currentCourse[0].config(foreground="green")
+                    try :
+                        currentCourse[0]["style"] = "DisplayFrameChangedCombobox.TCombobox"
+                    except :
+                        currentCourse[0].config(foreground=YELLOW_COLOR, background=BLACK_COLOR)
+                elif currentCourse[0]["width"] == cathcByWidth[self.root.controllSection.lastSortCombine] :
+                    try :
+                        currentCourse[0]["style"] = "DisplayFrameSortedCombobox.TCombobox"
+                    except :
+                        currentCourse[0].config(foreground=BLACK_COLOR, background=GREEN_COLOR)
+                else :
+                    try :
+                        currentCourse[0]["style"] = "DisplayFrameNormalCombobox.TCombobox"
+                    except :
+                        currentCourse[0].config(foreground=BLACK_COLOR, background=self.root.innerColor)
+        
 
                 currentCourse[0].grid(row=currentCourse[1], column=currentCourse[2], sticky=currentCourse[3])
 

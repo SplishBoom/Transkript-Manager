@@ -3,6 +3,20 @@ import  shutil
 import  json
 import  os
 
+WHITE_COLOR = "#{:02x}{:02x}{:02x}".format(255, 255, 255)
+BLACK_COLOR = "#{:02x}{:02x}{:02x}".format(0, 0, 0)
+RED_COLOR = "#{:02x}{:02x}{:02x}".format(255, 0, 0)
+BLUE_COLOR = "#{:02x}{:02x}{:02x}".format(0, 0, 255)
+GREEN_COLOR = "#{:02x}{:02x}{:02x}".format(9, 227, 163)
+PBLUE_COLOR = "#{:02x}{:02x}{:02x}".format(113, 187, 251)
+PINK_COLOR = "#{:02x}{:02x}{:02x}".format(253, 112, 164)
+ORANGE_COLOR = "#{:02x}{:02x}{:02x}".format(253, 146, 46)
+YELLOW_COLOR = "#{:02x}{:02x}{:02x}".format(217, 243, 78)
+PURPLE_COLOR = "#{:02x}{:02x}{:02x}".format(154, 107, 239)
+DARK_BACKGROUND_COLOR = "#{:02x}{:02x}{:02x}".format(223, 227, 233)
+LIGHT_BACKGROUND2_COLOR = "#{:02x}{:02x}{:02x}".format(232, 240, 254)
+
+
 def secureStart(passed=False) :
     neccessaryFolders = ("Assets", "GUI", "Sources", "Util")
 
@@ -11,12 +25,12 @@ def secureStart(passed=False) :
             print("Folder " + folder + " not found. Terminating application...")
             exit()
 
-    if not passed :
+    """if not passed :
         try :
             os.makedirs(os.path.abspath("Temp"))
         except :
             shutil.rmtree(os.path.abspath("Temp"))
-            os.makedirs(os.path.abspath("Temp"))
+            os.makedirs(os.path.abspath("Temp"))"""
         
 def secureFinish(passed=False) :
     if passed :

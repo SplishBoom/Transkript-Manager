@@ -1,13 +1,16 @@
 from    tkinter     import  ttk
 import  tkinter     as      tk
 
-class ResultFrame(tk.Frame):
+class ResultFrame(ttk.Frame):
     
     def __init__(self, parent, root, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.root = root
         self.parent = parent
+
+        self["style"] = "ResultFrame.TFrame"
+        self.configure(relief="flat", borderwidth=1)
 
         for i in range(0, 5):
             self.columnconfigure(i, weight=1)
@@ -22,19 +25,18 @@ class ResultFrame(tk.Frame):
             label.grid_configure(padx=1, pady=1)
 
     def _createWidgets(self) :
-        font = ("Arial", 10, "bold")
-        self.infoLabel1 = tk.Label(self, font=font, text="Attempted Credits")
-        self.infoLabel2 = tk.Label(self, font=font, text="Successful Credits")
-        self.infoLabel3 = tk.Label(self, font=font, text="Included Credits")
-        self.infoLabel4 = tk.Label(self, font=font, text="Quality Points")
-        self.infoLabel5 = tk.Label(self, font=font, text="CGPA")
+        
+        self.infoLabel1 = ttk.Label(self, text="Attempted Credits", style="ResultFrameInfoLabel.TLabel")
+        self.infoLabel2 = ttk.Label(self, text="Successful Credits", style="ResultFrameInfoLabel.TLabel")
+        self.infoLabel3 = ttk.Label(self, text="Included Credits", style="ResultFrameInfoLabel.TLabel")
+        self.infoLabel4 = ttk.Label(self, text="Quality Points", style="ResultFrameInfoLabel.TLabel")
+        self.infoLabel5 = ttk.Label(self, text="CGPA", style="ResultFrameInfoLabel.TLabel")
 
-        font = ("Arial", 15, "bold")
-        self.creditsAttemptedInfo = ttk.Label(self, font=font, textvariable=self.root.displaySection.creditsAttemptedVar, anchor="center")
-        self.creditsSuccesfullInfo = ttk.Label(self, font=font, textvariable=self.root.displaySection.creditsSuccesfullVar, anchor="center")
-        self.creditsIncludedInCPGAInfo = ttk.Label(self, font=font, textvariable=self.root.displaySection.creditsIncludedInCPGAVar, anchor="center")
-        self.totalQualityPointsInfo = ttk.Label(self, font=font, textvariable=self.root.displaySection.totalQualityPointsVar, anchor="center")
-        self.CGPAInfo = ttk.Label(self, font=font, textvariable=self.root.displaySection.CGPAVar, anchor="center")
+        self.creditsAttemptedInfo = ttk.Label(self, textvariable=self.root.displaySection.creditsAttemptedVar, style="ResultFrameDynamicLabel.TLabel")
+        self.creditsSuccesfullInfo = ttk.Label(self, textvariable=self.root.displaySection.creditsSuccesfullVar, style="ResultFrameDynamicLabel.TLabel")
+        self.creditsIncludedInCPGAInfo = ttk.Label(self, textvariable=self.root.displaySection.creditsIncludedInCPGAVar, style="ResultFrameDynamicLabel.TLabel")
+        self.totalQualityPointsInfo = ttk.Label(self, textvariable=self.root.displaySection.totalQualityPointsVar, style="ResultFrameDynamicLabel.TLabel")
+        self.CGPAInfo = ttk.Label(self, textvariable=self.root.displaySection.CGPAVar, style="ResultFrameDynamicLabel.TLabel")
 
         self.root.displaySection.CGPAVar.trace("w", self._awareChanges)
 
@@ -59,4 +61,4 @@ class ResultFrame(tk.Frame):
         self.CGPAInfo.configure(foreground=self._colorize(self.root.displaySection.CGPAVar.get().split()))
 
     def _colorize(self, splitedVar) :
-        return ("red" if splitedVar[0] > splitedVar[2] else ("green" if splitedVar[0] < splitedVar[2] else "black"))
+        return ("red" if splitedVar[0] > splitedVar[2] else ("lime green" if splitedVar[0] < splitedVar[2] else "black"))

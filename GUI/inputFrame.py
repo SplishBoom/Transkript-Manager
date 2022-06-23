@@ -15,10 +15,14 @@ class InputFrame(ttk.Frame):
         self.parent = parent
         self.root = root
 
+        self["style"] = "InputFrame.TFrame"
+
+        self.configure(relief="flat", borderwidth=10)
+
         self.gifFrames = [PhotoImage(file=os.path.abspath('Assets/loader.gif'),format = 'gif -index %i' %(i)) for i in range(150)]
         self.isDone = False
         self.autoLogin = False
-        self.loadedFromPayload = True
+        self.loadedFromPayload = False
 
         self._loadPayload()
         self.errorMessage = tk.StringVar()
@@ -27,29 +31,29 @@ class InputFrame(ttk.Frame):
         self.rowconfigure(0, weight=1)
 
         self.logoImg = ImageTk.PhotoImage(Image.open(os.path.abspath("Assets\mefLogo.png")).resize((194, 126), Image.ANTIALIAS))
-        logoLabel = ttk.Label(self, image=self.logoImg, padding=(self.root.generalPadding), anchor="center")
+        logoLabel = ttk.Label(self, image=self.logoImg, padding=(self.root.generalPadding), anchor="center", cursor="heart", style="InputFrameLabel.TLabel")
 
-        usernameLabel = ttk.Label(self, text="User Name", font=("Segoe UI", 13, "bold"), foreground="#4E5963")
+        usernameLabel = ttk.Label(self, text="User Name", font=("Segoe UI", 13, "bold"), foreground="#4E5963", style="InputFrameLabel.TLabel")
         usernameEntry = ttk.Entry(self, font=("Segoe UI", 11, "bold"), foreground="gray38", textvariable=self._username)
 
-        passwordLabel = ttk.Label(self, text="Password", font=("Segoe UI", 13, "bold"), foreground="#4E5963")
+        passwordLabel = ttk.Label(self, text="Password", font=("Segoe UI", 13, "bold"), foreground="#4E5963", style="InputFrameLabel.TLabel")
         passwordEntry = ttk.Entry(self, show="*", font=("Segoe UI", 11, "bold"), foreground="gray38", textvariable=self._password)
         
-        self.errorMessageLabel = ttk.Label(self, textvariable=self.errorMessage, font=("Segoe UI", 9, "bold"), foreground="red", anchor="center")
+        self.errorMessageLabel = ttk.Label(self, textvariable=self.errorMessage, font=("Segoe UI", 9, "bold"), foreground="red", anchor="center", style="InputFrameLabel.TLabel")
         
-        self.loginButton = tk.Button(self, text="Login", font=("Segoe UI", 14, "bold"), foreground="white", background="#27AE60", command=self._checkLogin, disabledforeground="gray90")
+        self.loginButton = tk.Button(self, text="Login", font=("Segoe UI", 14, "bold"), foreground="white", background="#27AE60", command=self._checkLogin, disabledforeground="gray90", cursor="exchange")
 
-        self.gifLabel = ttk.Label(self, padding=(self.root.generalPadding), anchor="center")
+        self.gifLabel = ttk.Label(self, padding=(self.root.generalPadding), anchor="center", style="InputFrameLabel.TLabel")
 
         self.root.bind("<Return>", self._checkLogin)
-
-        logoLabel.grid(row=0, column=0, sticky="nsew")
-        usernameLabel.grid(row=1, column=0, sticky="nsew")
-        usernameEntry.grid(row=2, column=0, sticky="nsew")
-        passwordLabel.grid(row=3, column=0, sticky="nsew")
-        passwordEntry.grid(row=4, column=0, sticky="nsew")
-        self.errorMessageLabel.grid(row=5, column=0, sticky="nsew", pady=self.root.generalPadding/1.3)
-        self.loginButton.grid(row=6, column=0, sticky="nsew")
+        
+        logoLabel.grid(row=0, column=0, sticky="ew")
+        usernameLabel.grid(row=1, column=0, sticky="ew")
+        usernameEntry.grid(row=2, column=0, sticky="ew")
+        passwordLabel.grid(row=3, column=0, sticky="ew")
+        passwordEntry.grid(row=4, column=0, sticky="ew")
+        self.errorMessageLabel.grid(row=5, column=0, sticky="ew", pady=self.root.generalPadding/1.3)
+        self.loginButton.grid(row=6, column=0, sticky="ew")
 
         if self.autoLogin :
             print("Auto login is enabled, logging in automatically...")
