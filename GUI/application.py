@@ -1,4 +1,4 @@
-from    Util        import WHITE_COLOR, BLACK_COLOR, RED_COLOR, BLUE_COLOR, GREEN_COLOR, BLUE_COLOR, PINK_COLOR, ORANGE_COLOR, YELLOW_COLOR, PURPLE_COLOR, DARK_BACKGROUND_COLOR, LIGHT_BACKGROUND2_COLOR
+from    Util        import WHITE_COLOR, BLACK_COLOR, RED_COLOR, BLUE_COLOR, GREEN_COLOR, PBLUE_COLOR, PINK_COLOR, ORANGE_COLOR, YELLOW_COLOR, PURPLE_COLOR, DARK_BACKGROUND_COLOR, LIGHT_BACKGROUND2_COLOR
 from    GUI         import ControllFrame, DisplayFrame, InfoFrame, InputFrame, ResultFrame
 from    Util        import retrieveData, segmentAndCreateJsons
 from    tkinter     import ttk
@@ -10,13 +10,19 @@ class Application(tk.Tk):
     def __init__(self, debug=False, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        try:
+            from ctypes import windll
+            windll.shcore.SetProcessDpiAwareness(1)
+        except:
+            pass
+
         self.generalPadding = 10
         
         style = ttk.Style()
 
         style.theme_use("clam")
         
-        self.innerColor = "white"
+        self.innerColor = PBLUE_COLOR
 
         style.configure("ContainerFrame.TFrame", background=BLUE_COLOR)
         
@@ -64,15 +70,12 @@ class Application(tk.Tk):
         self.container["style"] = "ContainerFrame.TFrame"
 
         if debug :
-            print("debug mode")
             self.switchToManager()
         else :
             self.inputSection = InputFrame(self.container, self)
             self.inputSection.grid(row=0, column=0, sticky="nsew", padx=self.generalPadding/2, pady=self.generalPadding/2, ipadx=self.generalPadding*2, ipady=self.generalPadding*2)
 
         self.rotateApplicationWindow()
-
-        self.bind("<Escape>", self.switchToManager)
 
     def retrieveTranscriptData(self, username, password, statue) :
         retrieveData(username, password, statue)
@@ -84,7 +87,6 @@ class Application(tk.Tk):
         self.switchToManager()
 
     def switchToManager(self, *event):
-        print("hi", event)
         try :
             self.inputSection.grid_forget()
         except :
