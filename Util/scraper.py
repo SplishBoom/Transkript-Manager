@@ -95,5 +95,5 @@ def retrieveData(username, password, isHidden=False):
 
     client.browser.quit()
 
-    with open (os.path.abspath("transcriptText.txt"), "w", encoding="utf-8") as file :
+    with open (os.path.abspath("Temp/transcriptText.txt"), "w", encoding="utf-8") as file :
         file.write(transkriptText)
