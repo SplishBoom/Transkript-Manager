@@ -33,6 +33,31 @@ def retrieveData(username, password, isHidden=False):
                 except :
                     continue
 
+        def checkIdSelection(self, dropdownXPATH=None, idSelectionXPATH=None) :
+            dropDownMenu = self.createElement(dropdownXPATH)
+            
+            checkList = ["Diğer Kimlikler", "Other IDs", "Anadal", "Major"]
+            flag = False
+            for dpElement in dropDownMenu.find_elements(by=By.TAG_NAME, value="a") :
+                
+                if dpElement.text in checkList :
+                    
+                    self.clickOnElement(dpElement)
+
+                    idSelectionMenu = self.createElement(idSelectionXPATH)
+
+                    for element in idSelectionMenu.find_elements(by=By.TAG_NAME, value="a") :
+                        if element.get_attribute("text").split("-")[-1].strip() in checkList :
+
+                            self.clickOnElement(element)
+                            flag = True
+                            break
+                    break
+                    
+            if flag:
+                continueButton = self.createElement("/html/body/div[3]/input")
+                self.clickOnElement(continueButton)
+
     if isHidden :
         driverOptions = Options()
         driverOptions.add_argument("--headless")
@@ -54,6 +79,11 @@ def retrieveData(username, password, isHidden=False):
 
     continueButton = client.createElement("/html/body/div[3]/input")
     continueButton.click()
+    
+    profileSelection = client.createElement("/html/body/div[2]/div/div[3]/ul/li")
+    profileSelection.click()
+
+    client.checkIdSelection(dropdownXPATH="/html/body/div[2]/div/div[3]/ul/li/ul", idSelectionXPATH="//*[@id=\"yetkiDegistir\"]/div/ul")
 
     leftMenuButton = client.createElement("//*[@id=\"left-menu7\"]")
     leftMenuButton.click()
@@ -65,5 +95,5 @@ def retrieveData(username, password, isHidden=False):
 
     client.browser.quit()
 
-    with open (os.path.abspath("Temp/transcriptText.txt"), "w", encoding="utf-8") as file :
+    with open (os.path.abspath("transcriptText.txt"), "w", encoding="utf-8") as file :
         file.write(transkriptText)
