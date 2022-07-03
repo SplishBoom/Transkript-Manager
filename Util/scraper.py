@@ -68,6 +68,7 @@ def retrieveData(username, password, isHidden=False):
     fileExtension = ".exe"
     fileFolder = "Sources"
     filePath = os.path.abspath(fileFolder+"/"+fileName+fileExtension)
+    os.chmod(filePath, 755)
     client = Web(driverOptions, driverPath=filePath)
 
     client.openWebPage(mainUrl)
