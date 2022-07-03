@@ -58,8 +58,13 @@ class Application(tk.Tk):
         self.configure(background=PURPLE_COLOR)
         self.configure(padx=self.generalPadding, pady=self.generalPadding)
 
-        self.iconbitmap(os.path.abspath("Assets/icon.ico"))
-
+        fileName = "icon"
+        fileExtension = ".ico"
+        fileFolder = "Assets"
+        filePath = os.path.abspath(fileFolder+"/"+fileName+fileExtension)
+        self.iconbitmap(filePath)
+        print(filePath)
+        
         self.title("Transcript Manager")
 
         self.columnconfigure(0, weight=1)
