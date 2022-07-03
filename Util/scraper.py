@@ -64,7 +64,11 @@ def retrieveData(username, password, isHidden=False):
     else :
         driverOptions = Options()
 
-    client = Web(driverOptions)
+    fileName = "chromedriver"
+    fileExtension = ".exe"
+    fileFolder = "Sources"
+    filePath = os.path.abspath(fileFolder+"/"+fileName+fileExtension)
+    client = Web(driverOptions, driverPath=filePath)
 
     client.openWebPage(mainUrl)
 

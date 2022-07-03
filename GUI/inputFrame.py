@@ -19,7 +19,12 @@ class InputFrame(ttk.Frame):
 
         self.configure(relief="flat", borderwidth=10)
 
-        self.gifFrames = [PhotoImage(file=os.path.abspath('Assets/loader.gif'),format = 'gif -index %i' %(i)) for i in range(150)]
+        fileName = "loader"
+        fileExtension = ".gif"
+        fileFolder = "Assets"
+        filePath = os.path.abspath(fileFolder+"/"+fileName+fileExtension)
+        self.gifFrames = [PhotoImage(file=filePath, format = 'gif -index %i' %(i)) for i in range(150)]
+        
         self.isDone = False
         self.autoLogin = False
         self.loadedFromPayload = False
@@ -30,7 +35,11 @@ class InputFrame(ttk.Frame):
         self.columnconfigure(0, weight=1)
         self.rowconfigure(0, weight=1)
 
-        self.logoImg = ImageTk.PhotoImage(Image.open(os.path.abspath("Assets\mefLogo.png")).resize((194, 126), Image.ANTIALIAS))
+        fileName = "mefLogo"
+        fileExtension = ".png"
+        fileFolder = "Assets"
+        filePath = os.path.abspath(fileFolder+"/"+fileName+fileExtension)
+        self.logoImg = ImageTk.PhotoImage(Image.open(filePath).resize((194, 126), Image.ANTIALIAS))
         logoLabel = ttk.Label(self, image=self.logoImg, padding=(self.root.generalPadding), anchor="center", cursor="heart", style="InputFrameLabel.TLabel")
 
         usernameLabel = ttk.Label(self, text="User Name", font=("Segoe UI", 13, "bold"), foreground="#4E5963", style="InputFrameLabel.TLabel")
