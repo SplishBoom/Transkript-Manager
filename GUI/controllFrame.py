@@ -44,7 +44,7 @@ class ControllFrame(ttk.Frame) :
 
         resetButton = ttk.Button(self, text="Reset", command=self._resetData, style="ControllFrameSettButton.TButton")
         magicButton = ttk.Button(self, text="Suprise", command=self._doSomeMagic, style="ControllFrameSettButton.TButton")
-        dummy = ttk.Button(self, text="", state="disabled", style="ControllFrameDummyButton.TButton")
+        dummy = ttk.Button(self, text="Export", command=self.exportRequest, style="ControllFrameSettButton.TButton")
         restartButton = ttk.Button(self, text="Restart", command=self.root.restartProgram, style="ControllFrameSettButton.TButton")
         exitButton = ttk.Button(self, text="Exit", command = self.root.destroy, style="ControllFrameSettButton.TButton")
 
@@ -101,3 +101,6 @@ class ControllFrame(ttk.Frame) :
             json.dump(data, f, indent=4)
 
         self._updateData()
+
+    def exportRequest(self) :
+        self.root.displaySection.exportCourses()

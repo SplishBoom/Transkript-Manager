@@ -30,6 +30,13 @@ def secureStart(passed=False) :
         except :
             shutil.rmtree(os.path.abspath("Temp"))
             os.makedirs(os.path.abspath("Temp"))
+
+    if not passed :
+        try :
+            os.makedirs(os.path.abspath("Data Export"))
+        except :
+            shutil.rmtree(os.path.abspath("Data Export"))
+            os.makedirs(os.path.abspath("Data Export"))
         
 def secureFinish(passed=False) :
     if passed :

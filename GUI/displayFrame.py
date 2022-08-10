@@ -1,6 +1,8 @@
 from    Util        import  BLACK_COLOR, GREEN_COLOR, YELLOW_COLOR
+from    pandas      import DataFrame
 from    tkinter     import  ttk
 import  tkinter     as      tk
+import  pandas      as      pd
 import  json
 import  os
 
@@ -114,6 +116,40 @@ class DisplayFrame(ttk.Frame):
         for currentCourseCode, currentCourseNotationCombobox in self.courseNotationComboboxes :
             currentCourseNotationCombobox.bind("<<ComboboxSelected>>", lambda event, courseCode=currentCourseCode: self.handleCombobox(courseCode, event.widget.get()))
             currentCourseNotationCombobox.unbind_class("TCombobox", "<MouseWheel>")
+
+    def exportCourses(self) :
+
+        dataFrameColumns = ["Course Code", "Course Name", "Course Language", "Course ETCS", "Course Notation", "Course Grade", "Course Order"]
+
+        with open(os.path.abspath("Temp/transcriptDataInit.json"), "r") as f:
+            courseJsonData = json.load(f)
+
+        with open(os.path.abspath("Temp/studentData.json"), "r", encoding="utf-8") as f:
+            studentID = json.load(f)[3].lower()
+
+        def _inExportAll(dataFrameColumns, jsonData, studentID) :
+            data = []
+            outputDataFrame = (DataFrame(columns=dataFrameColumns))
+
+            for exportableCourseCode in self.allCourses :
+                data.append([exportableCourseCode, *jsonData[exportableCourseCode]])
+            
+            outFile = pd.concat([outputDataFrame, DataFrame(data, columns=dataFrameColumns)])
+            
+            outFile.to_excel(f"Data Export/{studentID} all courses.xlsx", index=False)
+        def _inExportSelected(dataFrameColumns, jsonData, studentID) :
+            data = []
+            outputDataFrame = (DataFrame(columns=dataFrameColumns))
+
+            for exportableCourseCode in self.coursesShouldBeHighlighted :
+                data.append([exportableCourseCode, *jsonData[exportableCourseCode]])
+            
+            outFile = pd.concat([outputDataFrame, DataFrame(data, columns=dataFrameColumns)])
+            
+            outFile.to_excel(f"Data Export/{studentID} selected courses.xlsx", index=False)
+
+        _inExportSelected(dataFrameColumns, courseJsonData, studentID)
+        _inExportAll(dataFrameColumns, courseJsonData, studentID)
 
     def _onWheel(self, event) :
         self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
