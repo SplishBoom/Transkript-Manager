@@ -1,6 +1,7 @@
 from    Util        import WHITE_COLOR, BLACK_COLOR, RED_COLOR, BLUE_COLOR, GREEN_COLOR, PBLUE_COLOR, PINK_COLOR, ORANGE_COLOR, YELLOW_COLOR, PURPLE_COLOR, DARK_BACKGROUND_COLOR, LIGHT_BACKGROUND2_COLOR
 from    GUI         import ControllFrame, DisplayFrame, InfoFrame, InputFrame, ResultFrame
 from    Util        import retrieveData, segmentAndCreateJsons
+from    PIL         import ImageGrab
 from    tkinter     import ttk
 import  tkinter     as     tk
 import  os
@@ -9,6 +10,8 @@ class Application(tk.Tk):
     
     def __init__(self, debug=False, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self.screenShotCounter = 0
 
         try:
             from ctypes import windll
@@ -74,6 +77,8 @@ class Application(tk.Tk):
         self.container.grid(row=0, column=0)
         self.container["style"] = "ContainerFrame.TFrame"
 
+        self.bind("<Escape>p", self.screenShot)
+
         if debug :
             self.switchToManager()
         else :
@@ -126,3 +131,13 @@ class Application(tk.Tk):
     def rotateApplicationWindow(self) :
         self.update()
         self.geometry("+{}+{}".format(int(self.winfo_screenwidth()/2 - self.winfo_reqwidth()/2), int(self.winfo_screenheight()/2 - self.winfo_reqheight()/2)))
+
+    def screenShot(self, *event) :
+        # take a screenshot of entire window
+        self.update()
+        x = self.winfo_rootx()
+        y = self.winfo_rooty()
+        x1 = x + self.winfo_width()
+        y1 = y + self.winfo_height()
+        ImageGrab.grab().crop((x, y, x1, y1)).save(f"screenshot({self.screenShotCounter}).png")
+        self.screenShotCounter += 1
