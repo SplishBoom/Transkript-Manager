@@ -10,6 +10,9 @@ __pycache__/
 *.cfg
 *.json
 
+# Executable
+/Sources
+
 # C extensions
 *.so
 
