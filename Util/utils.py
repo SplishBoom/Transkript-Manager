@@ -1,7 +1,11 @@
+from    win32com.client import Dispatch
+from    bs4             import BeautifulSoup
 import  requests
+import  zipfile
 import  shutil
 import  json
 import  os
+import  io
 
 WHITE_COLOR = "#{:02x}{:02x}{:02x}".format(255, 255, 255)
 BLACK_COLOR = "#{:02x}{:02x}{:02x}".format(0, 0, 0)
@@ -15,6 +19,48 @@ YELLOW_COLOR = "#{:02x}{:02x}{:02x}".format(217, 243, 78)
 PURPLE_COLOR = "#{:02x}{:02x}{:02x}".format(61, 90, 128)
 DARK_BACKGROUND_COLOR = "#{:02x}{:02x}{:02x}".format(223, 227, 233)
 LIGHT_BACKGROUND2_COLOR = "#{:02x}{:02x}{:02x}".format(232, 240, 254)
+
+def _checkDriver() :
+    if not os.path.exists("../Sources/chromedriver.exe") :
+        print("ChromeDriver not found !")
+        print("Downloading ChromeDriver ...")
+    else :
+        exit()
+
+    parser = Dispatch("Scripting.FileSystemObject")
+
+    try :
+        versionStart = parser.GetFileVersion(r"C:\Program Files\Google\Chrome\Application\chrome.exe")
+    except :
+        try :
+            versionStart = parser.GetFileVersion(r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe")
+        except :
+            print("Chrome not found !")
+            exit()
+
+    versionStart = versionStart.split(".")[0]
+
+    pathToSave = "Sources"
+
+    downurl = "https://chromedriver.chromium.org/downloads"
+
+    response = requests.get(downurl)
+
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    versions = soup.find_all("a", class_="XqQF9c")
+
+    for currentVersion in versions :
+
+        if currentVersion.text.split(" ")[1].startswith(versionStart) :
+            officialVersion = currentVersion.text.split(" ")[1]
+            break       
+
+    url = f"https://chromedriver.storage.googleapis.com/{officialVersion}/chromedriver_win32.zip"
+
+    response = requests.get(url)
+    zipFile = zipfile.ZipFile(io.BytesIO(response.content))
+    zipFile.extractall(pathToSave)
 
 def secureStart(passed=False) :
     neccessaryFolders = ("Assets", "GUI", "Sources", "Util")
@@ -37,6 +83,8 @@ def secureStart(passed=False) :
         except :
             shutil.rmtree(os.path.abspath("Data Export"))
             os.makedirs(os.path.abspath("Data Export"))
+
+    _checkDriver()
         
 def secureFinish(passed=False) :
     if passed :
