@@ -10,6 +10,11 @@ __pycache__/
 *.cfg
 *.json
 
+# Execution Missles
+*.pdf
+*.png
+*.ecm
+
 # Executable
 /Sources
 
