@@ -1,23 +1,30 @@
 # transkript-manager
 
-First of all, this is a kind of management system which only works with the format of MEF University !
+> First of all, this is a kind of management system which only works with the format of MEF University !
 
 * The purpose of this project is to answer questionn of "How would my CPGA will be if I have taken A for a B+ course for example.
+
 * The system is not providing this much info on itself. It only provides the current semester for calculations. 
+
 * However, you can check all of your academical history by this system. (You are welcome)
 
 
-# 1-) Important for automatic logings, you can create a json file -> "Sources/payload.json". 
-    * After that you can fill the file by the format below.
-    * {
-    *     "username" : "someUserName",
-    *     "password" : "somePassWord",
-    *     "autoLogin" : true
-    * }
+# 1-) Important for automatic logings.
+* you can create a json file -> "Sources/payload.json". 
+
+    After that you can fill the file by the format below.
+    {
+         "username" : "someUserName",
+         "password" : "somePassWord",
+         "autoLogin" : true
+    }
 
     * Note that, you should type right username and password, otherwise it will not login automatically.
 
+
 # 2-) You can directly use requirements.txt to set up your environment.
+* conda create -n trman python=3.7 ; conda activate trman ; pip install -r requirements.txt
+
 
 # Examples
 
