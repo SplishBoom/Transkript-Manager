@@ -1,4 +1,4 @@
-# transkript-manager
+# Transkript Manager for Students of MEF University
 
 > First of all, this is a kind of management system which only works with the format of MEF University !
 
