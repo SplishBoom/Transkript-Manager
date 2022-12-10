@@ -21,8 +21,6 @@ First of all, this is a kind of management system which only works with the form
 
 # Examples
 
-# Welcome to the Max SubArray Project.
-
 ![Photo 1](Assets/TEMPLATES/screenshot(0).png)
 ![Photo 2](Assets/TEMPLATES/screenshot(1).png)
 ![Photo 3](Assets/TEMPLATES/screenshot(2).png)
