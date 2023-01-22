@@ -63,7 +63,7 @@ def _checkDriver() :
     zipFile.extractall(pathToSave)
 
 def secureStart(passed=False) :
-    neccessaryFolders = ("Assets", "GUI", "Sources", "Util")
+    neccessaryFolders = ("Assets", "GUI", "Util")
 
     for folder in neccessaryFolders:
         if not os.path.exists(os.path.abspath(folder)):
@@ -76,6 +76,9 @@ def secureStart(passed=False) :
         except :
             shutil.rmtree(os.path.abspath("Temp"))
             os.makedirs(os.path.abspath("Temp"))
+
+    if not os.path.exists(os.path.abspath("Sources")) :
+        os.makedirs(os.path.abspath("Sources"))
 
     if not passed :
         try :
