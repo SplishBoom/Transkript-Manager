@@ -23,7 +23,7 @@
 
 
 # 2-) You can directly use requirements.txt to set up your environment.
-* conda create -n trman python=3.7 ; conda activate trman ; pip install -r requirements.txt
+* `conda create -n trman python=3.7 ; conda activate trman ; pip install -r requirements.txt`
 
 
 # Examples
