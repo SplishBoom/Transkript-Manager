@@ -23,10 +23,22 @@ continueButton.click()
 profileSelection = client.create_element("/html/body/div[2]/div/div[3]/ul/li")
 profileSelection.click()
 
-client.checkIdSelection(dropdownXPATH="/html/body/div[2]/div/div[3]/ul/li/ul", idSelectionXPATH="//*[@id=\"yetkiDegistir\"]/div/ul")
-
-leftMenuButton = client.create_element("//*[@id=\"left-menu7\"]")
-leftMenuButton.click()
+dropDownMenu = client.create_element("/html/body/div[2]/div/div[3]/ul/li/ul")
+checkList = ["Diğer Kimlikler", "Other IDs", "Anadal", "Major"]
+flag = False
+for dpElement in dropDownMenu.find_elements(by=By.TAG_NAME, value="a") :
+    if dpElement.text in checkList :
+        client.click_on_element(dpElement)
+        idSelectionMenu = client.create_element("//*[@id=\"yetkiDegistir\"]/div/ul")
+        for element in idSelectionMenu.find_elements(by=By.TAG_NAME, value="a") :
+            if element.get_attribute("text").split("-")[-1].strip() in checkList :
+                client.click_on_element(element)
+                flag = True
+                break
+        break
+if flag:
+    continueButton = client.create_element("/html/body/div[3]/input")
+    client.click_on_element(continueButton)
 
 transkriptUrl = "https://sis.mef.edu.tr/ogrenciler/belge/transkript"
 client.openWebPage(transkriptUrl)
