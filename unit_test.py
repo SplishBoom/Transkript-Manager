@@ -1,47 +1,52 @@
-from Utilities import Web, By
-
-language = "turkish"
-mode = "online"
+from Utilities import (
+    Web, 
+    By,
+)
+from Constants import (
+    password,
+    username,
+)
 
 main_url = "file:///C:/GithubProjects/transkript-manager/Data/online%20turkish.html"
+main_url = "https://sis.mef.edu.tr/auth/login"
 
 client = Web(isHidden=False)
 client.open_web_page(main_url)
 
-inputField = client.create_element("//*[@id=\"kullanici_adi\"]")
-inputField.send_keys("memise")
+username_entry = client.create_element("//*[@id=\"kullanici_adi\"]")
+username_entry.send_keys(username)
 
-passwordField = client.create_element("//*[@id=\"kullanici_sifre\"]")
-passwordField.send_keys("Ee67456133140!")
+password_entry = client.create_element("//*[@id=\"kullanici_sifre\"]")
+password_entry.send_keys(password)
 
-loginButton = client.create_element("//*[@id=\"loginForm\"]/div[2]/div[3]/button")
-loginButton.click()
+login_button = client.create_element("//*[@id=\"loginForm\"]/div[2]/div[3]/button")
+login_button.click()
 
-continueButton = client.create_element("/html/body/div[3]/input")
-continueButton.click()
+continue_button = client.create_element("/html/body/div[3]/input")
+continue_button.click()
 
-profileSelection = client.create_element("/html/body/div[2]/div/div[3]/ul/li")
-profileSelection.click()
+profile_selection_label = client.create_element("/html/body/div[2]/div/div[3]/ul/li")
+profile_selection_label.click()
 
-dropDownMenu = client.create_element("/html/body/div[2]/div/div[3]/ul/li/ul")
-checkList = ["Diğer Kimlikler", "Other IDs", "Anadal", "Major"]
+drop_down_menu = client.create_element("/html/body/div[2]/div/div[3]/ul/li/ul")
+check_list = ["Diğer Kimlikler", "Other IDs", "Anadal", "Major"]
 flag = False
-for dpElement in dropDownMenu.find_elements(by=By.TAG_NAME, value="a") :
-    if dpElement.text in checkList :
-        client.click_on_element(dpElement)
+for current_element in drop_down_menu.find_elements(by=By.TAG_NAME, value="a") :
+    if current_element.text in check_list :
+        client.click_on_element(current_element)
         idSelectionMenu = client.create_element("//*[@id=\"yetkiDegistir\"]/div/ul")
         for element in idSelectionMenu.find_elements(by=By.TAG_NAME, value="a") :
-            if element.get_attribute("text").split("-")[-1].strip() in checkList :
+            if element.get_attribute("text").split("-")[-1].strip() in check_list :
                 client.click_on_element(element)
                 flag = True
                 break
         break
 if flag:
-    continueButton = client.create_element("/html/body/div[3]/input")
-    client.click_on_element(continueButton)
+    continue_button = client.create_element("/html/body/div[3]/input")
+    client.click_on_element(continue_button)
 
 transkriptUrl = "https://sis.mef.edu.tr/ogrenciler/belge/transkript"
-client.openWebPage(transkriptUrl)
+client.open_web_page(transkriptUrl)
 
 transkriptText = client.browser.find_element(By.TAG_NAME, "body").text
 
