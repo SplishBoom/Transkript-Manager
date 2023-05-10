@@ -144,6 +144,7 @@ class OnlineParser(Parser) :
 
         semesters = {}
         semester_no = 1
+        original_course_list = []
         for current_course in output :
 
             prep = "PREP" in current_course
@@ -165,14 +166,18 @@ class OnlineParser(Parser) :
 
                 course_info_parse = course_info.split(" ")
 
+                course_code = course_info_parse.pop(0) + " " + course_info_parse.pop(0)
                 course_list[course_index] = {
-                    "course_code" : course_info_parse.pop(0) + " " + course_info_parse.pop(0),
+                    "course_code" : course_code,
                     "course_name" : " ".join(course_info_parse[:-4]),
                     "course_lang" : course_info_parse[-4],
                     "course_credit" : course_info_parse[-3],
                     "course_grade" : course_info_parse[-2],
                     "course_grade_point" : course_info_parse[-1],
                 }
+
+                if course_code[-1] != "*" :
+                    original_course_list.append(course_list[course_index])
 
             semesters[f"semester_{semester_no}"] = {
                 "semester_definition" : semester_definition,
@@ -195,6 +200,7 @@ class OnlineParser(Parser) :
             "language_of_instruction" : language_of_instruction,
             "student_status" : student_status,
             "semesters" : semesters,
+            "original_course_list" : original_course_list
         }
 
         if self.save_to_file :
@@ -283,7 +289,6 @@ class OfflineParser(Parser) :
         ]
         founded_semesters = []
         temp = [output.pop(0)]
-        print(temp)
         for current_string in output :
             checker = " ".join(current_string.split(" ")[1:])
             
@@ -305,6 +310,7 @@ class OfflineParser(Parser) :
 
         semesters = {}
         semester_no = 1
+        original_course_list = []
         for semester_index, current_semester in enumerate(founded_semesters) :
             
             semester_definition = current_semester.pop(0)
@@ -334,6 +340,10 @@ class OfflineParser(Parser) :
                 
                 if add_count == 7 :
                     course_list.append(temp)
+
+                    if temp["course_code"][-1] != "*" :
+                        original_course_list.append(temp)
+
                     temp = {}
                     add_count = 1
 
@@ -341,14 +351,15 @@ class OfflineParser(Parser) :
                 add_count += 1
 
             course_list.append(temp)
-
-
+            if temp["course_code"][-1] != "*" :
+                original_course_list.append(temp)
+                        
             semesters[f"semester_{semester_no}"] = {
                 "semester_definition" : semester_definition,
                 "course_list" : course_list
             }
             semester_no += 1
-                
+        
         output = {
             "parsing_type" : "offline",
             "parsing_language" : sis_language,
@@ -362,7 +373,8 @@ class OfflineParser(Parser) :
             "student_department" : student_department,
             "language_of_instruction" : language_of_instruction,
             "student_status" : student_status,
-            "semesters" : semesters
+            "semesters" : semesters,
+            "original_course_list" : original_course_list
         }
 
         self.transcript_data = output
