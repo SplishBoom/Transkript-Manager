@@ -1,3 +1,7 @@
+# UPDATE : This software is being maintained, version 2 realse on hold. ~5/11/2023
+
+> Readme below,
+
 # Transkript Manager for Students of MEF University
 
 > First of all, this is a kind of management system which only works with the format of MEF University !
