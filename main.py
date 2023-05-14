@@ -9,8 +9,8 @@ if __name__ == "__main__" :
 
     # ------------------------------------------------------------------------
 
-    test_file_paths = os.getenv("test_file_paths")[1:-1].replace(" ", "").replace("\"", "").split(",")
-
+    test_file_paths = eval(os.getenv("test_file_paths"))
+    
     parser = OfflineParser(path_to_file=test_file_paths[0], save_to_file=False)
     data1 = parser.get_transcript_data()
 
@@ -22,8 +22,8 @@ if __name__ == "__main__" :
 
     # ------------------------------------------------------------------------
 
-    connection_string = os.getenv("connection_string")
-    database_name = os.getenv("database_name")
+    connection_string = str(os.getenv("connection_string"))
+    database_name = str(os.getenv("database_name"))
 
     client = MongoClient(connection_string, database_name)
     
