@@ -3,6 +3,7 @@ from    datetime    import datetime
 from    Utilities   import Web, By
 import  PyPDF2  as  ppdf
 import  json
+from urllib.request import urlretrieve as get_photo
 
 class Parser(ABC) :
 
@@ -31,11 +32,14 @@ class Parser(ABC) :
 
 class OnlineParser(Parser) :
 
-    def __init__(self, username:str=None, password:str=None, save_to_file:bool=False, *args, **kwargs) -> None:
+    def __init__(self, username:str=None, password:str=None, isHidden=True, save_to_file:bool=False, *args, **kwargs) -> None:
         super().__init__()
 
         self.username = username
         self.password = password
+        print(self.username, self.password)
+
+        self.isHidden = isHidden
 
         self.save_to_file = save_to_file
 
@@ -49,7 +53,7 @@ class OnlineParser(Parser) :
 
         main_url = "https://sis.mef.edu.tr/auth/login"
 
-        client = Web(isHidden=True)
+        client = Web(isHidden=self.isHidden)
         client.open_web_page(main_url)
 
         username_entry = client.create_element("//*[@id=\"kullanici_adi\"]")
@@ -63,6 +67,11 @@ class OnlineParser(Parser) :
 
         continue_button = client.create_element("/html/body/div[3]/input")
         continue_button.click()
+                
+        user_photo_label = client.create_element("/html/body/div[2]/div/div[3]/ul/li/a/img")
+        user_photo_src = user_photo_label.get_attribute("src")
+
+        get_photo(user_photo_src, "Assets/user_photo.png")
 
         profile_selection_label = client.create_element("/html/body/div[2]/div/div[3]/ul/li")
         profile_selection_label.click()
