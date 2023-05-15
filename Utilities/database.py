@@ -78,8 +78,7 @@ class UserData(pymongo.collection.Collection):
         
         filter = { # Only one change between them is enough ! For example different name of document and etc ...
             "owner_id" : owner_id,
-            "transcript_creation_date" : document["transcript_creation_date"],
-            "transcript_manager_date" : document["transcript_manager_date"],
+            "document_name" : document["document_name"],
         }
 
         if self.count_documents(filter) > 0 :
