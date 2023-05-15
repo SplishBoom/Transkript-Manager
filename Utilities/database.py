@@ -76,14 +76,10 @@ class UserData(pymongo.collection.Collection):
             #print("User not found, data is not pushed")
             return
         
-        filter = { # Only one change between them is enough ! For example differen name of document and etc ...
+        filter = { # Only one change between them is enough ! For example different name of document and etc ...
             "owner_id" : owner_id,
-            "filtering" : document["filtering"],
-            "sorting" : document["sorting"],
-            "modified_course_list" : document["modified_course_list"],
-            "document_name" : document["document_name"],
-            "subtracted_course_list" : document["subtracted_course_list"],
-            "added_course_list" : document["added_course_list"]
+            "transcript_creation_date" : document["transcript_creation_date"],
+            "transcript_manager_date" : document["transcript_manager_date"],
         }
 
         if self.count_documents(filter) > 0 :
