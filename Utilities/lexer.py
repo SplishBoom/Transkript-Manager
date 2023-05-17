@@ -37,7 +37,6 @@ class OnlineParser(Parser) :
 
         self.username = username
         self.password = password
-        print(self.username, self.password)
 
         self.isHidden = isHidden
 
