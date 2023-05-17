@@ -1,5 +1,5 @@
-from GUI import Application
+from GUI import TranscriptManager
 
 if __name__ == "__main__" :
 
-    Application().mainloop()
+    TranscriptManager().mainloop()
