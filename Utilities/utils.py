@@ -39,3 +39,6 @@ def authenticate(username, password) :
 
 def validate_transcript(pdf) :
     return True
+
+def get_gender(name) :
+    return None
