@@ -1,11 +1,14 @@
-from    Environment import EXECUTION_DC, SELENIUM_DC, ASCII_LOG
+from    Environment import EXECUTION_DC, SELENIUM_DC, ASCII_LOG, DEBUG
 import  colorama
 import  shutil
 from GUI import TranscriptManager
 import  os
 from Utilities import check_internet_connection, get_connection_details, download_chrome_driver, check_database_connection
 
-prints_enabled = True
+if not DEBUG :
+    prints_enabled = True
+else :
+    prints_enabled = False
 
 def safe_start() -> None:
     
@@ -84,7 +87,7 @@ def safe_execute() -> None:
     if prints_enabled : print(colorama.Fore.LIGHTCYAN_EX, "\n Executing application...\n |", colorama.Fore.RESET)
 
     try :
-        TranscriptManager(DEBUG=False).mainloop()
+        TranscriptManager(DEBUG=DEBUG).mainloop()
     except Exception as e:
         print(colorama.Fore.LIGHTRED_EX, colorama.Back.WHITE, ASCII_LOG["ERROR"], f"An error occured -> {e}", colorama.Fore.RESET)
         exit()
