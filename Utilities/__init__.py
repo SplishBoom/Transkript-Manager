@@ -1,5 +1,5 @@
 from Utilities.web import Web, By
-from Utilities.database import MongoClient
+from Utilities.database import MongoClient, check_database_connection
 from Utilities.lexer import OfflineParser, OnlineParser
 from Utilities.utils import (
     get_gif_frame_count,

@@ -1,6 +1,14 @@
 import pymongo
-import json
 from Environment import DATABASE_DC
+
+def check_database_connection() :
+    try :
+        client = MongoClient()
+        client.server_info()
+        port = client.address[1]
+        return (True, f"Database connection successful on port {port}")
+    except :
+        return (False, "Database connection failed")
 
 class MongoClient(pymongo.MongoClient):
 
