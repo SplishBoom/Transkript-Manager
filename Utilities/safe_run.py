@@ -1,41 +1,14 @@
-from    Environment import EXECUTION_DC, PACKAGES_DC, SELENIUM_DC
-from    Environment import connect_urls
-from    sys         import platform
-import  requests
+from    Environment import EXECUTION_DC, SELENIUM_DC, ASCII_LOG
 import  colorama
 import  shutil
 import  os
-from Utilities import check_internet_connection, get_connection_details, download_chrome_driver
-
-log_style = {
-    "ASCII" : {
-        "PROCCESS" : "\n***LOGGER (⌐■_■)",
-        "SUCCESS"  : "\t\t|\n\t\t|__LOGGER (～￣▽￣)～ ->",
-        "FAILURE"  : "\t\t|\n\t\t|__LOGGER (ﾉ ﾟｰﾟ)ﾉ ->",
-    },
-    "CONSOLE" : {
-        "PROCCESS" : "***LOG",
-        "SUCCESS"  : "     |_LOG",
-        "FAILURE"  : "     |_LOG",
-    }
-}
-ASCII_LOG = log_style["CONSOLE"]
-
-"""
-EXECUTION_DC = ExecutionDC(
-    PRE_EXISTING_CHECKLIST_MUST = [ASSETS_FOLDER, CONSTANTS_FOLDER, GUI_FOLDER, UTILITIES_FOLDER],
-    PRE_EXISTING_CHECKLIST_RELATIVE = [SOURCES_FOLDER, TEMP_FOLDER],
-    POST_CACHE_CLEANUP_LIST = [CONSTANTS_FOLDER, GUI_FOLDER, UTILITIES_FOLDER],
-    POST_CLEANUP_LIST = [SOURCES_FOLDER, TEMP_FOLDER]
-)
-
-"""
+from Utilities import check_internet_connection, get_connection_details, download_chrome_driver, check_database_connection
 
 def safe_start() -> None:
     
     print(colorama.Fore.MAGENTA, "Welcome to the \"Transcript Manager\" !\n", colorama.Fore.RESET)
 
-    print(colorama.Fore.CYAN, "Initializing the application...\n |", colorama.Fore.RESET)
+    print(colorama.Fore.CYAN, "Executing application...\n |", colorama.Fore.RESET)
 
     def __checkout_pre_existing_checklist_must() -> None:
         # Check for folders that must exist. If not, terminate the application.
@@ -87,15 +60,56 @@ def safe_start() -> None:
         else :
             print(colorama.Fore.GREEN, ASCII_LOG["SUCCESS"], f"Chrome driver found -> {SELENIUM_DC.CHROME_DRIVER_PATH}", colorama.Fore.RESET)
 
+    def __checkout_database() -> None:
+        # Check if mongoDB is reachable. If not, terminate the application.
+        print(colorama.Fore.YELLOW, ASCII_LOG["PROCCESS"], f"Checking for database connection...", colorama.Fore.RESET)
+        is_database_connection_successfull, message = check_database_connection()
+        if is_database_connection_successfull :
+            print(colorama.Fore.GREEN, ASCII_LOG["SUCCESS"], f"Database connection established -> {message}", colorama.Fore.RESET)
+        else :
+            print(colorama.Fore.RED, ASCII_LOG["ERROR"], f"Database connection failure -> {message}", colorama.Fore.RESET)
+            exit()
+
     __checkout_pre_existing_checklist_must()
     __checkout_pre_existing_checklist_relative()
     __checkout_internet_connection()
     __checkout_chrome_driver()
+    __checkout_database()
 
 def safe_end() -> None:
     
-    print(colorama.Fore.CYAN, "\nTerminating the application...\n |", colorama.Fore.RESET)
+    print(colorama.Fore.CYAN, "\n Terminating application...\n |", colorama.Fore.RESET)
 
     def __checkout_post_cache_cleanup_list() -> None:
         # Check for folders that includes cache files. If yes, clean them.
-        pass
+        print(colorama.Fore.YELLOW, ASCII_LOG["PROCCESS"], f"Cleaning cache files...", colorama.Fore.RESET)
+        post_cache_cleanup_list_STATUS = []
+        for current_folder_path in EXECUTION_DC.POST_CACHE_CLEANUP_LIST :
+            # check if there is "__pycache__" folder
+            possible_pycache_folder_path = os.path.join(current_folder_path, "__pycache__")
+            if os.path.exists(possible_pycache_folder_path) :
+                post_cache_cleanup_list_STATUS.append(os.path.basename(current_folder_path))
+                shutil.rmtree(possible_pycache_folder_path)
+        if post_cache_cleanup_list_STATUS :
+            print(colorama.Fore.GREEN, ASCII_LOG["SUCCESS"], f"The following folder's caches cleaned -> {post_cache_cleanup_list_STATUS}", colorama.Fore.RESET)
+        else :
+            print(colorama.Fore.GREEN, ASCII_LOG["SUCCESS"], f"All folders \"cache_approved\" -> {[os.path.basename(fname) for fname in EXECUTION_DC.POST_CACHE_CLEANUP_LIST]}", colorama.Fore.RESET)
+    
+    def __checkout_post_cleanup_list() -> None:
+        # Check for folders that should be cleaned. If yes, clean them.
+        print(colorama.Fore.YELLOW, ASCII_LOG["PROCCESS"], f"Cleaning temp folders...", colorama.Fore.RESET)
+        post_cleanup_list_STATUS = []
+        for current_folder_path in EXECUTION_DC.POST_CLEANUP_LIST :
+            if os.path.exists(current_folder_path) :
+                post_cleanup_list_STATUS.append(os.path.basename(current_folder_path))
+                shutil.rmtree(current_folder_path)
+        if post_cleanup_list_STATUS :
+            print(colorama.Fore.GREEN, ASCII_LOG["SUCCESS"], f"The following folders cleaned -> {post_cleanup_list_STATUS}", colorama.Fore.RESET)
+        else :
+            print(colorama.Fore.GREEN, ASCII_LOG["SUCCESS"], f"All folders \"clean_approved\" -> {[os.path.basename(fname) for fname in EXECUTION_DC.POST_CLEANUP_LIST]}", colorama.Fore.RESET)
+
+    __checkout_post_cache_cleanup_list()
+    __checkout_post_cleanup_list()
+
+    
+    print(colorama.Fore.MAGENTA, "\n Application terminated successfully", colorama.Fore.RESET)
