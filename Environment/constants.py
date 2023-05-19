@@ -24,8 +24,8 @@ class ExecutionDC:
 class AssetsDC:
     LOADING_ANIMATION_PATH : str
     LOGO_PATH : str
-    MAN_PP : str
-    WOMAN_PP : str
+    ICON : str
+    GENDERS_PHOTO_PATH : dict
 
 @dataclass
 class SeleniumDC:
@@ -64,7 +64,7 @@ class DatabaseDC:
 
 @dataclass
 class GUIDC:
-    pass
+    TITLE : str
 
 EXECUTION_DC = ExecutionDC(
     PRE_EXISTING_CHECKLIST_MUST = [ASSETS_FOLDER, ENVIRONMENT_FOLDER, GUI_FOLDER, UTILITIES_FOLDER],
@@ -75,8 +75,15 @@ EXECUTION_DC = ExecutionDC(
 ASSETS_DC = AssetsDC(
     LOADING_ANIMATION_PATH = connect_pathes(ASSETS_FOLDER, "animated", "loader.gif"),
     LOGO_PATH = connect_pathes(ASSETS_FOLDER, "mef", "logo.png"),
-    MAN_PP = connect_pathes(ASSETS_FOLDER, "user", "man.png"),
-    WOMAN_PP = connect_pathes(ASSETS_FOLDER, "user", "woman.png")
+    ICON = connect_pathes(ASSETS_FOLDER, "ui", "icon.ico"),
+    GENDERS_PHOTO_PATH = {
+        "andy" : connect_pathes(ASSETS_FOLDER, "user", "andy.png"),
+        "female" : connect_pathes(ASSETS_FOLDER, "user", "female.png"),
+        "male" : connect_pathes(ASSETS_FOLDER, "user", "male.png"),
+        "mostly_female" : connect_pathes(ASSETS_FOLDER, "user", "mostly_female.png"),
+        "mostly_male" : connect_pathes(ASSETS_FOLDER, "user", "mostly_male.png"),
+        "unknown" : connect_pathes(ASSETS_FOLDER, "user", "unknown.png"),
+    }
 )
 SELENIUM_DC = SeleniumDC(
     CHROME_DRIVER_PATH = connect_pathes(SOURCES_FOLDER, "chromedriver.exe"),
@@ -110,7 +117,7 @@ DATABASE_DC = DatabaseDC(
     COLLECTION_NAMES = {"__user_info_collection_define" : "user_info", "__user_data_collection_define" : "user_data"}
 )
 GUI_DC = GUIDC(
-    
+    TITLE = "Transcript Manager",
 )
 
 log_style = {
@@ -128,3 +135,4 @@ log_style = {
     }
 }
 ASCII_LOG = log_style["CONSOLE"]
+
