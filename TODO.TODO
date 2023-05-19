@@ -10,33 +10,11 @@ BEGIN
    2.1. PDF
 3. Interface
    3.1. GUI
-      3.1.1. Login
       3.1.2. Main
          3.1.2.1. TRMAN
          3.1.2.2. ACHIEVEMENT_ANALYZER
          3.1.2.3. ANALITICS
             3.1.2.3.1. SCHOLARSHIP
             3.1.2.3.2. SEMESTER INFO
-G. 
-   "Unit_Tests - {__main__ side package type}" &&& "Comments"
-      Web
-      Lexer
-      Database
-P.
-   Utilities
-      Safe Run
-         Start
-         Finish
-      Utils
-         Connection check
-         Gif paralyzer - count extracter
-         .
-         .
-         .
-   Constants
-      GUI Elements
-      Program Elements
-A.
-   Modearation | Optimization & Refactoring
 END
 """
