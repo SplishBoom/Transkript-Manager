@@ -1,6 +1,7 @@
 from    Environment import EXECUTION_DC, SELENIUM_DC, ASCII_LOG
 import  colorama
 import  shutil
+from GUI import TranscriptManager
 import  os
 from Utilities import check_internet_connection, get_connection_details, download_chrome_driver, check_database_connection
 
@@ -8,7 +9,7 @@ def safe_start() -> None:
     
     print(colorama.Fore.MAGENTA, "Welcome to the \"Transcript Manager\" !\n", colorama.Fore.RESET)
 
-    print(colorama.Fore.CYAN, "Executing application...\n |", colorama.Fore.RESET)
+    print(colorama.Fore.CYAN, "Starting application...\n |", colorama.Fore.RESET)
 
     def __checkout_pre_existing_checklist_must() -> None:
         # Check for folders that must exist. If not, terminate the application.
@@ -75,6 +76,16 @@ def safe_start() -> None:
     __checkout_internet_connection()
     __checkout_chrome_driver()
     __checkout_database()
+
+def safe_execute() -> None:
+
+    print(colorama.Fore.CYAN, "\n Executing application...", colorama.Fore.RESET)
+
+    try :
+        TranscriptManager().mainloop()
+    except Exception as e:
+        print(colorama.Fore.LIGHTRED_EX, ASCII_LOG["ERROR"], f"An error occured -> {e}", colorama.Fore.RESET)
+        exit()
 
 def safe_end() -> None:
     
