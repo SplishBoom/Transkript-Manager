@@ -1,10 +1,10 @@
 from Environment.constants import (
-    EXECUTION_DC, # DONE
-    PACKAGES_DC, # DONE
-    SELENIUM_DC, # DONE
-    ASSETS_DC, # DONE
-    UTILITIES_DC, # DONE
-    DATABASE_DC, # DONE
+    EXECUTION_DC,
+    PACKAGES_DC,
+    SELENIUM_DC,
+    ASSETS_DC,
+    UTILITIES_DC,
+    DATABASE_DC,
     GUI_DC 
 )
 from Environment.constants import (
