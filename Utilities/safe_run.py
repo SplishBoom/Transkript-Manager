@@ -33,6 +33,10 @@ EXECUTION_DC = ExecutionDC(
 
 def safe_start() -> None:
     
+    print(colorama.Fore.MAGENTA, "Welcome to the \"Transcript Manager\" !\n", colorama.Fore.RESET)
+
+    print(colorama.Fore.CYAN, "Initializing the application...\n |", colorama.Fore.RESET)
+
     def __checkout_pre_existing_checklist_must() -> None:
         # Check for folders that must exist. If not, terminate the application.
         print(colorama.Fore.YELLOW, ASCII_LOG["PROCCESS"], f"Checking for required modules...", colorama.Fore.RESET)
@@ -89,4 +93,9 @@ def safe_start() -> None:
     __checkout_chrome_driver()
 
 def safe_end() -> None:
-    pass
+    
+    print(colorama.Fore.CYAN, "\nTerminating the application...\n |", colorama.Fore.RESET)
+
+    def __checkout_post_cache_cleanup_list() -> None:
+        # Check for folders that includes cache files. If yes, clean them.
+        pass
