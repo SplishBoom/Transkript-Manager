@@ -1,31 +1,56 @@
 import tkinter as tk
 from tkinter import ttk
 import os
-from GUI import LoginFrame
-from Utilities import MongoClient
+from GUI import LoginFrame, ApplicationFrame
+from Utilities import MongoClient, push_dpi, OfflineParser
+from Environment import GUI_DC, ASSETS_DC
 
 class TranscriptManager(tk.Tk) :
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, DEBUG=False, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         
-        self.db_client = MongoClient(connection_string="mongodb://localhost:27017", db_name="trman")
+        self.DEBUG = DEBUG
 
-        self.title("Transcript Manager")
+        if not self.DEBUG :
+            push_dpi()
 
-        self.application_container = ttk.Frame(self)
-        self.application_container.grid(row=0, column=0)
+        self.title(GUI_DC.TITLE)
+        self.iconbitmap(ASSETS_DC.ICON)
 
-        self.application_container.grid_rowconfigure(0, weight=1)
-        self.application_container.grid_columnconfigure(0, weight=1)
+        self.db_client = MongoClient()
+        self.user_info_document = None
+        self.user_data_document = None
 
-        self.login_frame = LoginFrame(self.application_container, self)
-        self.login_frame.grid(row=0, column=0)
+        self.main_container = ttk.Frame(self)
+        self.main_container.grid(row=0, column=0)
 
+        self.main_container.grid_rowconfigure(0, weight=1)
+        self.main_container.grid_columnconfigure(0, weight=1)
 
-    def _switch_to_interface(self) :
+        if not self.DEBUG :
+            self.login_frame = LoginFrame(self.main_container, self, self.DEBUG) 
+            self.login_frame.grid(row=0, column=0)
+        else :
+            parser = OfflineParser(path_to_file=r"C:\GithubProjects\transkript-manager\Data\emir.pdf")
+            data = parser.get_transcript_data()
+            user_info_document, user_data_document = self.db_client.documentisize(data)
+            self.set_current_data(user_info_document, user_data_document)
+            self.application_frame = ApplicationFrame(self.main_container, self, self.DEBUG)
+            self.application_frame.grid(row=0, column=0)
 
+    def _switch_to_application(self) :
         self.login_frame.grid_forget()
 
-        self.interface_frame = ttk.Frame(self.application_container)
+        self.interface_frame = ApplicationFrame(self.main_container, self, self.DEBUG)
         self.interface_frame.grid(row=0, column=0)
+
+    def _switch_to_login(self) :
+        self.interface_frame.grid_forget()
+
+        self.login_frame = LoginFrame(self.main_container, self, self.DEBUG)
+        self.login_frame.grid(row=0, column=0)
+
+    def set_current_data(self, user_info_document, user_data_document) :
+        self.user_info_document = user_info_document
+        self.user_data_document = user_data_document
