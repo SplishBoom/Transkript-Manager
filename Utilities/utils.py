@@ -9,10 +9,10 @@ import re
 from    bs4         import BeautifulSoup
 import  io
 from win32com.client import Dispatch
-
-
+import gender_guesser.detector as gender
 import  zipfile
 
+GENDER_DETECTOR = gender.Detector(case_sensitive=False)
 
 def get_gif_frame_count(gif_file_path:str) -> int:
     """
@@ -110,10 +110,37 @@ def download_chrome_driver() -> tuple:
     zipFile = zipfile.ZipFile(io.BytesIO(download_response.content))
     zipFile.extractall(PACKAGES_DC.EXTRACTION_SITE)
 
-    return True, SELENIUM_DC.CHROME_DRIVER_PATH
+    return (True, SELENIUM_DC.CHROME_DRIVER_PATH)
 
-def validate_transcript(pdf) :
+def validate_transcript(path_to_pdf_file) :
+    
+    if path_to_pdf_file is None or path_to_pdf_file == "" :
+        return False
+    
+    if not path_to_pdf_file.endswith(".pdf") :
+        return False
+    
+    if not os.path.exists(path_to_pdf_file) :
+        return False
+    
+    try :
+        with open(path_to_pdf_file, "rb") as pdf_file :
+            pdf_file.read()
+    except :
+        return False
+    
     return True
 
-def get_gender(name) :
-    return None
+def get_gender(name=None, country="turkey") :
+    if name is None :
+        return "unknown"
+    else :
+        return GENDER_DETECTOR.get_gender(name=name, country=country)
+
+def push_dpi() :
+
+    try:
+        from ctypes import windll
+        windll.shcore.SetProcessDpiAwareness(1)
+    except:
+        pass

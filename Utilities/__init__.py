@@ -7,7 +7,9 @@ from Utilities.utils import (
     validate_transcript,
     check_internet_connection,
     get_connection_details,
-    download_chrome_driver
+    download_chrome_driver,
+    push_dpi,
+    get_gender
 )
 from Utilities.safe_run import (
     safe_start,
