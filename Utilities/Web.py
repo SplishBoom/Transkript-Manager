@@ -5,7 +5,7 @@ This script is used for retrieving online transcript data from sis.
 from    selenium.webdriver.chrome.service   import Service
 from    selenium.webdriver.chrome.options   import Options
 from    selenium.webdriver.common.by        import By
-from    Constants                           import CHROME_DRIVER_PATH
+from    Environment                         import CHROME_DRIVER_PATH
 from    selenium                            import webdriver
 import  os
 
