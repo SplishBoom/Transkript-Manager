@@ -118,11 +118,13 @@ log_style = {
         "PROCCESS" : "\n***LOGGER (⌐■_■)",
         "SUCCESS"  : "\t\t|\n\t\t|__LOGGER (～￣▽￣)～ ->",
         "FAILURE"  : "\t\t|\n\t\t|__LOGGER (ﾉ ﾟｰﾟ)ﾉ ->",
+        "ERROR"    : "\t\t|\n\t\t|__LOGGER (╯ °□°）╯ ->"
     },
     "CONSOLE" : {
         "PROCCESS" : "***LOG",
         "SUCCESS"  : "     |_LOG",
         "FAILURE"  : "     |_LOG",
+        "ERROR"    : "     |_LOG"
     }
 }
 ASCII_LOG = log_style["CONSOLE"]
