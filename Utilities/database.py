@@ -1,12 +1,17 @@
 import pymongo
 import json
+from Environment import DATABASE_DC
 
 class MongoClient(pymongo.MongoClient):
 
-    __user_info_collection_define = "user_info"
-    __user_data_collection_define = "user_data"
+    __user_info_collection_define = DATABASE_DC.COLLECTION_NAMES["__user_info_collection_define"]
+    __user_data_collection_define = DATABASE_DC.COLLECTION_NAMES["__user_data_collection_define"]
 
-    def __init__(self, connection_string, db_name):
+    def __init__(self, connection_string=None, db_name=None):
+        if db_name is None:
+            db_name = DATABASE_DC.DATABASE_NAME
+        if connection_string is None:
+            connection_string = DATABASE_DC.CONNECTION_STRING
         super().__init__(connection_string)
 
         self.db = self[db_name]

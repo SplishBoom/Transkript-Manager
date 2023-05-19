@@ -36,6 +36,7 @@ class SeleniumDC:
     OLEXER_LOGIN_BUTTON_XPATH : str
     OLEXER_CONTINUE_BUTTON_XPATH : str
     OLEXER_USER_PHOTO_LABEL_XPATH : str
+    OLEXER_SOURCE_ATTRIBUTE_TAGS : list
     OLEXER_PROFILE_SELECTION_XPATH : str
     OLEXER_DROP_DOWN_MENU_XPATH : str
     OLEXER_ID_SELECTION_XPATH : str
@@ -59,6 +60,10 @@ class DatabaseDC:
     DATABASE_NAME : str
     COLLECTION_NAMES : dict
 
+@dataclass
+class GUIDC:
+    pass
+
 EXECUTION_DC = ExecutionDC(
     PRE_EXISTING_CHECKLIST_MUST = [ASSETS_FOLDER, CONSTANTS_FOLDER, GUI_FOLDER, UTILITIES_FOLDER],
     PRE_EXISTING_CHECKLIST_RELATIVE = [SOURCES_FOLDER, TEMP_FOLDER],
@@ -80,6 +85,7 @@ SELENIUM_DC = SeleniumDC(
     OLEXER_LOGIN_BUTTON_XPATH = "//*[@id=\"loginForm\"]/div[2]/div[3]/button",
     OLEXER_CONTINUE_BUTTON_XPATH = "/html/body/div[3]/input",
     OLEXER_USER_PHOTO_LABEL_XPATH = "/html/body/div[2]/div/div[3]/ul/li/a/img",
+    OLEXER_SOURCE_ATTRIBUTE_TAGS = ["src", "text", "table"],
     OLEXER_PROFILE_SELECTION_XPATH = "/html/body/div[2]/div/div[3]/ul/li",
     OLEXER_DROP_DOWN_MENU_XPATH = "/html/body/div[2]/div/div[3]/ul/li/ul",
     OLEXER_ID_SELECTION_XPATH = "//*[@id=\"yetkiDegistir\"]/div/ul",
@@ -99,4 +105,7 @@ DATABASE_DC = DatabaseDC(
     CONNECTION_STRING = "mongodb://localhost:27017/",
     DATABASE_NAME = "trman",
     COLLECTION_NAMES = {"__user_info_collection_define" : "user_info", "__user_data_collection_define" : "user_data"}
+)
+GUI_DC = GUIDC(
+    
 )

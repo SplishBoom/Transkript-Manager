@@ -4,6 +4,7 @@ from    Utilities   import Web, By
 import  PyPDF2  as  ppdf
 import  json
 from urllib.request import urlretrieve as get_photo
+from Environment import SELENIUM_DC
 
 class Parser(ABC) :
 
@@ -50,52 +51,52 @@ class OnlineParser(Parser) :
         Private method for extracting transcript information from the source.
         """
 
-        main_url = "https://sis.mef.edu.tr/auth/login"
+        main_url = SELENIUM_DC.OLEXER_SYSTEM_LOGIN_URL
 
         client = Web(isHidden=self.isHidden)
         client.open_web_page(main_url)
 
-        username_entry = client.create_element("//*[@id=\"kullanici_adi\"]")
+        username_entry = client.create_element(SELENIUM_DC.OLEXER_USERNAME_ENTRY_XPATH)
         username_entry.send_keys(self.username)
 
-        password_entry = client.create_element("//*[@id=\"kullanici_sifre\"]")
+        password_entry = client.create_element(SELENIUM_DC.OLEXER_PASSWORD_ENTRY_XPATH)
         password_entry.send_keys(self.password)
 
-        login_button = client.create_element("//*[@id=\"loginForm\"]/div[2]/div[3]/button")
+        login_button = client.create_element(SELENIUM_DC.OLEXER_PASSWORD_ENTRY_XPATH)
         login_button.click()
 
-        continue_button = client.create_element("/html/body/div[3]/input")
+        continue_button = client.create_element(SELENIUM_DC.OLEXER_CONTINUE_BUTTON_XPATH)
         continue_button.click()
                 
-        user_photo_label = client.create_element("/html/body/div[2]/div/div[3]/ul/li/a/img")
-        user_photo_src = user_photo_label.get_attribute("src")
+        user_photo_label = client.create_element(SELENIUM_DC.OLEXER_USER_PHOTO_LABEL_XPATH)
+        user_photo_src = user_photo_label.get_attribute(SELENIUM_DC.OLEXER_SOURCE_ATTRIBUTE_TAGS[0])
 
-        get_photo(user_photo_src, "Assets/user_photo.png")
+        get_photo(user_photo_src, SELENIUM_DC.USER_PHOTO_OUTPUT_PATH)
 
-        profile_selection_label = client.create_element("/html/body/div[2]/div/div[3]/ul/li")
+        profile_selection_label = client.create_element(SELENIUM_DC.OLEXER_PROFILE_SELECTION_XPATH)
         profile_selection_label.click()
 
-        drop_down_menu = client.create_element("/html/body/div[2]/div/div[3]/ul/li/ul")
+        drop_down_menu = client.create_element(SELENIUM_DC.OLEXER_DROP_DOWN_MENU_XPATH)
         check_list = ["Diğer Kimlikler", "Other IDs", "Anadal", "Major"]
         flag = False
         for current_element in drop_down_menu.find_elements(by=By.TAG_NAME, value="a") :
             if current_element.text in check_list :
                 client.click_on_element(current_element)
-                idSelectionMenu = client.create_element("//*[@id=\"yetkiDegistir\"]/div/ul")
+                idSelectionMenu = client.create_element(SELENIUM_DC.OLEXER_ID_SELECTION_XPATH)
                 for element in idSelectionMenu.find_elements(by=By.TAG_NAME, value="a") :
-                    if element.get_attribute("text").split("-")[-1].strip() in check_list :
+                    if element.get_attribute(SELENIUM_DC.OLEXER_SOURCE_ATTRIBUTE_TAGS[1]).split("-")[-1].strip() in check_list :
                         client.click_on_element(element)
                         flag = True
                         break
                 break
         if flag:
-            continue_button = client.create_element("/html/body/div[3]/input")
+            continue_button = client.create_element(SELENIUM_DC.OLEXER_CONTINUE_BUTTON_XPATH)
             client.click_on_element(continue_button)
 
-        transkriptUrl = "https://sis.mef.edu.tr/ogrenciler/belge/transkript"
+        transkriptUrl = SELENIUM_DC.OLEXER_TRANSCRIPT_URL
         client.open_web_page(transkriptUrl)
 
-        table_elements = client.browser.find_elements(By.TAG_NAME, "table")
+        table_elements = client.browser.find_elements(By.TAG_NAME, SELENIUM_DC.OLEXER_SOURCE_ATTRIBUTE_TAGS[2])
 
         output = []
         for element in table_elements :

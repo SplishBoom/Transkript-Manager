@@ -5,7 +5,7 @@ This script is used for retrieving online transcript data from sis.
 from    selenium.webdriver.chrome.service   import Service
 from    selenium.webdriver.chrome.options   import Options
 from    selenium.webdriver.common.by        import By
-from    Environment                         import CHROME_DRIVER_PATH
+from    Environment                         import SELENIUM_DC
 from    selenium                            import webdriver
 import  os
 
@@ -14,7 +14,7 @@ class Web :
     Class, that initializes and overrides selenium webdriver.
     """
 
-    def __init__(self, driver_path=CHROME_DRIVER_PATH, isHidden=True) -> None:
+    def __init__(self, driver_path=None, isHidden=True) -> None:
         """
         Constructor, that initializes selenium browser.
         @Params:
@@ -23,6 +23,9 @@ class Web :
         @Return:
             - None
         """
+
+        if driver_path == None :
+            driver_path = SELENIUM_DC.CHROME_DRIVER_PATH
 
         os.chmod(driver_path, 755)
 
