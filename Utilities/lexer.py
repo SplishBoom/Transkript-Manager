@@ -62,7 +62,7 @@ class OnlineParser(Parser) :
         password_entry = client.create_element(SELENIUM_DC.OLEXER_PASSWORD_ENTRY_XPATH)
         password_entry.send_keys(self.password)
 
-        login_button = client.create_element(SELENIUM_DC.OLEXER_PASSWORD_ENTRY_XPATH)
+        login_button = client.create_element(SELENIUM_DC.OLEXER_LOGIN_BUTTON_XPATH)
         login_button.click()
 
         continue_button = client.create_element(SELENIUM_DC.OLEXER_CONTINUE_BUTTON_XPATH)
