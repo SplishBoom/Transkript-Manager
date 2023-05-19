@@ -11,11 +11,14 @@ from Utilities import (
 )
 import time
 import threading
+from Environment import ASSETS_DC
 
 class LoginFrame(ttk.Frame) :
 
-    def __init__(self, parent, root, *args, **kwargs):
+    def __init__(self, parent, root, DEBUG=False, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
+
+        self.DEBUG = DEBUG
 
         self.root = root
 
@@ -34,66 +37,61 @@ class LoginFrame(ttk.Frame) :
         self.__load_online_login()
         self.__load_output()
 
-    def __online_thread(self) :
+    def __load_thread(self) :
 
-        def job() :
-            parser = OnlineParser(username=self.username.get(), password=self.password.get())
+        def start_parse() :
+            if self.execution_mode.get() == "online" :
+                parser = OnlineParser(username=self.username.get(), password=self.password.get())
+            elif self.execution_mode.get() == "offline" :
+                parser = OfflineParser(path_to_file=self.path_to_transcript.get())
+                if not self.DEBUG :
+                    time.sleep(3) # Simulate a long process by fake sleeping for 3 seconds.
+                else :
+                    pass
             data = parser.get_transcript_data()
             user_info_document, user_data_document = self.root.db_client.documentisize(data)
             self.root.db_client.user_info.push_init(user_info_document)
             self.root.db_client.user_data.push_init(user_data_document)
+            self.root.set_current_data(user_info_document, user_data_document)
 
-        self.thread = threading.Thread(target=job, daemon=True)
+        self.thread = threading.Thread(target=start_parse, daemon=True)
         self.thread.start()
 
-    def __ofline_thread(self) :
+    def __handle_login(self, *args, **kwargs) :
 
-        def job() :
-            time.sleep(3) # Simulate a long process by fake sleeping for 3 seconds.
-            parser = OfflineParser(path_to_file=self.path_to_transcript.get())
-            data = parser.get_transcript_data()
-            user_info_document, user_data_document = self.root.db_client.documentisize(data)
-            self.root.db_client.user_info.push_init(user_info_document)
-            self.root.db_client.user_data.push_init(user_data_document)
-
-        self.thread = threading.Thread(target=job, daemon=True)
-        self.thread.start()
-        
-    def __handle_online_login(self, *args, **kwargs) :
-        
-        self.online_login_button.config(state="disabled", text="Processing")
-        self.online_login_label_button.config(state="disabled")
-
-        isCredentialsCorrect = authenticate(username=self.username.get(), password=self.password.get())
-
-        if isCredentialsCorrect :
-            self.__start_loading_animation()
-            self.__online_thread()
+        if self.execution_mode.get() == "online" :
+            self.online_login_button.config(state="disabled", text="Processing")
+            self.online_login_label_button.config(state="disabled")
+            isAllowed = authenticate(username=self.username.get(), password=self.password.get())
+        elif self.execution_mode.get() == "offline" :
+            self.offline_login_button.config(state="disabled", text="Processing")
+            self.offline_login_label_button.config(state="disabled")
+            isAllowed = validate_transcript(self.path_to_transcript.get())
         else :
-            self.online_login_button.config(text="Wrong Credentials")
-            self.after(500, lambda : self.online_login_button.config(state="normal", text="Login"))
-            self.after(500, lambda : self.online_login_label_button.config(state="normal"))
+            raise ValueError("Invalid Execution Mode")
 
-    def __handle_offline_login(self, *args, **kwargs) :
-
-        self.offline_login_button.config(state="disabled", text="Processing")
-        self.offline_login_label_button.config(state="disabled")
-
-        isTranscriptValid = validate_transcript(self.path_to_transcript.get())
-
-        if isTranscriptValid :
+        if isAllowed :
             self.__start_loading_animation()
-            self.__ofline_thread()
+            self.__load_thread()
         else :
-            self.offline_login_button.config(text="Invalid Transcript")
-            self.after(500, lambda : self.offline_login_button.config(state="normal", text="Login"))
-            self.after(500, lambda : self.offline_login_label_button.config(state="normal"))
+            if self.execution_mode.get() == "online" :
+                self.online_login_button.config(text="Wrong Credentials")
+                self.after(500, lambda : self.online_login_button.config(state="normal", text="Login"))
+                self.after(500, lambda : self.online_login_label_button.config(state="normal"))
+            elif self.execution_mode.get() == "offline" :
+                self.offline_login_button.config(text="Invalid Transcript")
+                self.after(500, lambda : self.offline_login_button.config(state="normal", text="Login"))
+                self.after(500, lambda : self.offline_login_label_button.config(state="normal"))
+            else :
+                raise ValueError("Invalid Execution Mode")
 
     def __handle_ask_file_dialog(self, *args, **kwargs) :
+        if not self.DEBUG :
+            input_file_path = filedialog.askopenfile(initialdir = self.work_dir, title = "Select Transcript", filetypes = [('pdf files only', '*.pdf')])
+        else :
+            input_file_path = filedialog.askopenfile(initialdir = self.desktop_path, title = "Select Transcript", filetypes = [('pdf files only', '*.pdf')])
 
-        input_file_path = filedialog.askopenfile(initialdir = self.work_dir, title = "Select Transcript", filetypes = [('pdf files only', '*.pdf')])
-        
-        if input_file_path is not None :
+        if input_file_path is not None or input_file_path != "" or input_file_path != " " :
             self.path_to_transcript.set(input_file_path.name)
             self.name_of_transcript.set(os.path.basename(input_file_path.name))
 
@@ -134,10 +132,9 @@ class LoginFrame(ttk.Frame) :
         self.mef_label_container.grid_rowconfigure(0, weight=1)
         self.mef_label_container.grid_columnconfigure(0, weight=1)
 
-        self.mef_logo_image = ImageTk.PhotoImage(Image.open("Assets\mef logo.png").resize((192, 126), Image.ANTIALIAS))
+        self.mef_logo_image = ImageTk.PhotoImage(Image.open(ASSETS_DC.LOGO_PATH).resize((192, 126), Image.ANTIALIAS))
         self.mef_logo_label = ttk.Label(self.mef_label_container, image=self.mef_logo_image)
         self.mef_logo_label.grid(row=0, column=0)
-
     def __load_online_login(self) :
         
         self.online_login_container.grid_rowconfigure((0,1,3), weight=1)
@@ -156,9 +153,8 @@ class LoginFrame(ttk.Frame) :
         self.online_login_password_entry = ttk.Entry(self.online_login_container, textvariable=self.password, show="*")
         self.online_login_password_entry.grid(row=2, column=1)
 
-        self.online_login_button = ttk.Button(self.online_login_container, text="Login", command=self.__handle_online_login)
+        self.online_login_button = ttk.Button(self.online_login_container, text="Login", command=self.__handle_login)
         self.online_login_button.grid(row=3, column=0, columnspan=2)
-
     def __load_offline_login(self) :
         
         self.offline_login_container.grid_rowconfigure((0,1,2), weight=1)
@@ -170,14 +166,13 @@ class LoginFrame(ttk.Frame) :
         self.offline_open_file_button = ttk.Button(self.offline_login_container, textvariable=self.name_of_transcript, command=self.__handle_ask_file_dialog)
         self.offline_open_file_button.grid(row=1, column=0)
 
-        self.offline_login_button = ttk.Button(self.offline_login_container, text="Login", command=self.__handle_offline_login)
+        self.offline_login_button = ttk.Button(self.offline_login_container, text="Login", command=self.__handle_login)
         self.offline_login_button.grid(row=2, column=0)
-
     def __load_output(self) :
         
-        self.gif_frame_count = get_gif_frame_count("Assets\loader.gif")
+        self.gif_frame_count = get_gif_frame_count(ASSETS_DC.LOADING_ANIMATION_PATH)
 
-        self.gif_frames = [PhotoImage(file="Assets\loader.gif", format = 'gif -index %i' %(i)) for i in range(self.gif_frame_count)]
+        self.gif_frames = [PhotoImage(file=ASSETS_DC.LOADING_ANIMATION_PATH, format = 'gif -index %i' %(i)) for i in range(self.gif_frame_count)]
 
         self.output_container.grid_rowconfigure(0, weight=1)
         self.output_container.grid_columnconfigure(0, weight=1)
@@ -189,7 +184,6 @@ class LoginFrame(ttk.Frame) :
         self.output_loading_label.grid(row=0, column=0)
 
         self.animation_id = self.root.after(0, self.__animate_loading, 0)
-
     def __animate_loading(self, frame_index) :
 
         if not self.thread.is_alive() :
@@ -202,12 +196,9 @@ class LoginFrame(ttk.Frame) :
         self.current_frame = self.gif_frames[frame_index]
         self.output_loading_label.configure(image=self.current_frame)
 
-        self.update()
-
         self.animation_id = self.root.after(20, self.__animate_loading, frame_index + 1)
-
     def __stop_loading_animation(self) :
         self.root.after_cancel(self.animation_id)
         self.output_loading_label.grid_remove()
 
-        self.root._switch_to_interface()
+        self.root._switch_to_application()
