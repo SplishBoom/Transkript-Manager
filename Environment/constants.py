@@ -73,10 +73,10 @@ EXECUTION_DC = ExecutionDC(
     POST_CLEANUP_LIST = [TEMP_FOLDER],
 )
 ASSETS_DC = AssetsDC(
-    LOADING_ANIMATION_PATH = connect_pathes(ASSETS_FOLDER, "loader.gif"),
-    LOGO_PATH = connect_pathes(ASSETS_FOLDER, "mef logo.png"),
-    MAN_PP = connect_pathes(ASSETS_FOLDER, "man.png"),
-    WOMAN_PP = connect_pathes(ASSETS_FOLDER, "woman.png")
+    LOADING_ANIMATION_PATH = connect_pathes(ASSETS_FOLDER, "animated", "loader.gif"),
+    LOGO_PATH = connect_pathes(ASSETS_FOLDER, "mef", "logo.png"),
+    MAN_PP = connect_pathes(ASSETS_FOLDER, "user", "man.png"),
+    WOMAN_PP = connect_pathes(ASSETS_FOLDER, "user", "woman.png")
 )
 SELENIUM_DC = SeleniumDC(
     CHROME_DRIVER_PATH = connect_pathes(SOURCES_FOLDER, "chromedriver.exe"),
