@@ -136,3 +136,4 @@ log_style = {
 }
 ASCII_LOG = log_style["CONSOLE"]
 
+DEBUG = False

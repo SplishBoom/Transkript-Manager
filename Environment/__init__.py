@@ -10,5 +10,6 @@ from Environment.constants import (
 from Environment.constants import (
     connect_pathes,
     connect_urls,
-    ASCII_LOG
+    ASCII_LOG,
+    DEBUG
 )
