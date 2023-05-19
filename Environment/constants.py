@@ -2,11 +2,12 @@ from os import path
 from dataclasses import dataclass
 
 def connect_pathes(*pathes): return path.join(*pathes)
+def connect_urls(*urls): return "/".join(urls)
 
 PROJECT_DIRECTORY = path.dirname(path.dirname(path.abspath(__file__)))
 
 ASSETS_FOLDER = connect_pathes(PROJECT_DIRECTORY, "Assets")
-CONSTANTS_FOLDER = connect_pathes(PROJECT_DIRECTORY, "Constants")
+ENVIRONMENT_FOLDER = connect_pathes(PROJECT_DIRECTORY, "Environment")
 GUI_FOLDER = connect_pathes(PROJECT_DIRECTORY, "GUI")
 SOURCES_FOLDER = connect_pathes(PROJECT_DIRECTORY, "Sources")
 TEMP_FOLDER = connect_pathes(PROJECT_DIRECTORY, "Temp")
@@ -18,6 +19,15 @@ class ExecutionDC:
     PRE_EXISTING_CHECKLIST_RELATIVE: list
     POST_CACHE_CLEANUP_LIST: list
     POST_CLEANUP_LIST: list
+
+    PROJECT_DIRECTORY : str
+
+    ASSETS_FOLDER : str
+    ENVIRONMENT_FOLDER : str
+    GUI_FOLDER : str
+    SOURCES_FOLDER : str
+    TEMP_FOLDER : str
+    UTILITIES_FOLDER : str
 
 @dataclass
 class AssetsDC:
@@ -47,6 +57,7 @@ class PackagesDC:
     CHROME_DRIVER_DOWNLOAD_URL : str
     CONNECTION_TEST_URL : str
     CHROME_DRIVER_DOWNLOAD_PARTITION : dict
+    EXTRACTION_SITE : str
 
 @dataclass
 class UtilitiesDC:
@@ -65,10 +76,17 @@ class GUIDC:
     pass
 
 EXECUTION_DC = ExecutionDC(
-    PRE_EXISTING_CHECKLIST_MUST = [ASSETS_FOLDER, CONSTANTS_FOLDER, GUI_FOLDER, UTILITIES_FOLDER],
+    PRE_EXISTING_CHECKLIST_MUST = [ASSETS_FOLDER, ENVIRONMENT_FOLDER, GUI_FOLDER, UTILITIES_FOLDER],
     PRE_EXISTING_CHECKLIST_RELATIVE = [SOURCES_FOLDER, TEMP_FOLDER],
-    POST_CACHE_CLEANUP_LIST = [CONSTANTS_FOLDER, GUI_FOLDER, UTILITIES_FOLDER],
-    POST_CLEANUP_LIST = [SOURCES_FOLDER, TEMP_FOLDER]
+    POST_CACHE_CLEANUP_LIST = [ENVIRONMENT_FOLDER, GUI_FOLDER, UTILITIES_FOLDER],
+    POST_CLEANUP_LIST = [SOURCES_FOLDER, TEMP_FOLDER],
+    PROJECT_DIRECTORY = PROJECT_DIRECTORY,
+    ASSETS_FOLDER = ASSETS_FOLDER,
+    ENVIRONMENT_FOLDER = ENVIRONMENT_FOLDER,
+    GUI_FOLDER = GUI_FOLDER,
+    SOURCES_FOLDER = SOURCES_FOLDER,
+    TEMP_FOLDER = TEMP_FOLDER,
+    UTILITIES_FOLDER = UTILITIES_FOLDER
 )
 ASSETS_DC = AssetsDC(
     LOADING_ANIMATION_PATH = connect_pathes(ASSETS_FOLDER, "loader.gif"),
@@ -94,7 +112,8 @@ SELENIUM_DC = SeleniumDC(
 PACKAGES_DC = PackagesDC(
     CHROME_DRIVER_DOWNLOAD_URL = "https://chromedriver.chromium.org/downloads",
     CONNECTION_TEST_URL = "https://www.google.com",
-    CHROME_DRIVER_DOWNLOAD_PARTITION = {"base":"https://chromedriver.storage.googleapis.com", "args":"chromedriver_win32.zip"}
+    CHROME_DRIVER_DOWNLOAD_PARTITION = {"base":"https://chromedriver.storage.googleapis.com", "args":"chromedriver_win32.zip"},
+    EXTRACTION_SITE = SOURCES_FOLDER
 )
 UTILITIES_DC = UtilitiesDC(
     AUTH_LOG_URL = "https://sis.mef.edu.tr/auth/login/ln/tr",
