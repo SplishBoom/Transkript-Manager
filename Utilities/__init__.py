@@ -16,3 +16,11 @@ from Utilities.safe_run import (
     safe_execute,
     safe_end
 )
+from Utilities.utils import (
+    sort_by,
+    filter_by,
+    add_course,
+    subtract_course,
+    update_course,
+    calculate_performance
+)
