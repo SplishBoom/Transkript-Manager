@@ -89,7 +89,7 @@ def safe_execute() -> None:
     try :
         TranscriptManager(DEBUG=DEBUG).mainloop()
     except Exception as e:
-        print(colorama.Fore.LIGHTRED_EX, colorama.Back.WHITE, ASCII_LOG["ERROR"], f"An error occured -> {e}", colorama.Fore.RESET)
+        print(colorama.Fore.LIGHTRED_EX, colorama.Back.WHITE, ASCII_LOG["ERROR"], f"An error occured -> {e}", colorama.Fore.RESET, colorama.Back.RESET)
         exit()
 
     if prints_enabled : print(colorama.Fore.LIGHTCYAN_EX, "Application executed successfully", colorama.Fore.RESET)
