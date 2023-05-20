@@ -12,6 +12,15 @@ class ApplicationFrame(ttk.Frame) :
         super().__init__(parent, *args, **kwargs)
 
         self.root = root
+        self.DEBUG = DEBUG
+
+        self.current_user_info_document = self.root.user_info_document
+        self.current_user_data_document = self.root.user_data_document
+
+        print(self.current_user_info_document["student_department"])
+        print(self.current_user_data_document["filtering"])
+
+
 
         self.__load_containers()
 
