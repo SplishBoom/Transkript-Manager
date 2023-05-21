@@ -11,8 +11,19 @@ import  io
 from win32com.client import Dispatch
 import gender_guesser.detector as gender
 import  zipfile
+from googletrans import Translator
 
 GENDER_DETECTOR = gender.Detector(case_sensitive=False)
+
+def translate_text(text:str, source_language:str="en", target_language:str="tr") -> str:
+
+	translator = Translator()
+	
+	try :
+		translation = translator.translate(text, src=source_language, dest=target_language)
+		return translation.text
+	except :
+		raise Exception("Error: Translation failed, LOG: " + source_language + " " + target_language + " " + text)
 
 def get_gif_frame_count(gif_file_path:str) -> int:
 	"""

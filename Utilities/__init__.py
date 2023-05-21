@@ -26,6 +26,7 @@ from Utilities.utils import (
     download_chrome_driver,
     push_dpi,
     get_gender,
+    translate_text,
     
     sort_by,
     filter_by,
@@ -33,6 +34,7 @@ from Utilities.utils import (
     subtract_course,
     update_course,
     calculate_performance
+
 )
 
 from Utilities.safe_run import (
