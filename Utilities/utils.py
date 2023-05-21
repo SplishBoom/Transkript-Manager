@@ -143,8 +143,6 @@ def get_gender(name : str =None, country="turkey") :
 
 		name = re.sub(r"[^a-zA-Z]+", "", name)
 	
-		print(name)
-
 		return GENDER_DETECTOR.get_gender(name=name, country=country)
 	else :
 		return None
@@ -156,19 +154,19 @@ def push_dpi() :
 		windll.shcore.SetProcessDpiAwareness(1)
 	except:
 		pass
-	
-def _validate_inpu_key(key):
+
+def _validate_input_key(key):
 	if key not in ["course_code", "course_name", "course_lang", "course_credit", "course_grade", "course_grade_point"]:
 		raise ValueError("Invalid sort key")
 		
 def sort_by(given_course_list, sort_key, should_reverse=False):
-	_validate_inpu_key(sort_key)
+	_validate_input_key(sort_key)
 	course_list = given_course_list.copy()
 	course_list.sort(key=lambda x: x[sort_key], reverse=should_reverse)
 	return course_list
 
 def filter_by(given_course_list, filter_key, filter_value):
-	_validate_inpu_key(filter_key)
+	_validate_input_key(filter_key)
 	course_list = given_course_list.copy()
 	course_list = list(filter(lambda x: x[filter_key] == filter_value, course_list))
 	return course_list
