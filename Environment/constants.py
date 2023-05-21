@@ -26,6 +26,8 @@ class AssetsDC:
     LOGO_PATH : str
     ICON : str
     GENDERS_PHOTO_PATH : dict
+    LEFT_ARROW_PATH : str
+    RIGHT_ARROW_PATH : str
 
 @dataclass
 class SeleniumDC:
@@ -83,7 +85,9 @@ ASSETS_DC = AssetsDC(
         "mostly_female" : connect_pathes(ASSETS_FOLDER, "user", "mostly_female.png"),
         "mostly_male" : connect_pathes(ASSETS_FOLDER, "user", "mostly_male.png"),
         "unknown" : connect_pathes(ASSETS_FOLDER, "user", "unknown.png"),
-    }
+    },
+    LEFT_ARROW_PATH = connect_pathes(ASSETS_FOLDER, "ui", "left_arrow.png"),
+    RIGHT_ARROW_PATH = connect_pathes(ASSETS_FOLDER, "ui", "right_arrow.png"),
 )
 SELENIUM_DC = SeleniumDC(
     CHROME_DRIVER_PATH = connect_pathes(SOURCES_FOLDER, "chromedriver.exe"),
