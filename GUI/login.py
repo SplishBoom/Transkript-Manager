@@ -45,7 +45,7 @@ class LoginFrame(ttk.Frame) :
             elif self.execution_mode.get() == "offline" :
                 parser = OfflineParser(path_to_file=self.path_to_transcript.get())
                 if not self.DEBUG :
-                    time.sleep(3) # Simulate a long process by fake sleeping for 3 seconds.
+                    time.sleep(2.3) # Simulate a long process by fake sleeping for 3 seconds.
                 else :
                     pass
             data = parser.get_transcript_data()
@@ -91,7 +91,7 @@ class LoginFrame(ttk.Frame) :
         else :
             input_file_path = filedialog.askopenfile(initialdir = self.desktop_path, title = "Select Transcript", filetypes = [('pdf files only', '*.pdf')])
 
-        if input_file_path is not None or input_file_path != "" or input_file_path != " " :
+        if input_file_path is not None and input_file_path != "" and input_file_path != " " :
             self.path_to_transcript.set(input_file_path.name)
             self.name_of_transcript.set(os.path.basename(input_file_path.name))
 
