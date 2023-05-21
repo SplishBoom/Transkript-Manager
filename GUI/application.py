@@ -24,9 +24,6 @@ class ApplicationFrame(ttk.Frame) :
     def __init__(self, parent, root, DEBUG=False, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
-        self.DRIVER(parent, root, DEBUG)
-
-    def DRIVER(self, parent, root, DEBUG):
         self.root = root
         self.parent = parent
         self.DEBUG = DEBUG
@@ -472,7 +469,7 @@ class ApplicationFrame(ttk.Frame) :
         
         self.reset_button.config(text=self._get_text("Resetting"), state="disabled")
         
-        self.DRIVER(self.parent, self.root, self.DEBUG)
+        self.root.restart_application()
     
     def __export(self, *args, **kwargs) :
 

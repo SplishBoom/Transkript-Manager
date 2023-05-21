@@ -52,6 +52,13 @@ class TranscriptManager(tk.Tk) :
         self.application_frame = ApplicationFrame(self.main_container, self, self.DEBUG)
         self.application_frame.grid(row=0, column=0)
 
+    def restart_application(self) :
+        self.application_frame.grid_forget()
+        self.application_frame = None
+
+        self.application_frame = ApplicationFrame(self.main_container, self, self.DEBUG)
+        self.application_frame.grid(row=0, column=0)
+
     def _switch_to_login(self) :
         self.application_frame.grid_forget()
         self.application_frame = None
