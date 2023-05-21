@@ -28,6 +28,16 @@ to_turkish = {
     "No data found for this user" : "Bu kullanıcı için veri bulunamadı",
     "Select Output Folder" : "Çıktı Klasörünü Seçin",
     "Exporting Data" : "Veriler Dışa Aktarılıyor",
+    "Resetting" : "Sıfırlanıyor",
 
-    
+    "Filter Courses" : "Dersleri Filtrele",
+    "Update Course" : "Ders Güncelle",
+    "Add Course" : "Ders Ekle",
+    "Remove Course" : "Ders Kaldır",
+    "Sort by Code" : "Koda Göre Sırala",
+    "Sort by Name" : "İsme Göre Sırala",
+    "Sort by Language" : "Dile Göre Sırala",
+    "Sort by Credit" : "Krediye Göre Sırala",
+    "Sort by Grade" : "Nota Göre Sırala",
+    "Sort by Grade Point" : "Puana Göre Sırala",
 }
