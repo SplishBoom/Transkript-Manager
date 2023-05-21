@@ -5,7 +5,7 @@ from PIL import Image, ImageTk
 from tkinter import filedialog
 import os
 from Environment import ASSETS_DC, SELENIUM_DC, to_turkish, connect_pathes
-from Utilities import get_gender, generate_pdf
+from Utilities import get_gender, generate_pdf, translate_text
 from PIL import Image, ImageTk
 import random
 from tkinter import messagebox
@@ -33,9 +33,9 @@ class ApplicationFrame(ttk.Frame) :
 
         self.__load_containers()
 
-        self.current_user_info_document, self.current_user_data_document = self.root.get_current_data()
-        self.__load_user_info()
-        self.__load_user_data()
+        current_user_info_document, current_user_data_document = self.root.get_current_data()
+        self.__load_user_data(current_user_data_document)
+        self.__load_user_info(current_user_info_document)
 
         if self.parsing_language == "en" :
             self.available_program_modes = ["Achievement Analyzer", "Grade Updater", "Stat Analyzer"]
@@ -57,6 +57,10 @@ class ApplicationFrame(ttk.Frame) :
                 
         current_mode = self.current_program_mode.get()
 
+        # unneccessary at this point.
+        #current_user_info = self.__create_user_info()
+        #current_user_data = self.__create_user_data()
+
         if current_mode == "Achievement Analyzer" or current_mode == "Başari Analizcisi" :
             self.achievement_analyzer_frame.grid_forget()
         elif current_mode == "Grade Updater" or current_mode == "Not Güncelleyici" :
@@ -65,34 +69,20 @@ class ApplicationFrame(ttk.Frame) :
             self.stat_analyzer_frame.grid_forget()
 
         if new_mode == "Achievement Analyzer" or new_mode == "Başari Analizcisi" :
+            self.achievement_analyzer_frame = AchievementAnalyzer(self.program_container, self, self.root, DEBUG=self.DEBUG)
             self.achievement_analyzer_frame.grid(row=0, column=0)
         elif new_mode == "Grade Updater" or new_mode == "Not Güncelleyici" :
             self.grade_updater_frame.grid(row=0, column=0)
         elif new_mode == "Stat Analyzer" or new_mode == "Istatistik Analizcisi" :
+            self.stat_analyzer_frame = StatAnalyzer(self.program_container, self, self.root, DEBUG=self.DEBUG)
             self.stat_analyzer_frame.grid(row=0, column=0)
 
         self.current_program_mode.set(new_mode)
         self.left_program_mode.set(self.available_program_modes[(self.available_program_modes.index(new_mode) - 1) % len(self.available_program_modes)])
         self.right_program_mode.set(self.available_program_modes[(self.available_program_modes.index(new_mode) + 1) % len(self.available_program_modes)])
 
-    def __load_user_info(self) :
-        self.language_of_instruction : str = self.current_user_info_document["language_of_instruction"]
-        self.student_department : str = self.current_user_info_document["student_department"]
-        self.student_faculty : str = self.current_user_info_document["student_faculty"]
-        self.student_name : str = self.current_user_info_document["student_name"]
-        self.student_school_id : str = self.current_user_info_document["student_school_id"]
-        self.student_national_id : str = self.current_user_info_document["_id"]
-        self.student_status : str = self.current_user_info_document["student_status"]
-        self.student_surname : str = self.current_user_info_document["student_surname"]
+    def __load_user_data(self, use_case) :
         
-        self.student_gender = get_gender(name=self.student_name)
-
-    def __load_user_data(self, use_specific=None) :
-        if use_specific is None :
-            use_case = self.current_user_data_document
-        else :
-            use_case = use_specific
-
         self.owner_id : str = use_case["owner_id"]
         self.parsing_type : str = use_case["parsing_type"]
         self.parsing_language : str = use_case["parsing_language"]
@@ -107,8 +97,57 @@ class ApplicationFrame(ttk.Frame) :
         self.subtracted_course_list : list = use_case["subtracted_course_list"]
         self.added_course_list : list = use_case["added_course_list"]
 
-    def update_user_data_from_grade_updater(self, updated_user_data) :
-        self.__load_user_data(use_specific=updated_user_data)
+    def __create_user_data(self) :
+
+        new_document = {
+            "owner_id" : self.owner_id,
+            "parsing_type" : self.parsing_type,
+            "parsing_language" : self.parsing_language,
+            "transcript_manager_date" : self.transcript_manager_date,
+            "transcript_creation_date" : self.transcript_creation_date,
+            "semesters" : self.semesters,
+            "original_course_list" : self.original_course_list,
+            "filtering" : self.filtering,
+            "sorting" : self.sorting,
+            "modified_course_list" : self.modified_course_list,
+            "document_name" : self.document_name,
+            "subtracted_course_list" : self.subtracted_course_list,
+            "added_course_list" : self.added_course_list
+        }
+        return new_document
+
+    def __load_user_info(self, use_case) :
+        
+        self.language_of_instruction : str = use_case["language_of_instruction"]
+        self.student_department : str = use_case["student_department"]
+        self.student_faculty : str = use_case["student_faculty"]
+        self.student_name : str = use_case["student_name"]
+        self.student_school_id : str = use_case["student_school_id"]
+        self.student_national_id : str = use_case["_id"]
+        self.student_status : str = use_case["student_status"]
+        self.student_surname : str = use_case["student_surname"]
+        
+        if self.parsing_language == "tr" :
+            self.student_faculty = translate_text(self.student_faculty)
+            self.student_department = translate_text(self.student_department)
+            self.student_status = translate_text(self.student_status)
+            self.language_of_instruction = translate_text(self.language_of_instruction)
+
+        self.student_gender = get_gender(name=self.student_name)
+
+    def __create_user_info(self) :
+
+        new_document = {
+            "_id" : self.student_national_id,
+            "student_name" : self.student_name,
+            "student_surname" : self.student_surname,
+            "student_school_id" : self.student_school_id,
+            "student_department" : self.student_department,
+            "student_faculty" : self.student_faculty,
+            "student_status" : self.student_status,
+            "language_of_instruction" : self.language_of_instruction
+        }
+        return new_document
 
     def _get_text(self, text) :
         if self.parsing_language == "tr" :
@@ -256,12 +295,17 @@ class ApplicationFrame(ttk.Frame) :
         self.program_container.grid_rowconfigure(0, weight=1)
         self.program_container.grid_columnconfigure(0, weight=1)
 
-        self.grade_updater_frame = GradeUpdater(self.program_container, self, self.root, DEBUG=self.DEBUG, current_user_data_document=self.current_user_data_document)
+        current_user_data = self.__create_user_data()
+
+        self.grade_updater_frame = GradeUpdater(self.program_container, self, self.root, current_user_data, DEBUG=self.DEBUG)
         self.grade_updater_frame.grid(row=0, column=0)
 
-        self.achievement_analyzer_frame = AchievementAnalyzer(self.program_container, self, self.root, DEBUG=self.DEBUG)
-
-        self.stat_analyzer_frame = StatAnalyzer(self.program_container, self, self.root, DEBUG=self.DEBUG)
+        # IF YOU WANT TO, ONLY SHOW ORIGINAL COURSE RESULT INFOS AFFECT TO ANALYZERS, THAN DO THE BELOW AND JUST "GRID" IN SWITCHING
+        #self.achievement_analyzer_frame = AchievementAnalyzer(self.program_container, self, self.root, DEBUG=self.DEBUG)
+        #self.stat_analyzer_frame = StatAnalyzer(self.program_container, self, self.root, DEBUG=self.DEBUG)
+        # IF YOU WANT TO, CHANGES COURSE RESULTS AFFECTS TO ANALYZERS, THAN DO THE BELOW AND "SET & GRID" IN SWITCHING
+        self.achievement_analyzer_frame = None
+        self.stat_analyzer_frame = None
 
     def __load_db_data(self, *args, **kwargs) :
         
@@ -351,7 +395,7 @@ class ApplicationFrame(ttk.Frame) :
              
         self.root.set_current_data(user_data_document=selected_user_data_document)
 
-        self.__load_user_data(use_specific=selected_user_data_document)
+        self.__load_user_data(selected_user_data_document)
 
         self.__reset()
 
@@ -482,9 +526,14 @@ class ApplicationFrame(ttk.Frame) :
         if output_file_folder is not None and output_file_folder != "" and output_file_folder != " " :
             output_file_path = connect_pathes(output_file_folder, self.document_name + ".pdf")
 
+            current_user_info_document = self.__create_user_info()
+            current_user_data_document = self.__create_user_data()
+
+            print(current_user_data_document["modified_course_list"])
+
             generate_pdf(
-                user_info_document = self.current_user_info_document, 
-                user_data_document = self.current_user_data_document, 
+                user_info_document = current_user_info_document, 
+                user_data_document = current_user_data_document, 
                 user_photo_path = self.current_user_photo_path,
                 output_file_path = output_file_path
             )
