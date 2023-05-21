@@ -32,7 +32,7 @@ class TranscriptManager(tk.Tk) :
             self.login_frame = LoginFrame(self.main_container, self, self.DEBUG) 
             self.login_frame.grid(row=0, column=0)
         else :
-            parser = OfflineParser(path_to_file=r"C:\GithubProjects\transkript-manager\Data\emir tr.pdf")
+            parser = OfflineParser(path_to_file=r"C:\GithubProjects\transkript-manager\Data\emir.pdf")
             data = parser.get_transcript_data()
             user_info_document, user_data_document = self.db_client.documentisize(data)
             self.db_client.user_info.push_init(user_info_document)

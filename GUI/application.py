@@ -13,15 +13,20 @@ from tkinter import Toplevel
 from datetime import datetime
 from tkinter import filedialog
 
+from GUI import AchievementAnalyzer, GradeUpdater, StatAnalyzer
 
 class ApplicationFrame(ttk.Frame) :
 
     mef_logo_size = (98, 86)
     student_photo_size = (94, 94)
+    arrow_size = (20, 20)
 
     def __init__(self, parent, root, DEBUG=False, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
+        self.DRIVER(parent, root, DEBUG)
+
+    def DRIVER(self, parent, root, DEBUG):
         self.root = root
         self.parent = parent
         self.DEBUG = DEBUG
@@ -36,11 +41,43 @@ class ApplicationFrame(ttk.Frame) :
         self.__load_user_info()
         self.__load_user_data()
 
-
-
-
+        if self.parsing_language == "en" :
+            self.available_program_modes = ["Achievement Analyzer", "Grade Updater", "Stat Analyzer"]
+            self.left_program_mode = tk.StringVar(value="Achievement Analyzer")
+            self.current_program_mode = tk.StringVar(value="Grade Updater")
+            self.right_program_mode = tk.StringVar(value="Stat Analyzer")
+        else :
+            self.available_program_modes = ["Başari Analizcisi", "Not Güncelleyici", "Istatistik Analizcisi"]
+            self.left_program_mode = tk.StringVar(value="Başari Analizcisi")
+            self.current_program_mode = tk.StringVar(value="Not Güncelleyici")
+            self.right_program_mode = tk.StringVar(value="Istatistik Analizcisi")
+        
         self.__load_user_info_label()
         self.__load_controller()
+        self.__load_program_selection()
+        self.__load_program()
+
+    def _switch_program_mode(self, new_mode) :
+                
+        current_mode = self.current_program_mode.get()
+
+        if current_mode == "Achievement Analyzer" or current_mode == "Başari Analizcisi" :
+            self.achievement_analyzer_frame.grid_forget()
+        elif current_mode == "Grade Updater" or current_mode == "Not Güncelleyici" :
+            self.grade_updater_frame.grid_forget()
+        elif current_mode == "Stat Analyzer" or current_mode == "Istatistik Analizcisi" :
+            self.stat_analyzer_frame.grid_forget()
+
+        if new_mode == "Achievement Analyzer" or new_mode == "Başari Analizcisi" :
+            self.achievement_analyzer_frame.grid(row=0, column=0)
+        elif new_mode == "Grade Updater" or new_mode == "Not Güncelleyici" :
+            self.grade_updater_frame.grid(row=0, column=0)
+        elif new_mode == "Stat Analyzer" or new_mode == "Istatistik Analizcisi" :
+            self.stat_analyzer_frame.grid(row=0, column=0)
+
+        self.current_program_mode.set(new_mode)
+        self.left_program_mode.set(self.available_program_modes[(self.available_program_modes.index(new_mode) - 1) % len(self.available_program_modes)])
+        self.right_program_mode.set(self.available_program_modes[(self.available_program_modes.index(new_mode) + 1) % len(self.available_program_modes)])
 
     def __load_user_info(self) :
         self.language_of_instruction : str = self.current_user_info_document["language_of_instruction"]
@@ -54,20 +91,28 @@ class ApplicationFrame(ttk.Frame) :
         
         self.student_gender = get_gender(name=self.student_name)
 
-    def __load_user_data(self) :
-        self.owner_id : str = self.current_user_data_document["owner_id"]
-        self.parsing_type : str = self.current_user_data_document["parsing_type"]
-        self.parsing_language : str = self.current_user_data_document["parsing_language"]
-        self.transcript_manager_date : str = self.current_user_data_document["transcript_manager_date"]
-        self.transcript_creation_date : str = self.current_user_data_document["transcript_creation_date"]
-        self.semesters : dict = self.current_user_data_document["semesters"]
-        self.original_course_list : list = self.current_user_data_document["original_course_list"]
-        self.filtering : tuple = self.current_user_data_document["filtering"]
-        self.sorting : tuple = self.current_user_data_document["sorting"]
-        self.modified_course_list : list = self.current_user_data_document["modified_course_list"]
-        self.document_name : str = self.current_user_data_document["document_name"]
-        self.subtracted_course_list : list = self.current_user_data_document["subtracted_course_list"]
-        self.added_course_list : list = self.current_user_data_document["added_course_list"]
+    def __load_user_data(self, use_specific=None) :
+        if use_specific is None :
+            use_case = self.current_user_data_document
+        else :
+            use_case = use_specific
+
+        self.owner_id : str = use_case["owner_id"]
+        self.parsing_type : str = use_case["parsing_type"]
+        self.parsing_language : str = use_case["parsing_language"]
+        self.transcript_manager_date : str = use_case["transcript_manager_date"]
+        self.transcript_creation_date : str = use_case["transcript_creation_date"]
+        self.semesters : dict = use_case["semesters"]
+        self.original_course_list : list = use_case["original_course_list"]
+        self.filtering : tuple = use_case["filtering"]
+        self.sorting : tuple = use_case["sorting"]
+        self.modified_course_list : list = use_case["modified_course_list"] or self.original_course_list
+        self.document_name : str = use_case["document_name"]
+        self.subtracted_course_list : list = use_case["subtracted_course_list"]
+        self.added_course_list : list = use_case["added_course_list"]
+
+    def update_user_data_from_grade_updater(self, updated_user_data) :
+        self.__load_user_data(use_specific=updated_user_data)
 
     def _get_text(self, text) :
         if self.parsing_language == "tr" :
@@ -76,6 +121,11 @@ class ApplicationFrame(ttk.Frame) :
             return text
 
     def __load_containers(self) :
+
+        try :
+            self.container.grid_forget()
+        except :
+            pass
 
         self.container = ttk.Frame(self)
         self.container.grid(row=0, column=0)
@@ -109,8 +159,8 @@ class ApplicationFrame(ttk.Frame) :
         mef_logo_label = ttk.Label(self.user_info_label_container, image=self.logo_image)
         mef_logo_label.grid(row=0, column=0, columnspan=4)
 
-        document_name_label = ttk.Label(self.user_info_label_container, text=self.document_name)
-        document_name_label.grid(row=0, column=4, columnspan=4)
+        self.document_name_label = ttk.Label(self.user_info_label_container, text=self.document_name)
+        self.document_name_label.grid(row=0, column=4, columnspan=4)
 
         self.current_user_photo_path = ASSETS_DC.GENDERS_PHOTO_PATH[self.student_gender]
         self.student_photo = ImageTk.PhotoImage(Image.open(self.current_user_photo_path).resize(self.student_photo_size, Image.ANTIALIAS))
@@ -181,8 +231,46 @@ class ApplicationFrame(ttk.Frame) :
         self.export_button = ttk.Button(self.controllers_container, text=self._get_text("Export Data"), command=self.__export)
         self.export_button.grid(row=0, column=5)
 
+    def __load_program_selection(self) :
+
+        self.program_selection_container.grid_rowconfigure((0), weight=1)
+        self.program_selection_container.grid_columnconfigure((0,1,2,3,4), weight=1)
+
+        self.left_arrow_photo_path = ASSETS_DC.LEFT_ARROW_PATH
+        self.left_arrow_image = ImageTk.PhotoImage(Image.open(self.left_arrow_photo_path).resize(self.arrow_size, Image.ANTIALIAS))
+        self.left_arrow_button = ttk.Button(self.program_selection_container, image=self.left_arrow_image, command=lambda : self.__change_mode_index("decrease"))
+        self.left_arrow_button.grid(row=0, column=0)
+
+        self.left_program_info_label = ttk.Label(self.program_selection_container, textvariable=self.left_program_mode, state="disabled")
+        self.left_program_info_label.grid(row=0, column=1)
+
+        self.current_program_info_label = ttk.Label(self.program_selection_container, textvariable=self.current_program_mode)
+        self.current_program_info_label.grid(row=0, column=2)
+
+        self.right_program_info_label = ttk.Label(self.program_selection_container, textvariable=self.right_program_mode, state="disabled")
+        self.right_program_info_label.grid(row=0, column=3)
+
+        self.right_arrow_photo_path = ASSETS_DC.RIGHT_ARROW_PATH
+        self.right_arrow_image = ImageTk.PhotoImage(Image.open(self.right_arrow_photo_path).resize(self.arrow_size, Image.ANTIALIAS))
+        self.right_arrow_button = ttk.Button(self.program_selection_container, image=self.right_arrow_image, command=lambda : self.__change_mode_index("increase"))
+        self.right_arrow_button.grid(row=0, column=4)
+
+    def __load_program(self) :
+
+        self.program_container.grid_rowconfigure(0, weight=1)
+        self.program_container.grid_columnconfigure(0, weight=1)
+
+        self.grade_updater_frame = GradeUpdater(self.program_container, self, self.root, DEBUG=self.DEBUG, current_user_data_document=self.current_user_data_document)
+        self.grade_updater_frame.grid(row=0, column=0)
+
+        self.achievement_analyzer_frame = AchievementAnalyzer(self.program_container, self, self.root, DEBUG=self.DEBUG)
+
+        self.stat_analyzer_frame = StatAnalyzer(self.program_container, self, self.root, DEBUG=self.DEBUG)
+
     def __load_db_data(self, *args, **kwargs) :
         
+        self.load_db_data_button.config(text=self._get_text("Loading Data"), state="disabled")
+
         class DataLoader(Toplevel) :
 
             def __init__(self, master, options, parsing_language) :
@@ -247,6 +335,7 @@ class ApplicationFrame(ttk.Frame) :
 
         if document_list == [] :
             messagebox.showerror(self._get_text("Error"), self._get_text("No data found for this user"))
+            self.load_db_data_button.config(text=self._get_text("Load Data"), state="normal")
             return
 
         available_documents = {}
@@ -259,17 +348,20 @@ class ApplicationFrame(ttk.Frame) :
         selected_option = data_loader.get_selected_option()
 
         if selected_option == "" :
+            self.load_db_data_button.config(text=self._get_text("Load Data"), state="normal")
             return
         
         selected_user_data_document = available_documents[selected_option]
              
         self.root.set_current_data(user_data_document=selected_user_data_document)
 
-        self.load_db_data_button.config(text=self._get_text("Loading Data"), state="disabled")
-        self.after(1000, lambda : self.load_db_data_button.config(text=self._get_text("Load Data"), state="normal"))
-        self.after(2000, self.__reset)
+        self.__load_user_data(use_specific=selected_user_data_document)
+
+        self.__reset()
 
     def __save_db_data(self, *args, **kwargs) :
+
+        self.save_db_data_button.config(text=self._get_text("Saving Data"), state="disabled")
 
         class DataSaver(Toplevel) :
 
@@ -351,6 +443,7 @@ class ApplicationFrame(ttk.Frame) :
         new_document_name = data_saver.get_new_document_name()
 
         if new_document_name == "" :
+            self.save_db_data_button.config(text=self._get_text("Save Data"), state="normal")
             return
         
         self.document_name = new_document_name
@@ -373,16 +466,18 @@ class ApplicationFrame(ttk.Frame) :
 
         self.root.db_client.user_data.push_init(new_user_data_document)
 
-        self.save_db_data_button.config(text=self._get_text("Saving Data"), state="disabled")
-        self.after(1000, lambda : self.save_db_data_button.config(text=self._get_text("Save Data"), state="normal"))
+        self.save_db_data_button.config(text=self._get_text("Save Data"), state="normal")
 
     def __reset(self, *args, **kwargs) :
         
-        self.reset_button.config(text="UPDATE THIS", state="disabled")
-        pass
+        self.reset_button.config(text=self._get_text("Resetting"), state="disabled")
+        
+        self.DRIVER(self.parent, self.root, self.DEBUG)
     
     def __export(self, *args, **kwargs) :
-        
+
+        self.export_button.config(text=self._get_text("Exporting Data"), state="disabled")
+
         if not self.DEBUG :
             output_file_folder = filedialog.askdirectory(initialdir = self.work_dir, title = self._get_text("Select Output Folder"))
         else :
@@ -391,13 +486,33 @@ class ApplicationFrame(ttk.Frame) :
         if output_file_folder is not None and output_file_folder != "" and output_file_folder != " " :
             output_file_path = connect_pathes(output_file_folder, self.document_name + ".pdf")
 
-            self.export_button.config(text=self._get_text("Exporting Data"), state="disabled")
-            self.after(1000, lambda : self.export_button.config(text=self._get_text("Export Data"), state="normal"))
-
             generate_pdf(
                 user_info_document = self.current_user_info_document, 
                 user_data_document = self.current_user_data_document, 
                 user_photo_path = self.current_user_photo_path,
                 output_file_path = output_file_path
             )
+
+        self.export_button.config(text=self._get_text("Export Data"), state="normal")
             
+    def __change_mode_index(self, operation, *args, **kwargs) :
+        
+        current_mode = self.current_program_mode.get()
+        current_modes_index = self.available_program_modes.index(current_mode)
+
+        if operation == "increase" :
+            if current_modes_index == len(self.available_program_modes) - 1 :
+                new_mode_index = 0
+            else :
+                new_mode_index = current_modes_index + 1
+        elif operation == "decrease" :
+            if current_modes_index == 0 :
+                new_mode_index = len(self.available_program_modes) - 1
+            else :
+                new_mode_index = current_modes_index - 1
+        else :
+            raise Exception("Invalid Operation")
+        
+        new_mode = self.available_program_modes[new_mode_index]
+        
+        self._switch_program_mode(new_mode)
