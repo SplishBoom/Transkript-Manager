@@ -72,5 +72,8 @@ class TranscriptManager(tk.Tk) :
         if user_data_document is not None :
             self.user_data_document = user_data_document
 
+    def get_current_data(self) :
+        return self.user_info_document, self.user_data_document
+
     def terminate(self) :
         self.destroy()

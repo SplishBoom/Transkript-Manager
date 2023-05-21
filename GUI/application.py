@@ -33,8 +33,7 @@ class ApplicationFrame(ttk.Frame) :
 
         self.__load_containers()
 
-        self.current_user_info_document = self.root.user_info_document
-        self.current_user_data_document = self.root.user_data_document
+        self.current_user_info_document, self.current_user_data_document = self.root.get_current_data()
         self.__load_user_info()
         self.__load_user_data()
 
