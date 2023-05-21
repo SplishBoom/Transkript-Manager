@@ -13,3 +13,6 @@ from Environment.constants import (
     ASCII_LOG,
     DEBUG
 )
+from Environment.language_hash import (
+    to_turkish,
+)
