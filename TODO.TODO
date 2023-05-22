@@ -1,14 +1,23 @@
 """
 BEGIN
-2. Export
-   2.1. PDF
-3. Interface
-   3.1. GUI
-      3.1.2. Main
-         3.1.2.1. TRMAN
-         3.1.2.2. ACHIEVEMENT_ANALYZER
-         3.1.2.3. ANALITICS
-            3.1.2.3.1. SCHOLARSHIP
-            3.1.2.3.2. SEMESTER INFO
+
+GUI
+   MAIN
+      ADD STYLES
+      TRMAN
+         Grade Updater
+            make sure grade updater's button handlers affects data on application py
+            finish up, Toplevels of functions
+            finish up the course list on canvas
+         Achievement Analyzer
+            create a matplot for given data
+            directly show a matplot for given data inside class
+         Stat Aanalyzer
+            DO SOMETHING
+
+PDF
+   COMPLETE WORKSPACE
+   ENTEGRATE TO APPLICATION_FRAME
+
 END
 """
