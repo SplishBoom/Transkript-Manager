@@ -18,6 +18,9 @@ class GradeUpdater(ttk.Frame) :
         self.__load_containers()
         self.__load_program_buttons()
 
+    def __update_user_data(self) :
+        self.parent.update_user_data(self.__create_user_data())
+
     def __load_user_data(self, use_case) :
         self.owner_id : str = use_case["owner_id"]
         self.parsing_type : str = use_case["parsing_type"]
@@ -32,8 +35,6 @@ class GradeUpdater(ttk.Frame) :
         self.document_name : str = use_case["document_name"]
         self.subtracted_course_list : list = use_case["subtracted_course_list"]
         self.added_course_list : list = use_case["added_course_list"]        
-
-        
 
     def __create_user_data(self) :
 
@@ -110,7 +111,17 @@ class GradeUpdater(ttk.Frame) :
         self.sort_by_grade_point_button.grid(row=1, column=10, columnspan=2)
 
     def __filter(self) :    
-        pass        
+        
+        self.filtering = self.filtering or []
+
+        self.filtering.append(
+            {
+                "filter_key" : "course_grade",
+                "filter_value" : "A",
+            }
+        )
+
+        self.__update_user_data()
 
     def __update_course(self) :
         pass

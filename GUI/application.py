@@ -80,6 +80,10 @@ class ApplicationFrame(ttk.Frame) :
         self.left_program_mode.set(self.available_program_modes[(self.available_program_modes.index(new_mode) - 1) % len(self.available_program_modes)])
         self.right_program_mode.set(self.available_program_modes[(self.available_program_modes.index(new_mode) + 1) % len(self.available_program_modes)])
 
+    def update_user_data(self, new_user_data) :
+
+        self.__load_user_data(new_user_data)
+
     def __load_user_data(self, use_case) :
         
         self.owner_id : str = use_case["owner_id"]
