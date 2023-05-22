@@ -53,7 +53,7 @@ class MongoClient(pymongo.MongoClient):
 			"filtering" : None,
 			"sorting" : None,
 			"modified_course_list" : None,
-			"document_name" : "Transcript Manager",
+			"document_name" : "Untitled Document",
 			"subtracted_course_list" : None,
 			"added_course_list" : None,
 		}

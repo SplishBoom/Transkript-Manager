@@ -3,7 +3,7 @@ from tkinter import ttk
 import os
 from GUI import LoginFrame, ApplicationFrame
 from Utilities import MongoClient, push_dpi, OfflineParser
-from Environment import GUI_DC, ASSETS_DC
+from Environment import GUI_DC, ASSETS_DC, to_turkish
 
 class TranscriptManager(tk.Tk) :
 
@@ -32,11 +32,11 @@ class TranscriptManager(tk.Tk) :
             self.login_frame = LoginFrame(self.main_container, self, self.DEBUG) 
             self.login_frame.grid(row=0, column=0)
         else :
-            parser = OfflineParser(path_to_file=r"C:\GithubProjects\transkript-manager\Data\emir.pdf")
+            parser = OfflineParser(path_to_file=r"C:\GithubProjects\transkript-manager\Data\emircan.pdf")
             data = parser.get_transcript_data()
             user_info_document, user_data_document = self.db_client.documentisize(data)
-            self.db_client.user_info.push_init(user_info_document)
-            self.db_client.user_data.push_init(user_data_document)
+            #self.db_client.user_info.push_init(user_info_document)
+            #self.db_client.user_data.push_init(user_data_document)
             self.set_current_data(user_info_document, user_data_document)
             self.application_frame = ApplicationFrame(self.main_container, self, self.DEBUG)
             self.application_frame.grid(row=0, column=0)
@@ -74,6 +74,12 @@ class TranscriptManager(tk.Tk) :
 
     def get_current_data(self) :
         return self.user_info_document, self.user_data_document
+
+    def get_text(self, text, parsing_language) :
+        if parsing_language == "tr" :
+            return to_turkish[text]
+        else :
+            return text
 
     def terminate(self) :
         self.destroy()

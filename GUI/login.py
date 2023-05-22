@@ -50,8 +50,10 @@ class LoginFrame(ttk.Frame) :
                     pass
             data = parser.get_transcript_data()
             user_info_document, user_data_document = self.root.db_client.documentisize(data)
-            self.root.db_client.user_info.push_init(user_info_document)
-            self.root.db_client.user_data.push_init(user_data_document)
+            
+            # Uncomment the following lines if you want to push the data to the database at each login.
+            #self.root.db_client.user_info.push_init(user_info_document)
+            #self.root.db_client.user_data.push_init(user_data_document)
             self.root.set_current_data(user_info_document, user_data_document)
 
         self.thread = threading.Thread(target=start_parse, daemon=True)
