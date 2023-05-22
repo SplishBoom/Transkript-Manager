@@ -1,10 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter import PhotoImage
 from PIL import Image, ImageTk
 from tkinter import filedialog
 import os
-from Environment import ASSETS_DC, SELENIUM_DC, to_turkish, connect_pathes
+from Environment import ASSETS_DC, SELENIUM_DC, connect_pathes, to_turkish
 from Utilities import get_gender, generate_pdf, translate_text
 from PIL import Image, ImageTk
 import random
@@ -59,7 +58,7 @@ class ApplicationFrame(ttk.Frame) :
 
         # unneccessary at this point.
         #current_user_info = self.__create_user_info()
-        #current_user_data = self.__create_user_data()
+        current_user_data = self.__create_user_data()
 
         if current_mode == "Achievement Analyzer" or current_mode == "Başari Analizcisi" :
             self.achievement_analyzer_frame.grid_forget()
@@ -69,12 +68,12 @@ class ApplicationFrame(ttk.Frame) :
             self.stat_analyzer_frame.grid_forget()
 
         if new_mode == "Achievement Analyzer" or new_mode == "Başari Analizcisi" :
-            self.achievement_analyzer_frame = AchievementAnalyzer(self.program_container, self, self.root, DEBUG=self.DEBUG)
+            self.achievement_analyzer_frame = AchievementAnalyzer(self.program_container, self, self.root, current_user_data, DEBUG=self.DEBUG)
             self.achievement_analyzer_frame.grid(row=0, column=0)
         elif new_mode == "Grade Updater" or new_mode == "Not Güncelleyici" :
             self.grade_updater_frame.grid(row=0, column=0)
         elif new_mode == "Stat Analyzer" or new_mode == "Istatistik Analizcisi" :
-            self.stat_analyzer_frame = StatAnalyzer(self.program_container, self, self.root, DEBUG=self.DEBUG)
+            self.stat_analyzer_frame = StatAnalyzer(self.program_container, self, self.root, current_user_data, DEBUG=self.DEBUG)
             self.stat_analyzer_frame.grid(row=0, column=0)
 
         self.current_program_mode.set(new_mode)
@@ -92,7 +91,7 @@ class ApplicationFrame(ttk.Frame) :
         self.original_course_list : list = use_case["original_course_list"]
         self.filtering : tuple = use_case["filtering"]
         self.sorting : tuple = use_case["sorting"]
-        self.modified_course_list : list = use_case["modified_course_list"] or self.original_course_list
+        self.modified_course_list : list = use_case["modified_course_list"]
         self.document_name : str = use_case["document_name"]
         self.subtracted_course_list : list = use_case["subtracted_course_list"]
         self.added_course_list : list = use_case["added_course_list"]
@@ -132,6 +131,11 @@ class ApplicationFrame(ttk.Frame) :
             self.student_department = translate_text(self.student_department)
             self.student_status = translate_text(self.student_status)
             self.language_of_instruction = translate_text(self.language_of_instruction)
+        if self.parsing_language == "en" :
+            self.student_faculty = translate_text(self.student_faculty, "tr", "en")
+            self.student_department = translate_text(self.student_department, "tr", "en")
+            self.student_status = translate_text(self.student_status, "tr", "en")
+            self.language_of_instruction = translate_text(self.language_of_instruction, "tr", "en")
 
         self.student_gender = get_gender(name=self.student_name)
 
@@ -149,11 +153,8 @@ class ApplicationFrame(ttk.Frame) :
         }
         return new_document
 
-    def _get_text(self, text) :
-        if self.parsing_language == "tr" :
-            return to_turkish[text]
-        else :
-            return text
+    def _get_text(self, text, parsing_language=None) :
+        return self.root.get_text(text, parsing_language or self.parsing_language)
 
     def __load_containers(self) :
 
@@ -363,6 +364,13 @@ class ApplicationFrame(ttk.Frame) :
                 self.cancel_button.grid(row=2, column=1)
 
             def __load(self) :
+
+                selected_option = self.selected_option.get()
+
+                if selected_option == "" :
+                    messagebox.showerror(self._get_text("Error"), self._get_text("Please select a document"))
+                    return
+                
                 self.destroy()
 
             def __clean_exit(self) :
@@ -464,6 +472,10 @@ class ApplicationFrame(ttk.Frame) :
                 if new_document_name in self.existing_document_names :
                     messagebox.showerror(self._get_text("Error"), self._get_text("A document with this name already exists"))
                     return
+                
+                if new_document_name == "Untitled Document" :
+                    messagebox.showerror(self._get_text("Error"), self._get_text("This name is reserved, please enter another name"))
+                    return
 
                 self.destroy()
 
@@ -504,9 +516,16 @@ class ApplicationFrame(ttk.Frame) :
             "added_course_list" : self.added_course_list
         }
 
+        user_info_document = self.__create_user_info()
+
+        self.root.db_client.user_info.push_init(user_info_document)
         self.root.db_client.user_data.push_init(new_user_data_document)
 
+        self.root.set_current_data(user_info_document, new_user_data_document)
+
         self.save_db_data_button.config(text=self._get_text("Save Data"), state="normal")
+
+        self.__reset()
 
     def __reset(self, *args, **kwargs) :
         
@@ -528,8 +547,6 @@ class ApplicationFrame(ttk.Frame) :
 
             current_user_info_document = self.__create_user_info()
             current_user_data_document = self.__create_user_data()
-
-            print(current_user_data_document["modified_course_list"])
 
             generate_pdf(
                 user_info_document = current_user_info_document, 
