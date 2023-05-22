@@ -29,6 +29,8 @@ to_turkish = {
     "Select Output Folder" : "Çıktı Klasörünü Seçin",
     "Exporting Data" : "Veriler Dışa Aktarılıyor",
     "Resetting" : "Sıfırlanıyor",
+    "Please select a document" : "Lütfen bir belge seçin",
+    "This name is reserved, please enter another name" : "Bu isim rezervedir, lütfen başka bir isim girin",
 
     "Filter Courses" : "Dersleri Filtrele",
     "Update Course" : "Ders Güncelle",
