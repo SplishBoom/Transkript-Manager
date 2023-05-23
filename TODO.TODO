@@ -6,7 +6,6 @@ GUI
       ADD STYLES
       TRMAN
          Grade Updater
-            finish up, Toplevels of functions
             finish up the course list on canvas
          Achievement Analyzer
             create a matplot for given data
