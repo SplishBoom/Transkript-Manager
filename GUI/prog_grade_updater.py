@@ -347,42 +347,42 @@ class GradeUpdater(ttk.Frame) :
 
             def create_widgets(self) :
 
-                self.update_course_container = ttk.Frame(self.container)
-                self.update_course_container.grid(row=0, column=0)
+                self.widgets_conainer = ttk.Frame(self.container)
+                self.widgets_conainer.grid(row=0, column=0)
 
-                self.update_course_container.grid_rowconfigure((0, 1, 2), weight=1)
-                self.update_course_container.grid_columnconfigure((0, 1), weight=1)
+                self.widgets_conainer.grid_rowconfigure((0, 1, 2), weight=1)
+                self.widgets_conainer.grid_columnconfigure((0, 1), weight=1)
 
-                self.update_course_course_code_label = ttk.Label(self.update_course_container, text=self._get_text("Select and Update Course"))
-                self.update_course_course_code_label.grid(row=0, column=0, columnspan=2)
+                self.info_label = ttk.Label(self.widgets_conainer, text=self._get_text("Select and Update Course"))
+                self.info_label.grid(row=0, column=0, columnspan=2)
 
-                self.updater_container = ttk.Frame(self.update_course_container)
+                self.updater_container = ttk.Frame(self.widgets_conainer)
                 self.updater_container.grid(row=1, column=0, columnspan=2)
-                self.show_current_updates()
+                self._init_updates()
 
-                self.save_button = ttk.Button(self.update_course_container, text=self._get_text("Apply"), command=self.__save)
+                self.save_button = ttk.Button(self.widgets_conainer, text=self._get_text("Apply"), command=self.__save)
                 self.save_button.grid(row=2, column=0)
 
-                self.cancel_button = ttk.Button(self.update_course_container, text=self._get_text("Cancel"), command=self.__clean_exit)
+                self.cancel_button = ttk.Button(self.widgets_conainer, text=self._get_text("Cancel"), command=self.__clean_exit)
                 self.cancel_button.grid(row=2, column=1)
 
-            def show_current_updates(self) :
+            def _init_updates(self) :
 
                 self.updater_container.grid_rowconfigure((0,1), weight=1)
                 self.updater_container.grid_columnconfigure((0, 1, 2, 3, 4, 5), weight=1)
 
-                self.table_course_code_label = ttk.Label(self.updater_container, text=self._get_text("Course Code"))
-                self.table_course_code_label.grid(row=0, column=0, columnspan=5)
+                self.course_code_label = ttk.Label(self.updater_container, text=self._get_text("Course Code"))
+                self.course_code_label.grid(row=0, column=0, columnspan=5)
 
-                self.update_course_course_code_combobox = ttk.Combobox(self.updater_container, values=self.available_course_codes, state="readonly")
-                self.update_course_course_code_combobox.grid(row=1, column=0, columnspan=5)
+                self.course_code_combobox = ttk.Combobox(self.updater_container, values=self.available_course_codes, state="readonly")
+                self.course_code_combobox.grid(row=1, column=0, columnspan=5)
 
-                self.update_course_course_code_combobox.bind("<<ComboboxSelected>>", self.get_new_course_values)
+                self.course_code_combobox.bind("<<ComboboxSelected>>", self.get_new_course_values)
 
             def get_new_course_values(self, event) :
 
-                self.update_course_course_code_combobox.grid_configure(columnspan=1)
-                self.table_course_code_label.grid_configure(columnspan=1)
+                self.course_code_combobox.grid_configure(columnspan=1)
+                self.course_code_label.grid_configure(columnspan=1)
 
                 self.new_course_name = tk.StringVar()
                 self.new_course_lang = tk.StringVar()
@@ -390,28 +390,28 @@ class GradeUpdater(ttk.Frame) :
                 self.new_course_grade = tk.StringVar()
                 self.new_course_grade_point = tk.StringVar()
 
-                table_course_name_label = ttk.Label(self.updater_container, text=self._get_text("New Course Name"))
-                table_course_name_label.grid(row=0, column=1)
+                course_name_label = ttk.Label(self.updater_container, text=self._get_text("New Course Name"))
+                course_name_label.grid(row=0, column=1)
                 self.new_course_name_entry = ttk.Entry(self.updater_container, textvariable=self.new_course_name)
                 self.new_course_name_entry.grid(row=1, column=1)
 
-                table_course_lang_label = ttk.Label(self.updater_container, text=self._get_text("New Course Language"))
-                table_course_lang_label.grid(row=0, column=2)
+                course_lang_label = ttk.Label(self.updater_container, text=self._get_text("New Course Language"))
+                course_lang_label.grid(row=0, column=2)
                 self.new_course_lang_entry = ttk.Entry(self.updater_container, textvariable=self.new_course_lang)
                 self.new_course_lang_entry.grid(row=1, column=2)
 
-                table_course_credit_label = ttk.Label(self.updater_container, text=self._get_text("New Course Credit"))
-                table_course_credit_label.grid(row=0, column=3)
+                course_credit_label = ttk.Label(self.updater_container, text=self._get_text("New Course Credit"))
+                course_credit_label.grid(row=0, column=3)
                 self.new_course_credit_entry = ttk.Entry(self.updater_container, textvariable=self.new_course_credit)
                 self.new_course_credit_entry.grid(row=1, column=3)
 
-                table_course_grade_label = ttk.Label(self.updater_container, text=self._get_text("New Course Grade"))
-                table_course_grade_label.grid(row=0, column=4)
+                course_grade_label = ttk.Label(self.updater_container, text=self._get_text("New Course Grade"))
+                course_grade_label.grid(row=0, column=4)
                 self.new_course_grade_entry = ttk.Entry(self.updater_container, textvariable=self.new_course_grade)
                 self.new_course_grade_entry.grid(row=1, column=4)
 
-                table_course_grade_point_label = ttk.Label(self.updater_container, text=self._get_text("New Course Grade Point"))
-                table_course_grade_point_label.grid(row=0, column=5)
+                course_grade_point_label = ttk.Label(self.updater_container, text=self._get_text("New Course Grade Point"))
+                course_grade_point_label.grid(row=0, column=5)
                 self.new_course_grade_point_entry = ttk.Entry(self.updater_container, textvariable=self.new_course_grade_point)
                 self.new_course_grade_point_entry.grid(row=1, column=5)
 
@@ -452,7 +452,7 @@ class GradeUpdater(ttk.Frame) :
                     return
 
                 updated_course = {
-                    "course_code" : self.update_course_course_code_combobox.get(),
+                    "course_code" : self.course_code_combobox.get(),
                     "course_name" : self.new_course_name_entry.get(),
                     "course_lang" : self.new_course_lang_entry.get(),
                     "course_credit" : self.new_course_credit_entry.get(),
