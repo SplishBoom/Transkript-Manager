@@ -44,7 +44,7 @@ class SeleniumDC:
     OLEXER_DROP_DOWN_MENU_XPATH : str
     OLEXER_ID_SELECTION_XPATH : str
     OLEXER_TRANSCRIPT_URL : str
-    
+
 @dataclass
 class PackagesDC:
     CHROME_DRIVER_DOWNLOAD_URL : str
@@ -140,4 +140,4 @@ log_style = {
 }
 ASCII_LOG = log_style["CONSOLE"]
 
-DEBUG = False
+DEBUG = True
