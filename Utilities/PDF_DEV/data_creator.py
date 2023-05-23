@@ -4,7 +4,7 @@ from DIRECT_EXECUTION import (
     add_course,
     subtract_course,
     update_course,
-    calculate_gpa
+    calculate_performance
 )
 import json
 
@@ -53,6 +53,7 @@ if __name__ == "__main__" :
         sorting = user_data_document["sorting"]
         modified_course_list = user_data_document["modified_course_list"]
         document_name = user_data_document["document_name"]
+        updated_course_list = user_data_document["updated_course_list"]
         subtracted_course_list = user_data_document["subtracted_course_list"]
         added_course_list = user_data_document["added_course_list"]
 
@@ -69,32 +70,10 @@ if __name__ == "__main__" :
             },
         ]
 
-        sorting = [
-            {
-                "sort_key" : "course_code",
-                "should_reverse" : False,
-            },
-            {
-                "sort_key" : "course_name",
-                "should_reverse" : True,
-            },
-            {
-                "sort_key" : "course_grade",
-                "should_reverse" : True,
-            },
-        ]
-
-        modified_course_list = original_course_list
-        subtracted_course_list = []
-        added_course_list = []
-
-    if True : # EXECUTE
-        
-        for current_filter in filtering :
-            modified_course_list = filter_by(modified_course_list, current_filter["filter_key"], current_filter["filter_value"])
-
-        for current_sort in sorting :
-            modified_course_list = sort_by(modified_course_list, current_sort["sort_key"], current_sort["should_reverse"])
+        sorting = {
+            "sort_key" : "course_grade",
+            "should_reverse" : True,
+        }
 
         courses_to_subtract = [
             {
@@ -134,19 +113,50 @@ if __name__ == "__main__" :
             }
         ]
 
+        courses_to_update = [
+            {
+                "course_code" : "MATH 115",
+                "course_name" : "BAM BAM BİRAM BAM Bİ RAM BAM",
+                "course_lang" : "en",
+                "course_credit" : 2,
+                "course_grade" : "A",
+                "course_grade_point" : 1.0,
+            },
+            {
+                "course_code" : "EE 203",
+                "course_name" : "SERKAN ELEKTALAR KOLTUGUN ALTINDA KALIP BENI ARA",
+                "course_lang" : "ARABIC",
+                "course_credit" : 10,
+                "course_grade" : "F",
+                "course_grade_point" : 99.9,
+            }
+        ]
+    
+    if True : # EXECUTE
+        
+        for current_filter in filtering :
+            modified_course_list = filter_by(modified_course_list, current_filter)
+
+        modified_course_list = sort_by(modified_course_list, sorting)
+
         for current_course in courses_to_subtract :
             modified_course_list = subtract_course(modified_course_list, current_course["course_code"])
             subtracted_course_list.append(current_course)
 
         for current_course in courses_to_add :
-            modified_course_list = add_course(modified_course_list, current_course["course_code"], current_course["course_name"], current_course["course_lang"], current_course["course_credit"], current_course["course_grade"], current_course["course_grade_point"])
+            modified_course_list = add_course(modified_course_list, current_course)
             added_course_list.append(current_course)
+
+        for current_course in courses_to_update :
+            modified_course_list = update_course(modified_course_list, current_course)
+            updated_course_list.append(current_course)
 
     if True : # SAVE DATA
 
         user_data_document["filtering"] = filtering
         user_data_document["sorting"] = sorting
         user_data_document["modified_course_list"] = modified_course_list
+        user_data_document["updated_course_list"] = updated_course_list
         user_data_document["subtracted_course_list"] = subtracted_course_list
         user_data_document["added_course_list"] = added_course_list
 

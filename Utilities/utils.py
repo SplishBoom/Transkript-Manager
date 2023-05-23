@@ -170,7 +170,9 @@ def _validate_input_key(key):
 	if key not in ["course_code", "course_name", "course_lang", "course_credit", "course_grade", "course_grade_point"]:
 		raise ValueError("Invalid sort key")
 		
-def sort_by(given_course_list, sort_key, should_reverse=False):
+def sort_by(given_course_list, sorting):
+	sort_key = sorting["sort_key"]
+	should_reverse = sorting["should_reverse"]
 	if sort_key is None:
 		return given_course_list.copy()
 	_validate_input_key(sort_key)
@@ -178,7 +180,9 @@ def sort_by(given_course_list, sort_key, should_reverse=False):
 	course_list.sort(key=lambda x: x[sort_key], reverse=should_reverse)
 	return course_list
 
-def filter_by(given_course_list, filter_key, filter_value):
+def filter_by(given_course_list, filtering):
+	filter_key = filtering["filter_key"]
+	filter_value = filtering["filter_value"]
 	_validate_input_key(filter_key)
 	course_list = given_course_list.copy()
 	course_list = list(filter(lambda x: x[filter_key] == filter_value, course_list))
@@ -194,11 +198,11 @@ def add_course(given_course_list, course):
 	course_grade_point = course["course_grade_point"]
 
 	course_list = given_course_list.copy()
-	result = filter_by(course_list, "course_code", course_code)
+	result = filter_by(course_list, {"filter_key":"course_code", "filter_value":course_code})
 	n = 1
 	while result:
 		course_code = course_code + " (" + str(n) + ")"
-		result = filter_by(course_list, "course_code", course_code)
+		result = filter_by(course_list, {"filter_key":"course_code", "filter_value":course_code})
 		n += 1
 	new_course ={
 		"course_code": course_code,
@@ -213,7 +217,7 @@ def add_course(given_course_list, course):
 
 def subtract_course(given_course_list, course_code):
 	course_list = given_course_list.copy()
-	result = filter_by(course_list, "course_code", course_code)
+	result = filter_by(course_list, {"filter_key":"course_code", "filter_value":course_code})
 	if not result:
 		return course_list
 	else:
@@ -229,7 +233,7 @@ def update_course(given_course_list, course):
 	course_code = course["course_code"]
 
 	course_list = given_course_list.copy()
-	result = filter_by(course_list, "course_code", course_code)
+	result = filter_by(course_list, {"filter_key":"course_code", "filter_value":course_code})
 	if not result:
 		return course_list
 	else:

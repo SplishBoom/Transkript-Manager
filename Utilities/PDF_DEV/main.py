@@ -1,4 +1,4 @@
-from    DIRECT_EXECUTION import sort_by, filter_by, add_course, subtract_course, update_course, calculate_gpa
+from    DIRECT_EXECUTION import sort_by, filter_by, add_course, subtract_course, update_course, calculate_performance
 from    DIRECT_EXECUTION import translate
 from    abc     import  ABC, abstractmethod
 from    fpdf    import  FPDF
@@ -41,6 +41,11 @@ class RemovedCourses(PdfElements, FPDF):
         pass
 
 class AppliedOperations(PdfElements, FPDF):
+    @staticmethod
+    def write_data(pdf_buffer: FPDF) -> None:
+        pass
+
+class UpdatedCourses(PdfElements, FPDF):
     @staticmethod
     def write_data(pdf_buffer: FPDF) -> None:
         pass
@@ -103,6 +108,7 @@ if __name__ == "__main__":
     sorting = user_data_document["sorting"]
     modified_course_list = user_data_document["modified_course_list"]
     document_name = user_data_document["document_name"]
+    updated_course_list = user_data_document["updated_course_list"]
     subtracted_course_list = user_data_document["subtracted_course_list"]
     added_course_list = user_data_document["added_course_list"]
 ###################################################################DRIVER_CODE
@@ -115,6 +121,7 @@ if __name__ == "__main__":
     AddedCourses.write_data(pdf)
     RemovedCourses.write_data(pdf)
     AppliedOperations.write_data(pdf)
+    UpdatedCourses.write_data(pdf)
     ModifiedCourses.write_data(pdf)
     Footer.write_data(pdf)
 

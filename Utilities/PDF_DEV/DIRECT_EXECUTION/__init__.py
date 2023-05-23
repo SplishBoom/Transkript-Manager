@@ -4,6 +4,6 @@ from DIRECT_EXECUTION.data_ops import (
     add_course,
     subtract_course,
     update_course,
-    calculate_gpa
+    calculate_performance
 )
 from DIRECT_EXECUTION.translator import translate

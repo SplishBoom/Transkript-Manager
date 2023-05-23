@@ -333,10 +333,10 @@ class GradeUpdater(ttk.Frame) :
                 self.modified_course_list = subtract_course(self.modified_course_list, course["course_code"])
             for course in self.updated_course_list :
                 self.modified_course_list = update_course(self.modified_course_list, course)
-            self.modified_course_list = sort_by(self.modified_course_list, self.sorting["sort_key"], self.sorting["should_reverse"])
+            self.modified_course_list = sort_by(self.modified_course_list, self.sorting)
 
         for current_filter in self.filtering :
-            self.modified_course_list = filter_by(self.modified_course_list, current_filter["filter_key"], current_filter["filter_value"])
+            self.modified_course_list = filter_by(self.modified_course_list, current_filter)
 
         self.filter_button.config(text=self._get_text("Filter Courses"), state="normal")
         self.__update_user_data()
