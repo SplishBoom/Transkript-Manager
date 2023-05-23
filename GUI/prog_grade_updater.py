@@ -186,6 +186,7 @@ class GradeUpdater(ttk.Frame) :
 
                 self.widgets_container = ttk.Frame(self.container)
                 self.widgets_container.grid(row=0, column=0)
+                
                 self.widgets_container.grid_rowconfigure((0,1,2), weight=1)
                 self.widgets_container.grid_columnconfigure((0,1), weight=1)
 
@@ -204,12 +205,24 @@ class GradeUpdater(ttk.Frame) :
 
             def _show_current_filters(self) :
 
-                row_count = len(self.current_filtering) + 1 # Filters and add filter part
-
-                self.filter_update_container.grid_rowconfigure(tuple(range(row_count)), weight=1)
+                self.row_count = 1 + len(self.current_filtering) + 1 # -> 1 name, n filters, 1 combobox
+                self.filter_update_container.grid_rowconfigure(tuple(range(self.row_count)), weight=1)
                 self.filter_update_container.grid_columnconfigure((0, 1, 2), weight=1)
 
+                self.filter_key_label = ttk.Label(self.filter_update_container, text=self._get_text("Filter By"))
+                self.filter_value_label = ttk.Label(self.filter_update_container, text=self._get_text("Filter With"))
+                self.operation_label = ttk.Label(self.filter_update_container, text=self._get_text("Operation"))
+
+                if self.current_filtering == [] :
+                    self.filter_key_label.grid(row=0, column=0, columnspan=3)
+                else :
+                    self.filter_key_label.grid(row=0, column=0)
+                    self.filter_value_label.grid(row=0, column=1)
+                    self.operation_label.grid(row=0, column=2)
+
                 for index, current_filter in enumerate(self.current_filtering) :
+
+                    index += 1
 
                     current_filter_key = current_filter["filter_key"]
                     current_filter_value = current_filter["filter_value"]
@@ -223,38 +236,44 @@ class GradeUpdater(ttk.Frame) :
                     current_filter_value_label = ttk.Label(self.filter_update_container, text=current_filter_value)
                     current_filter_value_label.grid(row=index, column=1)
 
-                    current_filter_remove_button = ttk.Button(self.filter_update_container, text=self._get_text("Remove"), command=___WRAPS_remove_filter)
-                    current_filter_remove_button.grid(row=index, column=2)
+                    remove_filter_button = ttk.Button(self.filter_update_container, text=self._get_text("Remove"), command=___WRAPS_remove_filter)
+                    remove_filter_button.grid(row=index, column=2)
 
-                self.add_filter_filter_key_combobox = ttk.Combobox(self.filter_update_container, values=list(available_filterings.keys()), state="readonly")
-                self.add_filter_filter_key_combobox.grid(row=row_count-1, column=0)
+                self.filter_key_combobox = ttk.Combobox(self.filter_update_container, values=list(available_filterings.keys()), state="readonly")
+                self.filter_key_combobox.grid(row=self.row_count-1, column=0)
 
-                self.add_filter_filter_key_combobox.bind("<<ComboboxSelected>>", self.__add_filter_filter_key_combobox_value_changed)
+                self.filter_key_combobox.bind("<<ComboboxSelected>>", self.__load_filter_value_combobox)
 
-            def __add_filter_filter_key_combobox_value_changed(self, event) :
-                self.add_filter_filter_value_combobox = ttk.Combobox(self.filter_update_container, values=available_filterings[self.add_filter_filter_key_combobox.get()], state="readonly")
-                self.add_filter_filter_value_combobox.grid(row=len(self.current_filtering), column=1)
+            def __load_filter_value_combobox(self, event) :
+
+                self.filter_key_label.grid_forget()
+                self.filter_key_label.grid(row=0, column=0)
+                self.filter_value_label.grid(row=0, column=1)
+                self.operation_label.grid(row=0, column=2)
+
+                self.filter_value_combobox = ttk.Combobox(self.filter_update_container, values=available_filterings[self.filter_key_combobox.get()], state="readonly")
+                self.filter_value_combobox.grid(row=self.row_count-1, column=1)
 
                 self.add_filter_button = ttk.Button(self.filter_update_container, text=self._get_text("Add"), command=self.__add_filter)
-                self.add_filter_button.grid(row=len(self.current_filtering), column=2)
+                self.add_filter_button.grid(row=self.row_count-1, column=2)
 
             def __add_filter(self) :
                 
                 # check if the new filter exists
                 for current_filter in self.current_filtering :
-                    if current_filter["filter_key"] == self.add_filter_filter_key_combobox.get() and current_filter["filter_value"] == self.add_filter_filter_value_combobox.get() :
+                    if current_filter["filter_key"] == self.filter_key_combobox.get() and current_filter["filter_value"] == self.filter_value_combobox.get() :
                         messagebox.showerror(self._get_text("Error"), self._get_text("This filter already exists"))
                         return
                     
                 # check if the new filter_key or filter_value is empty
-                if self.add_filter_filter_key_combobox.get() == "" or self.add_filter_filter_value_combobox.get() == "" :
-                    messagebox.showerror(self._get_text("Error"), self._get_text("Please select a filter key and a filter value"))
+                if self.filter_value_combobox.get() == "" :
+                    messagebox.showerror(self._get_text("Error"), self._get_text("Please select a filter value"))
                     return
 
-                self.current_filtering.append({"filter_key" : self.add_filter_filter_key_combobox.get(), "filter_value" : self.add_filter_filter_value_combobox.get()})
+                self.current_filtering.append({"filter_key" : self.filter_key_combobox.get(), "filter_value" : self.filter_value_combobox.get()})
 
-                self.add_filter_filter_key_combobox.destroy()
-                self.add_filter_filter_value_combobox.destroy()
+                self.filter_key_combobox.destroy()
+                self.filter_value_combobox.destroy()
                 self.add_filter_button.destroy()
 
                 self._show_current_filters()
@@ -263,7 +282,7 @@ class GradeUpdater(ttk.Frame) :
                 
                 self.current_filtering.remove(current_filter)
                 self.filter_update_container.destroy()
-                self.filter_update_container = ttk.Frame(self.container)
+                self.filter_update_container = ttk.Frame(self.widgets_container)
                 self.filter_update_container.grid(row=1, column=0, columnspan=2)
                 self._show_current_filters()
 
