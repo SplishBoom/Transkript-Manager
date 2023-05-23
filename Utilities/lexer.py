@@ -294,7 +294,7 @@ class OfflineParser(Parser) :
         student_status = output.pop(0) # student status
 
         splitters = [
-            "Fall Semester", "Spring Semester", "Summer School", "Fall Dönemi", "Spring Dönemi"
+            "Fall Semester", "Spring Semester", "Summer School", "Fall Dönemi", "Spring Dönemi", "Bahar Dönemi", "Güz Dönemi", "Yaz Okulu"
         ]
         founded_semesters = []
         temp = [output.pop(0)]
