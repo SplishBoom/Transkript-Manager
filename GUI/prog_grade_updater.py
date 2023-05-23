@@ -352,7 +352,7 @@ class GradeUpdater(ttk.Frame) :
 
         class CourseUpdater(tk.Toplevel) :
 
-            def __init__(self, master, available_course_codes, parsing_language) :
+            def __init__(self, master, modified_course_list, available_course_codes, parsing_language) :
                 super().__init__(master)
 
                 self.parsing_language = parsing_language
@@ -362,6 +362,7 @@ class GradeUpdater(ttk.Frame) :
 
                 self.result = None
                 self.available_course_codes = available_course_codes
+                self.modified_course_list = modified_course_list
 
                 self.container = ttk.Frame(self)
                 self.container.grid(row=0, column=0)
@@ -422,11 +423,17 @@ class GradeUpdater(ttk.Frame) :
                 self.course_code_combobox.grid_configure(columnspan=1)
                 self.course_code_label.grid_configure(columnspan=1)
 
-                self.new_course_name = tk.StringVar()
-                self.new_course_lang = tk.StringVar()
-                self.new_course_credit = tk.StringVar()
-                self.new_course_grade = tk.StringVar()
-                self.new_course_grade_point = tk.StringVar()
+                course_code = self.course_code_combobox.get()
+                for course in self.modified_course_list :
+                    if course["course_code"] == course_code :
+                        self.selected_course = course
+                        break
+                    
+                self.new_course_name = tk.StringVar(value=self.selected_course["course_name"])
+                self.new_course_lang = tk.StringVar(value=self.selected_course["course_lang"])
+                self.new_course_credit = tk.StringVar(value=self.selected_course["course_credit"])
+                self.new_course_grade = tk.StringVar(value=self.selected_course["course_grade"])
+                self.new_course_grade_point = tk.StringVar(value=self.selected_course["course_grade_point"])
 
                 course_name_label = ttk.Label(self.updater_container, text=self._get_text("New Course Name"))
                 course_name_label.grid(row=0, column=1)
@@ -510,7 +517,7 @@ class GradeUpdater(ttk.Frame) :
                 self.result = self.result
                 self.destroy()
 
-        obj = CourseUpdater(self, available_course_codes, self.parsing_language)
+        obj = CourseUpdater(self, self.modified_course_list, available_course_codes, self.parsing_language)
         result = obj.get_result()
         if result is not None :
             self.updated_course_list.append(result)
