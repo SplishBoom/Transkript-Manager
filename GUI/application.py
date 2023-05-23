@@ -262,7 +262,7 @@ class ApplicationFrame(ttk.Frame) :
         self.exit_button = ttk.Button(self.controllers_container, text=self._get_text("Exit"), command=self.root.terminate)
         self.exit_button.grid(row=0, column=2)
 
-        self.reset_button = ttk.Button(self.controllers_container, text=self._get_text("Reset"), command=self.__reset)
+        self.reset_button = ttk.Button(self.controllers_container, text=self._get_text("Refresh"), command=self.__reset)
         self.reset_button.grid(row=0, column=3)
 
         self.restart_button = ttk.Button(self.controllers_container, text=self._get_text("Restart"), command=self.root._switch_to_login)
@@ -533,7 +533,7 @@ class ApplicationFrame(ttk.Frame) :
 
     def __reset(self, *args, **kwargs) :
         
-        self.reset_button.config(text=self._get_text("Resetting"), state="disabled")
+        self.reset_button.config(text=self._get_text("Refreshing"), state="disabled")
         
         self.root.restart_application()
     
