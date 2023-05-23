@@ -97,6 +97,7 @@ class ApplicationFrame(ttk.Frame) :
         self.sorting : tuple = use_case["sorting"]
         self.modified_course_list : list = use_case["modified_course_list"]
         self.document_name : str = use_case["document_name"]
+        self.updated_course_list : list = use_case["updated_course_list"]
         self.subtracted_course_list : list = use_case["subtracted_course_list"]
         self.added_course_list : list = use_case["added_course_list"]
 
@@ -114,6 +115,7 @@ class ApplicationFrame(ttk.Frame) :
             "sorting" : self.sorting,
             "modified_course_list" : self.modified_course_list,
             "document_name" : self.document_name,
+            "updated_course_list" : self.updated_course_list,
             "subtracted_course_list" : self.subtracted_course_list,
             "added_course_list" : self.added_course_list
         }
@@ -516,6 +518,7 @@ class ApplicationFrame(ttk.Frame) :
             "sorting" : self.sorting,
             "modified_course_list" : self.modified_course_list,
             "document_name" : self.document_name,
+            "updated_course_list" : self.updated_course_list,
             "subtracted_course_list" : self.subtracted_course_list,
             "added_course_list" : self.added_course_list
         }

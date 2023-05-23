@@ -54,6 +54,7 @@ class MongoClient(pymongo.MongoClient):
 			"sorting" : None,
 			"modified_course_list" : None,
 			"document_name" : "Untitled Document",
+			"updated_course_list" : None,
 			"subtracted_course_list" : None,
 			"added_course_list" : None,
 		}

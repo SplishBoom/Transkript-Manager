@@ -6,6 +6,16 @@ from tkinter import Toplevel
 from Environment import ASSETS_DC, to_turkish
 from Utilities import calculate_performance
 
+from Utilities import (
+    filter_by,
+    sort_by,
+    update_course,
+    add_course,
+    subtract_course,
+
+
+)
+
 class GradeUpdater(ttk.Frame) :
 
     def __init__(self, application_container, parent, root, current_user_data, DEBUG=False, *args, **kwargs):
@@ -17,6 +27,7 @@ class GradeUpdater(ttk.Frame) :
         self.DEBUG = DEBUG
         
         self.__load_user_data(current_user_data)
+        self.__update_user_data()
 
         self.__load_containers()
         self.__load_program_buttons()
@@ -36,6 +47,7 @@ class GradeUpdater(ttk.Frame) :
         self.sorting : dict = use_case["sorting"] or {"sort_key" : None, "should_reverse" : None}
         self.modified_course_list : list = use_case["modified_course_list"]  or self.original_course_list.copy()
         self.document_name : str = use_case["document_name"]
+        self.updated_course_list : list = use_case["updated_course_list"] or []
         self.subtracted_course_list : list = use_case["subtracted_course_list"] or []
         self.added_course_list : list = use_case["added_course_list"] or []
 
@@ -64,6 +76,7 @@ class GradeUpdater(ttk.Frame) :
             "sorting" : self.sorting,
             "modified_course_list" : self.modified_course_list,
             "document_name" : self.document_name,
+            "updated_course_list" : self.updated_course_list,
             "subtracted_course_list" : self.subtracted_course_list,
             "added_course_list" : self.added_course_list
         }
@@ -290,6 +303,14 @@ class GradeUpdater(ttk.Frame) :
                 return self.result
 
             def __save(self) :
+
+                try :
+                    if self.filter_value_combobox.get() == "" :
+                        messagebox.showerror(self._get_text("Error"), self._get_text("Please select a filter value"))
+                        return
+                except :
+                    pass
+
                 self.result = self.current_filtering
                 self.destroy()
 
@@ -297,8 +318,25 @@ class GradeUpdater(ttk.Frame) :
                 self.result = self.result
                 self.destroy()
 
+        previous_filter_count = len(self.filtering)
+
         obj = FilterSelecter(self, self.filtering, available_filterings, self.parsing_language)
         self.filtering = obj.get_result()
+
+        current_filter_count = len(self.filtering)
+
+        if current_filter_count < previous_filter_count :
+            self.modified_course_list = self.original_course_list.copy()
+            for course in self.added_course_list :
+                self.modified_course_list = add_course(self.modified_course_list, course)
+            for course in self.subtracted_course_list :
+                self.modified_course_list = subtract_course(self.modified_course_list, course["course_code"])
+            for course in self.updated_course_list :
+                self.modified_course_list = update_course(self.modified_course_list, course)
+            self.modified_course_list = sort_by(self.modified_course_list, self.sorting["sort_key"], self.sorting["should_reverse"])
+
+        for current_filter in self.filtering :
+            self.modified_course_list = filter_by(self.modified_course_list, current_filter["filter_key"], current_filter["filter_value"])
 
         self.filter_button.config(text=self._get_text("Filter Courses"), state="normal")
         self.__update_user_data()
@@ -314,7 +352,7 @@ class GradeUpdater(ttk.Frame) :
 
         class CourseUpdater(tk.Toplevel) :
 
-            def __init__(self, master, current_modified_course_list, available_course_codes, parsing_language) :
+            def __init__(self, master, available_course_codes, parsing_language) :
                 super().__init__(master)
 
                 self.parsing_language = parsing_language
@@ -322,7 +360,7 @@ class GradeUpdater(ttk.Frame) :
                 self.title(self._get_text("Update Course"))
                 self.iconbitmap(ASSETS_DC.ICON)
 
-                self.result = current_modified_course_list.copy()
+                self.result = None
                 self.available_course_codes = available_course_codes
 
                 self.container = ttk.Frame(self)
@@ -417,6 +455,10 @@ class GradeUpdater(ttk.Frame) :
 
             def validate_new_course_data(self) :
 
+                if self.course_code_combobox.get() == "" :
+                    messagebox.showerror(self._get_text("Error"), self._get_text("Please select a course code"))
+                    return False
+
                 if self.new_course_name.get() == "" or self.new_course_lang.get() == "" or self.new_course_credit.get() == "" or self.new_course_grade.get() == "" or self.new_course_grade_point.get() == "" :
                     messagebox.showerror(self._get_text("Error"), self._get_text("Please fill all the fields"))
                     return False
@@ -460,15 +502,7 @@ class GradeUpdater(ttk.Frame) :
                     "course_grade_point" : self.new_course_grade_point_entry.get()
                 }
 
-                update_index = 0
-                for index in range(len(self.result)) :
-                    if self.result[index]["course_code"] == updated_course["course_code"] :
-                        update_index = index
-                        break
-
-                self.result[update_index] = updated_course
-
-                print(updated_course)
+                self.result = updated_course
 
                 self.destroy()
 
@@ -476,8 +510,11 @@ class GradeUpdater(ttk.Frame) :
                 self.result = self.result
                 self.destroy()
 
-        obj = CourseUpdater(self, self.modified_course_list, available_course_codes, self.parsing_language)
-        self.modified_course_list = obj.get_result()
+        obj = CourseUpdater(self, available_course_codes, self.parsing_language)
+        result = obj.get_result()
+        if result is not None :
+            self.updated_course_list.append(result)
+            self.modified_course_list = update_course(self.modified_course_list, result)
 
         self.update_course_button.config(text=self._get_text("Update Course"), state="normal")
         self.__update_user_data()
@@ -498,7 +535,7 @@ class GradeUpdater(ttk.Frame) :
                 self.title(self._get_text("Add Course"))
                 self.iconbitmap(ASSETS_DC.ICON)
 
-                self.result = []
+                self.result = None
                 self.existing_course_codes = existing_course_codes
 
                 self.container = ttk.Frame(self)
@@ -648,7 +685,10 @@ class GradeUpdater(ttk.Frame) :
                 self.destroy()
 
         obj = CourseAdder(self, existing_course_codes, self.parsing_language)
-        self.added_course_list = obj.get_result()
+        result = obj.get_result()
+        if result is not None :
+            self.added_course_list.append(result)
+            self.modified_course_list = add_course(self.modified_course_list, result)
 
         self.add_course_button.config(text=self._get_text("Add Course"), state="normal")
         self.__update_user_data()
@@ -669,7 +709,7 @@ class GradeUpdater(ttk.Frame) :
                 self.title(self._get_text("Remove Course"))
                 self.iconbitmap(ASSETS_DC.ICON)
 
-                self.result = []
+                self.result = None
                 self.existing_course_codes = existing_course_codes
                 self.modified_course_list = modified_course_list
 
@@ -800,7 +840,10 @@ class GradeUpdater(ttk.Frame) :
                 self.destroy()
 
         obj = CourseRemover(self, self.modified_course_list, existing_course_codes, self.parsing_language)
-        self.subtracted_course_list = obj.get_result()
+        result = obj.get_result()
+        if result is not None :
+            self.subtracted_course_list.append(result)
+            self.modified_course_list = subtract_course(self.modified_course_list, result["course_code"])
 
         self.remove_course_button.config(text=self._get_text("Remove Course"), state="normal")
         self.__update_user_data()

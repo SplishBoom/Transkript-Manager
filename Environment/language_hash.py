@@ -79,4 +79,12 @@ to_turkish = {
     "Existing Course Grade" : "Mevcut Ders Notu",
     "Existing Course Grade Point" : "Mevcut Ders Puanı",
     "Please select a course to remove" : "Lütfen kaldırmak için bir ders seçin",
+    "Please select a course code" : "Lütfen bir ders kodu seçin",
+    "Course Code" : "Ders Kodu",
+    "Course Name" : "Ders Adı",
+    "Course Language" : "Ders Dili",
+    "Course Credit" : "Ders Kredisi",
+    "Course Grade" : "Ders Notu",
+    "Course Grade Point" : "Ders Puanı",
+    "New Course Code" : "Yeni Ders Kodu",    
 }
