@@ -163,12 +163,15 @@ class GradeUpdater(ttk.Frame) :
         self.program_output_container.grid_rowconfigure((0,1), weight=1)
         self.program_output_container.grid_columnconfigure((0, 1, 2, 3), weight=1)
         
+        self.modes = ["BOTH", "MODIFIED"]
+        self.output_mode = "BOTH"
+
         self.credits_attempted_output_text = tk.StringVar()
         self.credits_successful_output_text = tk.StringVar()
         self.credits_included_in_gpa_output_text = tk.StringVar()
         self.gpa_output_text = tk.StringVar()
         
-        self.__update_output_label_texts()
+        self.__update_output_label()
         
         self.credits_attempted_info_label = ttk.Label(self.program_output_container, text=self._get_text("Credits Attempted"))
         self.credits_attempted_info_label.grid(row=0, column=0)
@@ -190,17 +193,37 @@ class GradeUpdater(ttk.Frame) :
         self.gpa_output_label = ttk.Label(self.program_output_container, textvariable=self.gpa_output_text)
         self.gpa_output_label.grid(row=1, column=3)
 
+        for widget in self.program_output_container.winfo_children() :
+            widget.bind("<Button-1>", self.__switch_output_mode)
+        self.program_output_container.bind("<Button-1>", self.__switch_output_mode)
 
+    def __switch_output_mode(self, event) :
 
-    def __update_output_label_texts(self) :
+        if self.output_mode == "BOTH" :
+            self.output_mode = "MODIFIED"
+        else :
+            self.output_mode = "BOTH"
 
-        def ___reconfigure(original : tk.StringVar, modified : tk.StringVar) :
+        self.__update_output_label()
+
+    def ___reconfigure_output_text(self, modified : tk.StringVar, original : tk.StringVar = None) :
+        if original is None :
+            return modified.get()
+        else :
             return "{} {} {}".format(original.get(), "\u279C", modified.get())
 
-        self.credits_attempted_output_text.set(___reconfigure(self.original_credits_attempted, self.modified_credits_attempted))
-        self.credits_successful_output_text.set(___reconfigure(self.original_credits_successful, self.modified_credits_successful))
-        self.credits_included_in_gpa_output_text.set(___reconfigure(self.original_credits_included_in_gpa, self.modified_credits_included_in_gpa))
-        self.gpa_output_text.set(___reconfigure(self.original_gpa, self.modified_gpa))
+    def __update_output_label(self) :
+
+        if self.output_mode == "BOTH" :
+            self.credits_attempted_output_text.set(self.___reconfigure_output_text(self.modified_credits_attempted, self.original_credits_attempted))
+            self.credits_successful_output_text.set(self.___reconfigure_output_text(self.modified_credits_successful, self.original_credits_successful))
+            self.credits_included_in_gpa_output_text.set(self.___reconfigure_output_text(self.modified_credits_included_in_gpa, self.original_credits_included_in_gpa))
+            self.gpa_output_text.set(self.___reconfigure_output_text(self.modified_gpa, self.original_gpa))
+        elif self.output_mode == "MODIFIED" :
+            self.credits_attempted_output_text.set(self.___reconfigure_output_text(self.modified_credits_attempted))
+            self.credits_successful_output_text.set(self.___reconfigure_output_text(self.modified_credits_successful))
+            self.credits_included_in_gpa_output_text.set(self.___reconfigure_output_text(self.modified_credits_included_in_gpa))
+            self.gpa_output_text.set(self.___reconfigure_output_text(self.modified_gpa))
 
     def __fix_grade_points(self, course) :
 
@@ -430,7 +453,7 @@ class GradeUpdater(ttk.Frame) :
         self.filter_button.config(text=self._get_text("Filter Courses"), state="normal")
         self.__update_user_data()
         self.__load_output_info()
-        self.__update_output_label_texts()
+        self.__update_output_label()
 
     def __update_course(self) :
         
@@ -648,7 +671,7 @@ class GradeUpdater(ttk.Frame) :
         self.update_course_button.config(text=self._get_text("Update Course"), state="normal")
         self.__update_user_data()
         self.__load_output_info()
-        self.__update_output_label_texts()
+        self.__update_output_label()
 
     def __add_course(self) :
         
@@ -855,7 +878,7 @@ class GradeUpdater(ttk.Frame) :
         self.add_course_button.config(text=self._get_text("Add Course"), state="normal")
         self.__update_user_data()
         self.__load_output_info()
-        self.__update_output_label_texts()
+        self.__update_output_label()
 
     def __remove_course(self) :
         
@@ -1012,7 +1035,7 @@ class GradeUpdater(ttk.Frame) :
         self.remove_course_button.config(text=self._get_text("Remove Course"), state="normal")
         self.__update_user_data()
         self.__load_output_info()
-        self.__update_output_label_texts()
+        self.__update_output_label()
 
     def __sort(self, key) :
         
@@ -1028,4 +1051,4 @@ class GradeUpdater(ttk.Frame) :
         self.modified_course_list = sort_by(self.modified_course_list, self.sorting)
         self.__update_user_data()
         self.__load_output_info()
-        self.__update_output_label_texts()
+        self.__update_output_label()
