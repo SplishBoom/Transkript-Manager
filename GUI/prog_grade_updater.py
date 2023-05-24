@@ -24,11 +24,18 @@ class GradeUpdater(ttk.Frame) :
         self.application_container = application_container
         self.DEBUG = DEBUG
         
+        self.possibleNotations = ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "F", "I", "W", "S"]
+        self.weights = {"A":4.00, "A-":3.70, "B+":3.30, "B":3.00, "B-":2.70, "C+":2.30, "C":2.00, "C-":1.70, "D+":1.30, "D":1.00, "F":0.00}
+        
+
         self.__load_user_data(current_user_data)
+        self.__load_output_info(is_init=True)
         self.__update_user_data()
 
         self.__load_containers()
         self.__load_program_buttons()
+        # self.__load_program_display()
+        self.__load_program_output()
 
     def __update_user_data(self) :
         self.parent.update_user_data(self.__create_user_data())
@@ -49,16 +56,20 @@ class GradeUpdater(ttk.Frame) :
         self.subtracted_course_list : list = use_case["subtracted_course_list"] or []
         self.added_course_list : list = use_case["added_course_list"] or []
 
-        original_performance = calculate_performance(self.original_course_list)
-        self.original_credits_attempted = original_performance["credits_attempted"]
-        self.original_credits_successful = original_performance["credits_successful"]
-        self.original_credits_included_in_gpa = original_performance["credits_included_in_gpa"]
-        self.original_gpa = original_performance["gpa"]
+    def __load_output_info(self, is_init=False) :
+
+        if is_init :
+            original_performance = calculate_performance(self.original_course_list)
+            self.original_credits_attempted = tk.IntVar(value=original_performance["credits_attempted"])
+            self.original_credits_successful = tk.IntVar(value=original_performance["credits_successful"])
+            self.original_credits_included_in_gpa = tk.IntVar(value=original_performance["credits_included_in_gpa"])
+            self.original_gpa = tk.DoubleVar(value=original_performance["gpa"])
+        
         modified_performance = calculate_performance(self.modified_course_list)
-        self.modified_credits_attempted = modified_performance["credits_attempted"]
-        self.modified_credits_successful = modified_performance["credits_successful"]
-        self.modified_credits_included_in_gpa = modified_performance["credits_included_in_gpa"]
-        self.modified_gpa = modified_performance["gpa"]
+        self.modified_credits_attempted = tk.IntVar(value=modified_performance["credits_attempted"])
+        self.modified_credits_successful = tk.IntVar(value=modified_performance["credits_successful"])
+        self.modified_credits_included_in_gpa = tk.IntVar(value=modified_performance["credits_included_in_gpa"])
+        self.modified_gpa = tk.DoubleVar(value=modified_performance["gpa"])
 
     def __create_user_data(self) :
 
@@ -143,6 +154,77 @@ class GradeUpdater(ttk.Frame) :
             "course_grade" : False,
             "course_grade_point" : False
         }
+
+    def __load_program_display(self) :
+        pass
+
+    def __load_program_output(self) :
+        
+        self.program_output_container.grid_rowconfigure((0,1), weight=1)
+        self.program_output_container.grid_columnconfigure((0, 1, 2, 3), weight=1)
+        
+        self.credits_attempted_output_text = tk.StringVar()
+        self.credits_successful_output_text = tk.StringVar()
+        self.credits_included_in_gpa_output_text = tk.StringVar()
+        self.gpa_output_text = tk.StringVar()
+        
+        self.__update_output_label_texts()
+        
+        self.credits_attempted_info_label = ttk.Label(self.program_output_container, text=self._get_text("Credits Attempted"))
+        self.credits_attempted_info_label.grid(row=0, column=0)
+        self.credits_attempted_output_label = ttk.Label(self.program_output_container, textvariable=self.credits_attempted_output_text)
+        self.credits_attempted_output_label.grid(row=1, column=0)
+
+        self.credits_successful_info_label = ttk.Label(self.program_output_container, text=self._get_text("Credits Successful"))
+        self.credits_successful_info_label.grid(row=0, column=1)
+        self.credits_successful_output_label = ttk.Label(self.program_output_container, textvariable=self.credits_successful_output_text)
+        self.credits_successful_output_label.grid(row=1, column=1)
+
+        self.credits_included_in_gpa_info_label = ttk.Label(self.program_output_container, text=self._get_text("Credits Included in GPA"))
+        self.credits_included_in_gpa_info_label.grid(row=0, column=2)
+        self.credits_included_in_gpa_output_label = ttk.Label(self.program_output_container, textvariable=self.credits_included_in_gpa_output_text)
+        self.credits_included_in_gpa_output_label.grid(row=1, column=2)
+
+        self.gpa_info_label = ttk.Label(self.program_output_container, text=self._get_text("GPA"))
+        self.gpa_info_label.grid(row=0, column=3)
+        self.gpa_output_label = ttk.Label(self.program_output_container, textvariable=self.gpa_output_text)
+        self.gpa_output_label.grid(row=1, column=3)
+
+
+
+    def __update_output_label_texts(self) :
+
+        def ___reconfigure(original : tk.StringVar, modified : tk.StringVar) :
+            return "{} {} {}".format(original.get(), "\u279C", modified.get())
+
+        self.credits_attempted_output_text.set(___reconfigure(self.original_credits_attempted, self.modified_credits_attempted))
+        self.credits_successful_output_text.set(___reconfigure(self.original_credits_successful, self.modified_credits_successful))
+        self.credits_included_in_gpa_output_text.set(___reconfigure(self.original_credits_included_in_gpa, self.modified_credits_included_in_gpa))
+        self.gpa_output_text.set(___reconfigure(self.original_gpa, self.modified_gpa))
+
+    def __fix_grade_points(self, course) :
+
+        try :
+            course_credit = int(course["course_credit"])
+            course_grade = course["course_grade"]
+            course_grade_point = round(float(course["course_grade_point"]),2)
+        except ValueError :
+            course_credit = 0
+            course_grade = "NA"
+            course_grade_point = 0.0
+
+        try :
+            weigth = self.weights[course_grade]
+        except KeyError :
+            weigth = 0
+
+        correct_grade_point = round(course_credit * weigth, 2)
+
+        if course_grade_point != correct_grade_point :
+            course["course_grade_point"] = correct_grade_point
+            print("Fixed grade point for course {} from {} to {}".format(course["course_code"], course_grade_point, correct_grade_point))
+
+        return course
 
     def __filter(self) :    
         
@@ -347,6 +429,8 @@ class GradeUpdater(ttk.Frame) :
 
         self.filter_button.config(text=self._get_text("Filter Courses"), state="normal")
         self.__update_user_data()
+        self.__load_output_info()
+        self.__update_output_label_texts()
 
     def __update_course(self) :
         
@@ -359,7 +443,7 @@ class GradeUpdater(ttk.Frame) :
 
         class CourseUpdater(tk.Toplevel) :
 
-            def __init__(self, master, modified_course_list, available_course_codes, parsing_language) :
+            def __init__(self, master, modified_course_list, available_course_codes, parsing_language, possibleNotations, weights) :
                 super().__init__(master)
 
                 self.parsing_language = parsing_language
@@ -370,6 +454,8 @@ class GradeUpdater(ttk.Frame) :
                 self.result = None
                 self.available_course_codes = available_course_codes
                 self.modified_course_list = modified_course_list
+                self.possibleNotations = possibleNotations
+                self.weights = weights
 
                 self.container = ttk.Frame(self)
                 self.container.grid(row=0, column=0)
@@ -464,8 +550,34 @@ class GradeUpdater(ttk.Frame) :
 
                 course_grade_point_label = ttk.Label(self.updater_container, text=self._get_text("New Course Grade Point"))
                 course_grade_point_label.grid(row=0, column=5)
-                self.new_course_grade_point_entry = ttk.Entry(self.updater_container, textvariable=self.new_course_grade_point)
+                self.new_course_grade_point_entry = ttk.Entry(self.updater_container, textvariable=self.new_course_grade_point, state="disabled")
                 self.new_course_grade_point_entry.grid(row=1, column=5)
+
+                self.new_course_credit.trace_add("write", self.calculate_new_course_grade_point)
+                self.new_course_grade.trace_add("write", self.calculate_new_course_grade_point)
+
+            def calculate_new_course_grade_point(self, *args) :
+
+                try :
+                    credit = self.new_course_credit.get()
+                    if credit == "" :
+                        return
+                    else :
+                        credit = int(credit)
+                    grade = self.new_course_grade.get().upper()
+                except :
+                    return
+                
+                if (credit < 0 or credit > 7) or grade not in self.possibleNotations :
+                    return
+                
+                self.new_course_grade.set(grade)
+
+                weight = self.weights[grade]
+
+                grade_point = credit * weight
+
+                self.new_course_grade_point.set(str(grade_point))
 
             def validate_new_course_data(self) :
 
@@ -477,13 +589,16 @@ class GradeUpdater(ttk.Frame) :
                     messagebox.showerror(self._get_text("Error"), self._get_text("Please fill all the fields"))
                     return False
                                                 
-                if self.new_course_grade.get().upper() not in ["A", "A-", "B+", "B-", "C+", "C-", "D+", "D-", "F", "W", "I", "U", "S", "N/A"] :
+                if self.new_course_grade.get().upper() not in self.possibleNotations :
                     messagebox.showerror(self._get_text("Error"), self._get_text("Invalid grade"))
                     return False
                 
                 try :
                     pump = self.new_course_credit.get()
                     pump = int(pump)
+                    if pump < 0 or pump > 7 :
+                        messagebox.showerror(self._get_text("Error"), self._get_text("New Credit must be between 0 and 7"))
+                        return False
                 except :
                     messagebox.showerror(self._get_text("Error"), self._get_text("New Credit must be an integer"))
                     return False
@@ -524,7 +639,7 @@ class GradeUpdater(ttk.Frame) :
                 self.result = self.result
                 self.destroy()
 
-        obj = CourseUpdater(self, self.modified_course_list, available_course_codes, self.parsing_language)
+        obj = CourseUpdater(self, self.modified_course_list, available_course_codes, self.parsing_language, self.possibleNotations, self.weights)
         result = obj.get_result()
         if result is not None :
             self.updated_course_list.append(result)
@@ -532,6 +647,8 @@ class GradeUpdater(ttk.Frame) :
 
         self.update_course_button.config(text=self._get_text("Update Course"), state="normal")
         self.__update_user_data()
+        self.__load_output_info()
+        self.__update_output_label_texts()
 
     def __add_course(self) :
         
@@ -541,7 +658,7 @@ class GradeUpdater(ttk.Frame) :
 
         class CourseAdder(tk.Toplevel) :
 
-            def __init__(self, master, existing_course_codes, parsing_language) :
+            def __init__(self, master, existing_course_codes, parsing_language, possibleNotations, weights) :
                 super().__init__(master)
 
                 self.parsing_language = parsing_language
@@ -551,6 +668,8 @@ class GradeUpdater(ttk.Frame) :
 
                 self.result = None
                 self.existing_course_codes = existing_course_codes
+                self.possibleNotations = possibleNotations 
+                self.weights = weights
 
                 self.container = ttk.Frame(self)
                 self.container.grid(row=0, column=0)
@@ -638,8 +757,34 @@ class GradeUpdater(ttk.Frame) :
                 self.new_course_grade_entry = ttk.Entry(self.adderer_container, textvariable=self.new_course_grade)
                 self.new_course_grade_entry.grid(row=1, column=4)
 
-                self.new_course_grade_point_entry = ttk.Entry(self.adderer_container, textvariable=self.new_course_grade_point)
+                self.new_course_grade_point_entry = ttk.Entry(self.adderer_container, textvariable=self.new_course_grade_point, state="disabled")
                 self.new_course_grade_point_entry.grid(row=1, column=5)
+
+                self.new_course_credit.trace_add("write", self.calculate_new_course_grade_point)
+                self.new_course_grade.trace_add("write", self.calculate_new_course_grade_point)
+
+            def calculate_new_course_grade_point(self, *args) :
+
+                try :
+                    credit = self.new_course_credit.get()
+                    if credit == "" :
+                        return
+                    else :
+                        credit = int(credit)
+                    grade = self.new_course_grade.get().upper()
+                except :
+                    return
+                
+                if (credit < 0 or credit > 7) or grade not in self.possibleNotations :
+                    return
+                
+                self.new_course_grade.set(grade)
+
+                weight = self.weights[grade]
+
+                grade_point = credit * weight
+
+                self.new_course_grade_point.set(str(grade_point))
 
             def validate_new_course_data(self) :
 
@@ -647,13 +792,16 @@ class GradeUpdater(ttk.Frame) :
                     messagebox.showerror(self._get_text("Error"), self._get_text("Please fill all the fields"))
                     return False
                                                 
-                if self.new_course_grade.get().upper() not in ["A", "A-", "B+", "B-", "C+", "C-", "D+", "D-", "F", "W", "I", "U", "S", "N/A"] :
+                if self.new_course_grade.get().upper() not in self.possibleNotations :
                     messagebox.showerror(self._get_text("Error"), self._get_text("Invalid grade"))
                     return False
                 
                 try :
                     pump = self.new_course_credit.get()
                     pump = int(pump)
+                    if pump < 0 or pump > 7 :
+                        messagebox.showerror(self._get_text("Error"), self._get_text("New Credit must be between 0 and 7"))
+                        return False
                 except :
                     messagebox.showerror(self._get_text("Error"), self._get_text("New Credit must be an integer"))
                     return False
@@ -698,7 +846,7 @@ class GradeUpdater(ttk.Frame) :
                 self.result = self.result
                 self.destroy()
 
-        obj = CourseAdder(self, existing_course_codes, self.parsing_language)
+        obj = CourseAdder(self, existing_course_codes, self.parsing_language, self.possibleNotations, self.weights)
         result = obj.get_result()
         if result is not None :
             self.added_course_list.append(result)
@@ -706,6 +854,8 @@ class GradeUpdater(ttk.Frame) :
 
         self.add_course_button.config(text=self._get_text("Add Course"), state="normal")
         self.__update_user_data()
+        self.__load_output_info()
+        self.__update_output_label_texts()
 
     def __remove_course(self) :
         
@@ -861,6 +1011,8 @@ class GradeUpdater(ttk.Frame) :
 
         self.remove_course_button.config(text=self._get_text("Remove Course"), state="normal")
         self.__update_user_data()
+        self.__load_output_info()
+        self.__update_output_label_texts()
 
     def __sort(self, key) :
         
@@ -875,3 +1027,5 @@ class GradeUpdater(ttk.Frame) :
 
         self.modified_course_list = sort_by(self.modified_course_list, self.sorting)
         self.__update_user_data()
+        self.__load_output_info()
+        self.__update_output_label_texts()

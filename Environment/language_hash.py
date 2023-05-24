@@ -86,5 +86,11 @@ to_turkish = {
     "Course Credit" : "Ders Kredisi",
     "Course Grade" : "Ders Notu",
     "Course Grade Point" : "Ders Puanı",
-    "New Course Code" : "Yeni Ders Kodu",    
+    "New Course Code" : "Yeni Ders Kodu",
+    "New Credit must be between 0 and 7" : "Yeni Kredi 0 ile 7 arasında olmalıdır",
+
+    "Credits Attempted" : "Denenen Krediler",
+    "Credits Successful" : "Başarılı Krediler",
+    "Credits Included in GPA" : "GPA'ya Dahil Krediler",
+    "GPA" : "GPA",
 }
