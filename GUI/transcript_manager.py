@@ -9,7 +9,7 @@ class TranscriptManager(tk.Tk) :
 
     def __init__(self, DEBUG=False, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        
+
         self.DEBUG = DEBUG
 
         if not self.DEBUG :
