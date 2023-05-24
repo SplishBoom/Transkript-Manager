@@ -241,7 +241,7 @@ def update_course(given_course_list, course):
 		course_list = add_course(course_list, course)
 		return course_list
 
-def calculate_performance(course_list):
+def calculate_performance(course_list, skip_retakens=False):
 	"""
 	This function calculates the GPA based on the given course list.
 	"""
@@ -252,6 +252,11 @@ def calculate_performance(course_list):
 	gpa = 0
 
 	for course in course_list:
+
+		if skip_retakens:
+			if course["course_code"].endswith("*"):
+				continue
+
 		course_credit : int = int(course["course_credit"])
 		course_grade : str = course["course_grade"]
 		course_grade_point : float = float(course["course_grade_point"])
