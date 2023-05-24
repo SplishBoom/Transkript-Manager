@@ -12,8 +12,6 @@ from Utilities import (
     update_course,
     add_course,
     subtract_course,
-
-
 )
 
 class GradeUpdater(ttk.Frame) :
@@ -119,23 +117,32 @@ class GradeUpdater(ttk.Frame) :
         self.remove_course_button = ttk.Button(self.program_buttons_container, text=self._get_text("Remove Course"), command=self.__remove_course)
         self.remove_course_button.grid(row=0, column=9, columnspan=3)
 
-        self.sort_by_code_button = ttk.Button(self.program_buttons_container, text=self._get_text("Sort by Code"), command=lambda : self.__sort("code"))
+        self.sort_by_code_button = ttk.Button(self.program_buttons_container, text=self._get_text("Sort by Code"), command=lambda : self.__sort("course_code"))
         self.sort_by_code_button.grid(row=1, column=0, columnspan=2)
 
-        self.sort_by_name_button = ttk.Button(self.program_buttons_container, text=self._get_text("Sort by Name"), command=lambda : self.__sort("name"))
+        self.sort_by_name_button = ttk.Button(self.program_buttons_container, text=self._get_text("Sort by Name"), command=lambda : self.__sort("course_name"))
         self.sort_by_name_button.grid(row=1, column=2, columnspan=2)
 
-        self.sort_by_language_button = ttk.Button(self.program_buttons_container, text=self._get_text("Sort by Language"), command=lambda : self.__sort("language"))
+        self.sort_by_language_button = ttk.Button(self.program_buttons_container, text=self._get_text("Sort by Language"), command=lambda : self.__sort("course_lang"))
         self.sort_by_language_button.grid(row=1, column=4, columnspan=2)
 
-        self.sort_by_credit_button = ttk.Button(self.program_buttons_container, text=self._get_text("Sort by Credit"), command=lambda : self.__sort("credit"))
+        self.sort_by_credit_button = ttk.Button(self.program_buttons_container, text=self._get_text("Sort by Credit"), command=lambda : self.__sort("course_credit"))
         self.sort_by_credit_button.grid(row=1, column=6, columnspan=2)
 
-        self.sort_by_grade_button = ttk.Button(self.program_buttons_container, text=self._get_text("Sort by Grade"), command=lambda : self.__sort("grade"))
+        self.sort_by_grade_button = ttk.Button(self.program_buttons_container, text=self._get_text("Sort by Grade"), command=lambda : self.__sort("course_grade"))
         self.sort_by_grade_button.grid(row=1, column=8, columnspan=2)
 
-        self.sort_by_grade_point_button = ttk.Button(self.program_buttons_container, text=self._get_text("Sort by Grade Point"), command=lambda : self.__sort("grade_point"))
+        self.sort_by_grade_point_button = ttk.Button(self.program_buttons_container, text=self._get_text("Sort by Grade Point"), command=lambda : self.__sort("course_grade_point"))
         self.sort_by_grade_point_button.grid(row=1, column=10, columnspan=2)
+
+        self.sorting_reverse_history = {
+            "course_code" : False,
+            "course_name" : False,
+            "course_lang" : False,
+            "course_credit" : False,
+            "course_grade" : False,
+            "course_grade_point" : False
+        }
 
     def __filter(self) :    
         
@@ -856,4 +863,15 @@ class GradeUpdater(ttk.Frame) :
         self.__update_user_data()
 
     def __sort(self, key) :
-        pass
+        
+        sort_key = key
+        should_reverse = self.sorting_reverse_history[sort_key]
+        self.sorting_reverse_history[sort_key] = not should_reverse
+
+        self.sorting = {
+            "sort_key" : sort_key,
+            "should_reverse" : should_reverse
+        }
+
+        self.modified_course_list = sort_by(self.modified_course_list, self.sorting)
+        self.__update_user_data()
