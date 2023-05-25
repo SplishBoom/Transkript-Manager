@@ -5,8 +5,6 @@ GUI
    MAIN
       ADD STYLES
       TRMAN
-         Grade Updater
-            finish up the course list on canvas
          Achievement Analyzer
             create a matplot for given data
             directly show a matplot for given data inside class
