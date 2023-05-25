@@ -177,7 +177,10 @@ def sort_by(given_course_list, sorting):
 		return given_course_list.copy()
 	_validate_input_key(sort_key)
 	course_list = given_course_list.copy()
-	course_list.sort(key=lambda x: x[sort_key], reverse=should_reverse)
+	if sort_key == "course_grade_point":
+		course_list.sort(key=lambda x: float(x[sort_key]), reverse=should_reverse)
+	else :
+		course_list.sort(key=lambda x: x[sort_key], reverse=should_reverse)
 	return course_list
 
 def filter_by(given_course_list, filtering):
