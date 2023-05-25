@@ -177,11 +177,7 @@ def sort_by(given_course_list, sorting):
 		return given_course_list.copy()
 	_validate_input_key(sort_key)
 	course_list = given_course_list.copy()
-	try :
-		course_list.sort(key=lambda x: x[sort_key], reverse=should_reverse)
-	except :
-		# sorting by grade point which is float
-		course_list.sort(key=lambda x: str(float(x[sort_key])), reverse=should_reverse)
+	course_list.sort(key=lambda x: x[sort_key], reverse=should_reverse)
 	return course_list
 
 def filter_by(given_course_list, filtering):
@@ -241,8 +237,9 @@ def update_course(given_course_list, course):
 	if not result:
 		return course_list
 	else:
-		course_list = list(filter(lambda x: x["course_code"] != course_code, course_list))
-		course_list = add_course(course_list, course)
+		index_of_course = course_list.index(result[0])
+		course_list.pop(index_of_course)
+		course_list.insert(index_of_course, course)
 		return course_list
 
 def calculate_performance(course_list, skip_retakens=False):
