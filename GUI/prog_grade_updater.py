@@ -4,9 +4,9 @@ from tkinter import messagebox
 
 from tkinter import Toplevel
 from Environment import ASSETS_DC, to_turkish
-from Utilities import calculate_performance
 
 from Utilities import (
+    calculate_performance,
     filter_by,
     sort_by,
     update_course,
@@ -27,7 +27,6 @@ class GradeUpdater(ttk.Frame) :
         self.possibleNotations = ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "F", "I", "W", "S"]
         self.weights = {"A":4.00, "A-":3.70, "B+":3.30, "B":3.00, "B-":2.70, "C+":2.30, "C":2.00, "C-":1.70, "D+":1.30, "D":1.00, "F":0.00}
         
-
         self.__load_user_data(current_user_data)
         self.__load_output_info(is_init=True)
         self.__update_user_data()
@@ -157,117 +156,43 @@ class GradeUpdater(ttk.Frame) :
 
     def __load_program_display(self) :
         
-        self.program_display_container.grid_rowconfigure((0,1), weight=1)
         self.program_display_container.grid_columnconfigure((0), weight=1)
-        
-        self.column_name_container = ttk.Frame(self.program_display_container)
-        self.column_name_container.grid(row=0, column=0)
-        self.add_table_column_names()
+        self.program_display_container.grid_rowconfigure((0), weight=1)
 
-        self.table_elements_container = ttk.Frame(self.program_display_container)
-        self.table_elements_container.grid(row=1, column=0)
-        self.setup_display()
+        self.display_treeview = ttk.Treeview(self.program_display_container, height=15, show="headings", selectmode="browse")
+        self.display_treeview.grid(row=0, column=0)
+
+        # set columns
+        self.display_treeview["columns"] = ("_code", "_name", "_canguage", "_credit", "_crade", "_crade_point")
+
+        # set headings
+        self.display_treeview.heading("_code", text="Course Code")
+        self.display_treeview.heading("_name", text="Course Name")
+        self.display_treeview.heading("_canguage", text="Course Language")
+        self.display_treeview.heading("_credit", text="Course Credit")
+        self.display_treeview.heading("_crade", text="Course Grade")
+        self.display_treeview.heading("_crade_point", text="Course Grade Point")
+
+        # when headings are clicked, it will be sorted
+        self.display_treeview.column("_code", anchor="center", width=120)
+        self.display_treeview.column("_name", anchor="center", width=120)
+        self.display_treeview.column("_canguage", anchor="center", width=120)
+        self.display_treeview.column("_credit", anchor="center", width=120)
+        self.display_treeview.column("_crade", anchor="center", width=120)
+        self.display_treeview.column("_crade_point", anchor="center", width=120)
+
+        # add data
         self.__update_program_display()
 
-    def add_table_column_names(self) :
-
-        self.column_name_container.grid_columnconfigure((0,1,2,3,4,5), weight=1)
-        self.column_name_container.grid_rowconfigure(0, weight=1)
-
-        course_code_label = ttk.Label(self.column_name_container, text=self._get_text("Course Code"))
-        course_code_label.grid(row=0, column=0)
-
-        course_name_label = ttk.Label(self.column_name_container, text=self._get_text("Course Name"))
-        course_name_label.grid(row=0, column=1)
-
-        course_lang_label = ttk.Label(self.column_name_container, text=self._get_text("Course Language"))
-        course_lang_label.grid(row=0, column=2)
-
-        course_credit_label = ttk.Label(self.column_name_container, text=self._get_text("Course Credit"))
-        course_credit_label.grid(row=0, column=3)
-
-        course_grade_label = ttk.Label(self.column_name_container, text=self._get_text("Course Grade"))
-        course_grade_label.grid(row=0, column=4)
-
-        course_grade_point_label = ttk.Label(self.column_name_container, text=self._get_text("Course Grade Point"))
-        course_grade_point_label.grid(row=0, column=5)
-
-    def setup_display(self):
-        
-        self.table_elements_container.grid_columnconfigure(0, weight=1)
-        self.table_elements_container.grid_rowconfigure(0, weight=1)
-
-        self.canvas = tk.Canvas(self.table_elements_container, width=750, height=500)
-        self.scrollbar = ttk.Scrollbar(self.table_elements_container, orient="vertical", command=self.canvas.yview)
-        self.scrollable_frame = ttk.Frame(self.canvas)
-
-        self.root.bind("<MouseWheel>", self._on_mousewheel)
-        self.scrollable_frame.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
-
-        self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw")
-        self.canvas.configure(yscrollcommand=self.scrollbar.set)
-
-        self.canvas.grid(row=0, column=0, sticky="NSEW")
-        self.scrollbar.grid(row=0, column=1, sticky="NS")
-
-        self.scrollable_frame.winfo_toplevel()
-
-    def _on_mousewheel(self, event) : self.canvas.yview_scroll(int(-1*(event.delta/120)), "units")
-
     def __update_program_display(self) :
-        
-        try :
-            for widget in self.scrollable_frame.winfo_children() :
-                widget.destroy()
-        except :
-            pass
-        
-        number_of_courses = len(self.modified_course_list)
-        self.scrollable_frame.grid_rowconfigure(tuple(range(number_of_courses)), weight=1)
-        self.scrollable_frame.grid_columnconfigure((0,1,2,3,4,5), weight=1)
 
-        updated_course_codes = [course["course_code"] for course in self.updated_course_list]
-        added_course_codes = [course["course_code"] for course in self.added_course_list]
+        # clear all data
+        self.display_treeview.delete(*self.display_treeview.get_children())
 
-        for row_index, course in enumerate(self.modified_course_list) :
-
-            course_code = course["course_code"]
-            course_name = course["course_name"]
-            course_lang = course["course_lang"]
-            course_credit = course["course_credit"]
-            course_grade = course["course_grade"]
-            course_grade_point = course["course_grade_point"]
-        
-            if course_code in updated_course_codes :
-                pass
-            if course_code in added_course_codes :
-                pass
-
-            course_code_label = ttk.Label(self.scrollable_frame, text=course_code)
-            course_code_label.grid(row=row_index, column=0)
-
-            course_name_label = ttk.Label(self.scrollable_frame, text=course_name)
-            course_name_label.grid(row=row_index, column=1)
-
-            course_lang_label = ttk.Label(self.scrollable_frame, text=course_lang)
-            course_lang_label.grid(row=row_index, column=2)
-
-            course_credit_label = ttk.Label(self.scrollable_frame, text=course_credit)
-            course_credit_label.grid(row=row_index, column=3)
-
-            course_grade_combobox = ttk.Combobox(self.scrollable_frame, values=self.possibleNotations, state="readonly")
-            course_grade_combobox.set(course_grade)
-            course_grade_combobox.grid(row=row_index, column=4)
-
-            course_grade_point_label = ttk.Label(self.scrollable_frame, text=course_grade_point)
-            course_grade_point_label.grid(row=row_index, column=5)
-
-            def wrapper(_course, _course_grade_combobox) :
-                self.__update_grade(_course, _course_grade_combobox.get())
-
-            course_grade_combobox.bind("<<ComboboxSelected>>", lambda event, course=course, new_grade=course_grade_combobox : wrapper(course, new_grade))
-            
-
+        # add data
+        for course in self.modified_course_list :
+            self.display_treeview.insert("", "end", values=(course["course_code"], course["course_name"], course["course_lang"], course["course_credit"], course["course_grade"], course["course_grade_point"]))
+    
     def __load_program_output(self) :
         
         self.program_output_container.grid_rowconfigure((0,1), weight=1)
@@ -316,47 +241,24 @@ class GradeUpdater(ttk.Frame) :
 
         self.__update_output_label()
 
-    def ___reconfigure_output_text(self, modified : tk.StringVar, original : tk.StringVar = None) :
-        if original is None :
-            return modified.get()
-        else :
-            return "{} {} {}".format(original.get(), "\u279C", modified.get())
-
     def __update_output_label(self) :
 
+        def ____reconfigure_output_text(modified : tk.StringVar, original : tk.StringVar = None) :
+            if original is None :
+                return modified.get()
+            else :
+                return "{} {} {}".format(original.get(), "\u279C", modified.get())
+            
         if self.output_mode == "BOTH" :
-            self.credits_attempted_output_text.set(self.___reconfigure_output_text(self.modified_credits_attempted, self.original_credits_attempted))
-            self.credits_successful_output_text.set(self.___reconfigure_output_text(self.modified_credits_successful, self.original_credits_successful))
-            self.credits_included_in_gpa_output_text.set(self.___reconfigure_output_text(self.modified_credits_included_in_gpa, self.original_credits_included_in_gpa))
-            self.gpa_output_text.set(self.___reconfigure_output_text(self.modified_gpa, self.original_gpa))
+            self.credits_attempted_output_text.set(____reconfigure_output_text(self.modified_credits_attempted, self.original_credits_attempted))
+            self.credits_successful_output_text.set(____reconfigure_output_text(self.modified_credits_successful, self.original_credits_successful))
+            self.credits_included_in_gpa_output_text.set(____reconfigure_output_text(self.modified_credits_included_in_gpa, self.original_credits_included_in_gpa))
+            self.gpa_output_text.set(____reconfigure_output_text(self.modified_gpa, self.original_gpa))
         elif self.output_mode == "MODIFIED" :
-            self.credits_attempted_output_text.set(self.___reconfigure_output_text(self.modified_credits_attempted))
-            self.credits_successful_output_text.set(self.___reconfigure_output_text(self.modified_credits_successful))
-            self.credits_included_in_gpa_output_text.set(self.___reconfigure_output_text(self.modified_credits_included_in_gpa))
-            self.gpa_output_text.set(self.___reconfigure_output_text(self.modified_gpa))
-
-    def __fix_grade_points(self, course) :
-
-        try :
-            course_credit = int(course["course_credit"])
-            course_grade = course["course_grade"]
-            course_grade_point = round(float(course["course_grade_point"]),2)
-        except ValueError :
-            course_credit = 0
-            course_grade = "NA"
-            course_grade_point = 0.0
-
-        try :
-            weigth = self.weights[course_grade]
-        except KeyError :
-            weigth = 0
-
-        correct_grade_point = round(course_credit * weigth, 2)
-
-        if course_grade_point != correct_grade_point :
-            course["course_grade_point"] = correct_grade_point
-
-        return course
+            self.credits_attempted_output_text.set(____reconfigure_output_text(self.modified_credits_attempted))
+            self.credits_successful_output_text.set(____reconfigure_output_text(self.modified_credits_successful))
+            self.credits_included_in_gpa_output_text.set(____reconfigure_output_text(self.modified_credits_included_in_gpa))
+            self.gpa_output_text.set(____reconfigure_output_text(self.modified_gpa))
 
     def __filter(self) :    
         
@@ -567,6 +469,11 @@ class GradeUpdater(ttk.Frame) :
 
     def __update_course(self) :
         
+        try :
+            selected_course_code = self.display_treeview.item(self.display_treeview.selection())["values"][0]
+        except :
+            selected_course_code = None
+
         self.update_course_button.config(text=self._get_text("Updating"), state="disabled")
 
         available_course_codes = []
@@ -576,7 +483,7 @@ class GradeUpdater(ttk.Frame) :
 
         class CourseUpdater(tk.Toplevel) :
 
-            def __init__(self, master, modified_course_list, available_course_codes, parsing_language, possibleNotations, weights) :
+            def __init__(self, master, modified_course_list, available_course_codes, parsing_language, possibleNotations, weights, selected_course_code) :
                 super().__init__(master)
 
                 self.parsing_language = parsing_language
@@ -589,6 +496,7 @@ class GradeUpdater(ttk.Frame) :
                 self.modified_course_list = modified_course_list
                 self.possibleNotations = possibleNotations
                 self.weights = weights
+                self.selected_course_code = selected_course_code
 
                 self.container = ttk.Frame(self)
                 self.container.grid(row=0, column=0)
@@ -643,7 +551,11 @@ class GradeUpdater(ttk.Frame) :
                 self.course_code_combobox.grid(row=1, column=0, columnspan=5)
 
                 self.course_code_combobox.bind("<<ComboboxSelected>>", self.get_new_course_values)
-
+                
+                if self.selected_course_code != None :
+                    self.course_code_combobox.set(self.selected_course_code)
+                    self.get_new_course_values(None)
+                    
             def get_new_course_values(self, event) :
 
                 self.course_code_combobox.grid_configure(columnspan=1)
@@ -772,23 +684,13 @@ class GradeUpdater(ttk.Frame) :
                 self.result = self.result
                 self.destroy()
 
-        obj = CourseUpdater(self, self.modified_course_list, available_course_codes, self.parsing_language, self.possibleNotations, self.weights)
+        obj = CourseUpdater(self, self.modified_course_list, available_course_codes, self.parsing_language, self.possibleNotations, self.weights, selected_course_code)
         result = obj.get_result()
         if result is not None :
             self.updated_course_list.append(result)
             self.modified_course_list = update_course(self.modified_course_list, result)
 
         self.update_course_button.config(text=self._get_text("Update Course"), state="normal")
-        self.__update_user_data()
-        self.__load_output_info()
-        self.__update_output_label()
-        self.__update_program_display()
-
-    def __update_grade(self, course, new_grade) :
-
-        course["course_grade"] = new_grade
-        course = self.__fix_grade_points(course)
-        self.modified_course_list = update_course(self.modified_course_list, course)
         self.__update_user_data()
         self.__load_output_info()
         self.__update_output_label()
@@ -1004,13 +906,18 @@ class GradeUpdater(ttk.Frame) :
 
     def __remove_course(self) :
         
+        try :
+            selected_course_code = self.display_treeview.item(self.display_treeview.selection())["values"][0]
+        except :
+            selected_course_code = None
+
         self.remove_course_button.config(text=self._get_text("Removing"), state="disabled")
 
         existing_course_codes = [course["course_code"] for course in self.modified_course_list]
 
         class CourseRemover(tk.Toplevel) :
 
-            def __init__(self, master, modified_course_list, existing_course_codes, parsing_language) :
+            def __init__(self, master, modified_course_list, existing_course_codes, parsing_language, selected_course_code) :
                 super().__init__(master)
 
                 self.parsing_language = parsing_language
@@ -1021,6 +928,7 @@ class GradeUpdater(ttk.Frame) :
                 self.result = None
                 self.existing_course_codes = existing_course_codes
                 self.modified_course_list = modified_course_list
+                self.selected_course_code = selected_course_code
 
                 self.container = ttk.Frame(self)
                 self.container.grid(row=0, column=0)
@@ -1075,6 +983,10 @@ class GradeUpdater(ttk.Frame) :
                 self.select_course_course_code_combobox.grid(row=1, column=0, columnspan=5)
 
                 self.select_course_course_code_combobox.bind("<<ComboboxSelected>>", self.show_course_items)
+
+                if self.selected_course_code is not None :
+                    self.select_course_course_code_combobox.set(self.selected_course_code)
+                    self.show_course_items(None)
                 
             def show_course_items(self, event) :
 
@@ -1148,7 +1060,7 @@ class GradeUpdater(ttk.Frame) :
                 self.result = self.result
                 self.destroy()
 
-        obj = CourseRemover(self, self.modified_course_list, existing_course_codes, self.parsing_language)
+        obj = CourseRemover(self, self.modified_course_list, existing_course_codes, self.parsing_language, selected_course_code)
         result = obj.get_result()
         if result is not None :
             self.subtracted_course_list.append(result)
