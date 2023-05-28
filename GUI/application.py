@@ -2,9 +2,10 @@ import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
 from tkinter import filedialog
+from tkinter import PhotoImage
 import os
 from Environment import ASSETS_DC, SELENIUM_DC, connect_pathes, to_turkish
-from Utilities import get_gender, generate_pdf, translate_text
+from Utilities import UserVerifier, get_gender, generate_pdf, translate_text, authenticate, get_gif_frame_count
 from rembg import remove as remove_background
 import threading
 import random
@@ -12,6 +13,7 @@ from tkinter import messagebox
 from tkinter import Toplevel
 from datetime import datetime
 from tkinter import filedialog
+import threading
 
 from GUI import AchievementAnalyzer, GradeUpdater, StatAnalyzer
 
@@ -36,6 +38,7 @@ class ApplicationFrame(ttk.Frame) :
         current_user_info_document, current_user_data_document = self.root.get_current_data()
         self.__load_user_data(current_user_data_document)
         self.__load_user_info(current_user_info_document)
+        self.__update_user_authitication()
 
         if self.parsing_language == "en" :
             self.available_program_modes = ["Achievement Analyzer", "Grade Updater", "Stat Analyzer"]
@@ -52,6 +55,13 @@ class ApplicationFrame(ttk.Frame) :
         self.__load_controller()
         self.__load_program_selection()
         self.__load_program()
+
+    def __update_user_authitication(self) :
+
+        if self.parsing_type == "offline" :
+            self.is_user_authenticated = False
+        else :
+            self.is_user_authenticated = True
 
     def _switch_program_mode(self, new_mode) :
                 
@@ -342,6 +352,12 @@ class ApplicationFrame(ttk.Frame) :
         
         self.load_db_data_button.config(text=self._get_text("Loading Data"), state="disabled")
 
+        self.__check_authentication()
+
+        if not self.is_user_authenticated :
+            self.load_db_data_button.config(text=self._get_text("Load Data"), state="enabled")
+            return
+
         class DataLoader(Toplevel) :
 
             def __init__(self, master, options, parsing_language) :
@@ -440,6 +456,12 @@ class ApplicationFrame(ttk.Frame) :
     def __save_db_data(self, *args, **kwargs) :
 
         self.save_db_data_button.config(text=self._get_text("Saving Data"), state="disabled")
+
+        self.__check_authentication()
+
+        if not self.is_user_authenticated :
+            self.save_db_data_button.config(text=self._get_text("Save Data"), state="enabled")
+            return
 
         class DataSaver(Toplevel) :
 
@@ -609,3 +631,144 @@ class ApplicationFrame(ttk.Frame) :
         new_mode = self.available_program_modes[new_mode_index]
         
         self._switch_program_mode(new_mode)
+
+    def __check_authentication(self) :
+
+        if self.is_user_authenticated == True :
+            return True
+
+        class Verifier(tk.Toplevel) :
+
+            def __init__(self, master, match_id, parsing_language) :
+                super().__init__(master)
+
+                self.parsing_language = parsing_language
+
+                self.title(self._get_text("Unauthorized Access Verification"))
+                self.iconbitmap(ASSETS_DC.ICON)
+
+                self.match_id = match_id
+                self.result = False
+
+                self.container = ttk.Frame(self)
+                self.container.grid(row=0, column=0)
+
+                self.protocol("WM_DELETE_WINDOW", self.__clean_exit)
+
+                self.container.grid_rowconfigure((0), weight=1)
+                self.container.grid_columnconfigure((0), weight=1)
+
+                self.create_widgets()
+
+                self.grab_set()
+                self.focus_set()
+                self.wait_window()
+
+            def create_widgets(self) :
+
+                self.widgets_container = ttk.Frame(self.container)
+                self.widgets_container.grid(row=0, column=0)
+
+                self.widgets_container.grid_rowconfigure((0, 1, 2, 3), weight=1)
+                self.widgets_container.grid_columnconfigure((0, 1), weight=1)
+
+                self.info_label = ttk.Label(self.widgets_container, text=self._get_text("Enter your credentials to authorize"))
+                self.info_label.grid(row=0, column=0, columnspan=2)
+
+                self.login_container = ttk.Frame(self.widgets_container)
+                self.login_container.grid(row=1, column=0, columnspan=2)
+                self.__init_login()
+
+                self.login_button = ttk.Button(self.widgets_container, text=self._get_text("Apply"), command=self.__login)
+                self.login_button.grid(row=2, column=0)
+
+                self.cancel_button = ttk.Button(self.widgets_container, text=self._get_text("Cancel"), command=self.__clean_exit)
+                self.cancel_button.grid(row=2, column=1)
+
+                self.gif_frame_count = get_gif_frame_count(ASSETS_DC.LOADING_ANIMATION_PATH)
+                self.gif_frames = [PhotoImage(file=ASSETS_DC.LOADING_ANIMATION_PATH, format = 'gif -index %i' %(i)) for i in range(self.gif_frame_count)]
+                self.output_loading_label = ttk.Label(self.widgets_container)
+                
+            def __start_loading_animation(self) :
+                self.output_loading_label.grid(row=3, column=0, columnspan=2)
+                self.animation_id = self.after(0, self.__animate_loading, 0)
+
+            def __animate_loading(self, frame_index) :
+                if not self.thread.is_alive() :
+                    self.after(0, self.__stop_loading_animation)
+                    return
+                if frame_index == self.gif_frame_count :
+                    frame_index = 0
+                self.current_frame = self.gif_frames[frame_index]
+                self.output_loading_label.configure(image=self.current_frame)
+                self.animation_id = self.after(20, self.__animate_loading, frame_index + 1)
+                
+            def __stop_loading_animation(self) :
+                self.after_cancel(self.animation_id)
+                self.output_loading_label.grid_remove()
+                self.__clean_exit()
+            
+            def __init_login(self) :
+
+                self.login_container.grid_rowconfigure((0, 1), weight=1)
+                self.login_container.grid_columnconfigure((0, 1), weight=1)
+
+                self.username_label = ttk.Label(self.login_container, text=self._get_text("Username"))
+                self.username_label.grid(row=0, column=0)
+                self.username_entry = ttk.Entry(self.login_container)
+                self.username_entry.grid(row=0, column=1)
+
+                self.password_label = ttk.Label(self.login_container, text=self._get_text("Password"))
+                self.password_label.grid(row=1, column=0)
+                self.password_entry = ttk.Entry(self.login_container, show="*")
+                self.password_entry.grid(row=1, column=1)
+
+            def __load_thread(self) :
+
+                def start_auth() :
+                    
+                    verifier = UserVerifier(username=self.username_entry.get(), password=self.password_entry.get(), match_id=self.match_id)
+                    self.result = verifier.verify_user()
+
+                self.thread = threading.Thread(target=start_auth, daemon=True)
+                self.thread.start()
+
+            def __login(self) :
+
+                self.login_button.config(text=self._get_text("Processing"), state="disabled")
+
+                username = self.username_entry.get()
+                password = self.password_entry.get()
+
+                if username == "" or password == "" :
+                    messagebox.showerror(self._get_text("Error"), self._get_text("Username or Password is Empty"))
+                    self.login_button.config(text=self._get_text("Login"), state="normal")
+                    return
+                
+                auth = authenticate(username, password)
+
+                if auth == False :
+                    messagebox.showerror(self._get_text("Error"), self._get_text("Username or Password is Incorrect"))
+                    self.login_button.config(text=self._get_text("Login"), state="normal")
+                    return
+                
+                self.__start_loading_animation()
+                self.__load_thread()
+
+            def _get_text(self, text) :
+                if self.parsing_language == "tr" :
+                    return to_turkish[text]
+                else :
+                    return text
+            
+            def __clean_exit(self) :
+                self.result = self.result
+                self.destroy()
+            
+            def get_result(self) :
+                return self.result
+
+        obj = Verifier(self, self.student_school_id, self.parsing_language)
+        result = obj.get_result()
+
+        self.is_user_authenticated = result

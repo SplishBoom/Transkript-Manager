@@ -98,4 +98,12 @@ to_turkish = {
     "Credit" : "Kredi",
     "Grade" : "Not",
     "Grade Point" : "Puan",
+
+    "Unauthorized Access Verification" : "Yetkisiz Erişim Doğrulaması",
+
+    "Username" : "Kullanıcı Adı",
+    "Password" : "Şifre",
+    "Login" : "Giriş",
+    "Enter your credentials to authorize" : "Yetkilendirmek için kimlik bilgilerinizi girin",
+    "Login to Authorize :" : "Yetkilendirmek için Giriş Yap :",
 }

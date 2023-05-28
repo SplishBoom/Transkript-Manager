@@ -41,6 +41,7 @@ class SeleniumDC:
     OLEXER_USER_PHOTO_LABEL_XPATH : str
     OLEXER_SOURCE_ATTRIBUTE_TAGS : list
     OLEXER_PROFILE_SELECTION_XPATH : str
+    OLEXER_STUDENT_INFO_XPATH : str
     OLEXER_DROP_DOWN_MENU_XPATH : str
     OLEXER_ID_SELECTION_XPATH : str
     OLEXER_TRANSCRIPT_URL : str
@@ -100,6 +101,7 @@ SELENIUM_DC = SeleniumDC(
     OLEXER_USER_PHOTO_LABEL_XPATH = "/html/body/div[2]/div/div[3]/ul/li/a/img",
     OLEXER_SOURCE_ATTRIBUTE_TAGS = ["src", "text", "table"],
     OLEXER_PROFILE_SELECTION_XPATH = "/html/body/div[2]/div/div[3]/ul/li",
+    OLEXER_STUDENT_INFO_XPATH = "/html/body/div[2]/div/div[3]/ul/li/ul/li[1]/a",
     OLEXER_DROP_DOWN_MENU_XPATH = "/html/body/div[2]/div/div[3]/ul/li/ul",
     OLEXER_ID_SELECTION_XPATH = "//*[@id=\"yetkiDegistir\"]/div/ul",
     OLEXER_TRANSCRIPT_URL = "https://sis.mef.edu.tr/ogrenciler/belge/transkript"
