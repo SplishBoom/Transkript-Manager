@@ -213,63 +213,66 @@ class ApplicationFrame(ttk.Frame) :
 
             threading.Thread(target=job).start()
 
-        self.user_info_label_container.grid_rowconfigure((0,1,2,3,4), weight=1)
+        self.user_info_label_container.grid_rowconfigure((0,1,2,3,4,5), weight=1)
         self.user_info_label_container.grid_columnconfigure((0,1,2,3,4,5,6,7,8,9,10,11), weight=1)
 
         self.logo_image = ImageTk.PhotoImage(Image.open(ASSETS_DC.LOGO_PATH).resize(self.mef_logo_size, Image.ANTIALIAS))
         mef_logo_label = ttk.Label(self.user_info_label_container, image=self.logo_image)
-        mef_logo_label.grid(row=0, column=0, columnspan=4)
+        mef_logo_label.grid(row=0, column=0, columnspan=4, rowspan=2)
 
         self.document_name_label = ttk.Label(self.user_info_label_container, text=self.document_name)
         self.document_name_label.grid(row=0, column=4, columnspan=4)
 
+        self.document_date_label = ttk.Label(self.user_info_label_container, text=self.transcript_creation_date)
+        self.document_date_label.grid(row=1, column=4, columnspan=4)
+
         self.current_user_photo_path = ASSETS_DC.GENDERS_PHOTO_PATH[self.student_gender]
         self.student_photo = ImageTk.PhotoImage(Image.open(self.current_user_photo_path).resize(self.student_photo_size, Image.ANTIALIAS))
         self.student_photo_label = ttk.Label(self.user_info_label_container, image=self.student_photo)
-        self.student_photo_label.grid(row=0, column=8, columnspan=4)
+        self.student_photo_label.grid(row=0, column=8, columnspan=4, rowspan=2)
         self.student_photo_label.bind("<Button-1>", ___change_user_photo)
         if os.path.exists(SELENIUM_DC.USER_PHOTO_OUTPUT_PATH) :
             __load_original_photo()
 
         student_id_label = ttk.Label(self.user_info_label_container, text=self._get_text("Student ID"))
-        student_id_label.grid(row=1, column=0, columnspan=3)
+        student_id_label.grid(row=2, column=0, columnspan=3)
         student_id_label_value = ttk.Label(self.user_info_label_container, text=self.student_school_id)
-        student_id_label_value.grid(row=1, column=3, columnspan=3)
+        student_id_label_value.grid(row=2, column=3, columnspan=3)
 
         national_id_label = ttk.Label(self.user_info_label_container, text=self._get_text("National ID"))
-        national_id_label.grid(row=1, column=6, columnspan=3)
+        national_id_label.grid(row=2, column=6, columnspan=3)
         national_id_label_value = ttk.Label(self.user_info_label_container, text=self.student_national_id)
-        national_id_label_value.grid(row=1, column=9, columnspan=3)
+        national_id_label_value.grid(row=2, column=9, columnspan=3)
 
         student_name_label = ttk.Label(self.user_info_label_container, text=self._get_text("Name"))
-        student_name_label.grid(row=2, column=0, columnspan=3)
+        student_name_label.grid(row=3, column=0, columnspan=3)
         student_name_label_value = ttk.Label(self.user_info_label_container, text=self.student_name)
-        student_name_label_value.grid(row=2, column=3, columnspan=3)
+        student_name_label_value.grid(row=3, column=3, columnspan=3)
 
         student_surname_label = ttk.Label(self.user_info_label_container, text=self._get_text("Surname"))
-        student_surname_label.grid(row=2, column=6, columnspan=3)
+        student_surname_label.grid(row=3, column=6, columnspan=3)
         student_surname_label_value = ttk.Label(self.user_info_label_container, text=self.student_surname)
-        student_surname_label_value.grid(row=2, column=9, columnspan=3)
+        student_surname_label_value.grid(row=3, column=9, columnspan=3)
 
         faculty_department_label = ttk.Label(self.user_info_label_container, text=self._get_text("Faculty / Department"))
-        faculty_department_label.grid(row=3, column=0, columnspan=3)
+        faculty_department_label.grid(row=4, column=0, columnspan=3)
         faculty_department_label_value = ttk.Label(self.user_info_label_container, text=self.student_faculty)
-        faculty_department_label_value.grid(row=3, column=3, columnspan=3)
+        faculty_department_label_value.grid(row=4, column=3, columnspan=3)
 
         program_name_label = ttk.Label(self.user_info_label_container, text=self._get_text("Program Name"))
-        program_name_label.grid(row=3, column=6, columnspan=3)
+        program_name_label.grid(row=4, column=6, columnspan=3)
         program_name_label_value = ttk.Label(self.user_info_label_container, text=self.student_department)
-        program_name_label_value.grid(row=3, column=9, columnspan=3)
+        program_name_label_value.grid(row=4, column=9, columnspan=3)
 
         language_of_instruction_label = ttk.Label(self.user_info_label_container, text=self._get_text("Language of Instruction"))
-        language_of_instruction_label.grid(row=4, column=0, columnspan=3)
+        language_of_instruction_label.grid(row=5, column=0, columnspan=3)
         language_of_instruction_label_value = ttk.Label(self.user_info_label_container, text=self.language_of_instruction)
-        language_of_instruction_label_value.grid(row=4, column=3, columnspan=3)
+        language_of_instruction_label_value.grid(row=5, column=3, columnspan=3)
 
         student_status_label = ttk.Label(self.user_info_label_container, text=self._get_text("Student Status"))
-        student_status_label.grid(row=4, column=6, columnspan=3)
+        student_status_label.grid(row=5, column=6, columnspan=3)
         student_status_label_value = ttk.Label(self.user_info_label_container, text=self.student_status)
-        student_status_label_value.grid(row=4, column=9, columnspan=3)
+        student_status_label_value.grid(row=5, column=9, columnspan=3)
 
     def __load_controller(self) :
 
