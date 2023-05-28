@@ -188,7 +188,10 @@ def filter_by(given_course_list, filtering):
 	filter_value = filtering["filter_value"]
 	_validate_input_key(filter_key)
 	course_list = given_course_list.copy()
-	course_list = list(filter(lambda x: x[filter_key] == filter_value, course_list))
+	if filter_key == "course_grade_point":
+		course_list = list(filter(lambda x: float(x[filter_key]) == float(filter_value), course_list))
+	else :
+		course_list = list(filter(lambda x: x[filter_key] == filter_value, course_list))
 	return course_list
 
 def add_course(given_course_list, course):
