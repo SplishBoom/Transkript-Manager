@@ -38,6 +38,11 @@ class TranscriptManager(tk.Tk) :
             #self.db_client.user_info.push_init(user_info_document)
             #self.db_client.user_data.push_init(user_data_document)
             self.set_current_data(user_info_document, user_data_document)
+
+            is_user_authenticated = user_data_document["parsing_type"] != "offline"
+
+            self.set_authication_status(is_user_authenticated)
+
             self.application_frame = ApplicationFrame(self.main_container, self, self.DEBUG)
             self.application_frame.grid(row=0, column=0)
 
@@ -74,6 +79,12 @@ class TranscriptManager(tk.Tk) :
 
     def get_current_data(self) :
         return self.user_info_document, self.user_data_document
+
+    def set_authication_status(self, status) :
+        self.authication_status = status
+
+    def get_authication_status(self) :
+        return self.authication_status
 
     def get_text(self, text, parsing_language) :
         if parsing_language == "tr" :

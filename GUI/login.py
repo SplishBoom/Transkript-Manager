@@ -56,6 +56,10 @@ class LoginFrame(ttk.Frame) :
             #self.root.db_client.user_data.push_init(user_data_document)
             self.root.set_current_data(user_info_document, user_data_document)
 
+            is_user_authenticated = user_data_document["parsing_type"] != "offline"
+
+            self.root.set_authication_status(is_user_authenticated)
+
         self.thread = threading.Thread(target=start_parse, daemon=True)
         self.thread.start()
 
@@ -207,5 +211,5 @@ class LoginFrame(ttk.Frame) :
     def __stop_loading_animation(self) :
         self.root.after_cancel(self.animation_id)
         self.output_loading_label.grid_remove()
-
+        
         self.root._switch_to_application()

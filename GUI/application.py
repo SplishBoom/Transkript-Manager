@@ -57,11 +57,7 @@ class ApplicationFrame(ttk.Frame) :
         self.__load_program()
 
     def __update_user_authitication(self) :
-
-        if self.parsing_type == "offline" :
-            self.is_user_authenticated = False
-        else :
-            self.is_user_authenticated = True
+        self.is_user_authenticated = self.root.get_authication_status()
 
     def _switch_program_mode(self, new_mode) :
                 
