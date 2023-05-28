@@ -93,4 +93,9 @@ to_turkish = {
     "Credits Successful" : "Başarılı Krediler",
     "Credits Included in GPA" : "GPA'ya Dahil Krediler",
     "GPA" : "GPA",
+
+    "Language" : "Dil",
+    "Credit" : "Kredi",
+    "Grade" : "Not",
+    "Grade Point" : "Puan",
 }
