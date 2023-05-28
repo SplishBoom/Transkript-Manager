@@ -10,7 +10,8 @@ from Utilities.database import (
 
 from Utilities.lexer import (
     OfflineParser, 
-    OnlineParser
+    OnlineParser,
+    UserVerifier
 )
 
 from Utilities.pdf_export import (

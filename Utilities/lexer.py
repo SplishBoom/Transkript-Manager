@@ -2,6 +2,7 @@ from    abc         import ABC, abstractmethod
 from    datetime    import datetime
 from    Utilities   import Web, By
 import  PyPDF2  as  ppdf
+import  re
 import  json
 from urllib.request import urlretrieve as get_photo
 from Environment import SELENIUM_DC
@@ -403,3 +404,87 @@ class OfflineParser(Parser) :
         self._parse_transcript_information()
 
         return self.transcript_data
+    
+class UserVerifier() :
+
+    def __init__(self, username:str=None, password:str=None, isHidden=True, match_id=None, *args, **kwargs) -> None:
+        super().__init__()
+
+        self.username = username
+        self.password = password
+
+        self.isHidden = isHidden
+
+        self.match_id = match_id
+        self.received_id = None
+
+        self.is_user_verified = False
+
+    def _receive_system_id(self) -> None:
+        """
+        Private method for extracting transcript information from the source.
+        """
+
+        main_url = SELENIUM_DC.OLEXER_SYSTEM_LOGIN_URL
+
+        client = Web(isHidden=self.isHidden)
+        client.open_web_page(main_url)
+
+        username_entry = client.create_element(SELENIUM_DC.OLEXER_USERNAME_ENTRY_XPATH)
+        username_entry.send_keys(self.username)
+
+        password_entry = client.create_element(SELENIUM_DC.OLEXER_PASSWORD_ENTRY_XPATH)
+        password_entry.send_keys(self.password)
+
+        login_button = client.create_element(SELENIUM_DC.OLEXER_LOGIN_BUTTON_XPATH)
+        login_button.click()
+
+        continue_button = client.create_element(SELENIUM_DC.OLEXER_CONTINUE_BUTTON_XPATH)
+        continue_button.click()
+                
+        profile_selection_label = client.create_element(SELENIUM_DC.OLEXER_PROFILE_SELECTION_XPATH)
+        profile_selection_label.click()
+
+        drop_down_menu = client.create_element(SELENIUM_DC.OLEXER_DROP_DOWN_MENU_XPATH)
+        check_list = ["Diğer Kimlikler", "Other IDs", "Anadal", "Major"]
+        flag = False
+        for current_element in drop_down_menu.find_elements(by=By.TAG_NAME, value="a") :
+            if current_element.text in check_list :
+                client.click_on_element(current_element)
+                idSelectionMenu = client.create_element(SELENIUM_DC.OLEXER_ID_SELECTION_XPATH)
+                for element in idSelectionMenu.find_elements(by=By.TAG_NAME, value="a") :
+                    if element.get_attribute(SELENIUM_DC.OLEXER_SOURCE_ATTRIBUTE_TAGS[1]).split("-")[-1].strip() in check_list :
+                        client.click_on_element(element)
+                        flag = True
+                        break
+                break
+        if flag:
+            continue_button = client.create_element(SELENIUM_DC.OLEXER_CONTINUE_BUTTON_XPATH)
+            client.click_on_element(continue_button)
+
+        profile_selection_label = client.create_element(SELENIUM_DC.OLEXER_PROFILE_SELECTION_XPATH)
+        profile_selection_label.click()
+
+        student_info_a_tag = client.create_element(SELENIUM_DC.OLEXER_STUDENT_INFO_XPATH)
+
+        self.received_id = re.findall(r"\d+", student_info_a_tag.text)[0]
+
+    def _compare_ids(self) -> bool:
+        
+        if self.match_id == None :
+            self.is_user_verified = False
+        else :
+            if self.match_id == self.received_id :
+                self.is_user_verified = True
+            else :
+                self.is_user_verified = False
+
+    def verify_user(self) -> None :
+        """
+        Public method for verifying user.
+        """
+
+        self._receive_system_id()
+        self._compare_ids()
+                
+        return self.is_user_verified
