@@ -26,6 +26,7 @@ class GradeUpdater(ttk.Frame) :
         
         self.possibleNotations = ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "F", "I", "W", "S"]
         self.weights = {"A":4.00, "A-":3.70, "B+":3.30, "B":3.00, "B-":2.70, "C+":2.30, "C":2.00, "C-":1.70, "D+":1.30, "D":1.00, "F":0.00}
+        self.possibleCredits = [1, 2, 3, 4, 5, 6, 7]
         
         self.__load_user_data(current_user_data)
         self.__load_output_info(is_init=True)
@@ -497,7 +498,7 @@ class GradeUpdater(ttk.Frame) :
 
         class CourseUpdater(tk.Toplevel) :
 
-            def __init__(self, master, modified_course_list, available_course_codes, parsing_language, possibleNotations, weights, selected_course_code) :
+            def __init__(self, master, modified_course_list, available_course_codes, parsing_language, possibleNotations, weights, possibleCredits, selected_course_code) :
                 super().__init__(master)
 
                 self.parsing_language = parsing_language
@@ -510,6 +511,7 @@ class GradeUpdater(ttk.Frame) :
                 self.modified_course_list = modified_course_list
                 self.possibleNotations = possibleNotations
                 self.weights = weights
+                self.possibleCredits = possibleCredits
                 self.selected_course_code = selected_course_code
 
                 self.container = ttk.Frame(self)
@@ -599,13 +601,13 @@ class GradeUpdater(ttk.Frame) :
 
                 course_credit_label = ttk.Label(self.updater_container, text=self._get_text("New Course Credit"))
                 course_credit_label.grid(row=0, column=3)
-                self.new_course_credit_entry = ttk.Entry(self.updater_container, textvariable=self.new_course_credit)
-                self.new_course_credit_entry.grid(row=1, column=3)
+                self.new_course_credit_combobox = ttk.Combobox(self.updater_container, values=self.possibleCredits, state="readonly", textvariable=self.new_course_credit)
+                self.new_course_credit_combobox.grid(row=1, column=3)
 
                 course_grade_label = ttk.Label(self.updater_container, text=self._get_text("New Course Grade"))
                 course_grade_label.grid(row=0, column=4)
-                self.new_course_grade_entry = ttk.Entry(self.updater_container, textvariable=self.new_course_grade)
-                self.new_course_grade_entry.grid(row=1, column=4)
+                self.new_course_grade_combobox = ttk.Combobox(self.updater_container, values=self.possibleNotations, state="readonly", textvariable=self.new_course_grade)
+                self.new_course_grade_combobox.grid(row=1, column=4)
 
                 course_grade_point_label = ttk.Label(self.updater_container, text=self._get_text("New Course Grade Point"))
                 course_grade_point_label.grid(row=0, column=5)
@@ -629,12 +631,10 @@ class GradeUpdater(ttk.Frame) :
                 
                 if (credit < 0 or credit > 7) or grade not in self.possibleNotations :
                     return
-                
-                self.new_course_grade.set(grade)
 
                 weight = self.weights[grade]
 
-                grade_point = credit * weight
+                grade_point = round(credit * weight, 2)
 
                 self.new_course_grade_point.set(str(grade_point))
 
@@ -685,8 +685,8 @@ class GradeUpdater(ttk.Frame) :
                     "course_code" : self.course_code_combobox.get(),
                     "course_name" : self.new_course_name_entry.get(),
                     "course_lang" : self.new_course_lang_entry.get(),
-                    "course_credit" : self.new_course_credit_entry.get(),
-                    "course_grade" : self.new_course_grade_entry.get().upper(),
+                    "course_credit" : self.new_course_credit_combobox.get(),
+                    "course_grade" : self.new_course_grade_combobox.get().upper(),
                     "course_grade_point" : self.new_course_grade_point_entry.get()
                 }
 
@@ -698,7 +698,7 @@ class GradeUpdater(ttk.Frame) :
                 self.result = self.result
                 self.destroy()
 
-        obj = CourseUpdater(self, self.modified_course_list, available_course_codes, self.parsing_language, self.possibleNotations, self.weights, selected_course_code)
+        obj = CourseUpdater(self, self.modified_course_list, available_course_codes, self.parsing_language, self.possibleNotations, self.weights, self.possibleCredits, selected_course_code)
         result = obj.get_result()
         if result is not None :
             self.updated_course_list.append(result)
@@ -718,7 +718,7 @@ class GradeUpdater(ttk.Frame) :
 
         class CourseAdder(tk.Toplevel) :
 
-            def __init__(self, master, existing_course_codes, parsing_language, possibleNotations, weights) :
+            def __init__(self, master, existing_course_codes, parsing_language, possibleNotations, weights, possibleCredits) :
                 super().__init__(master)
 
                 self.parsing_language = parsing_language
@@ -730,6 +730,7 @@ class GradeUpdater(ttk.Frame) :
                 self.existing_course_codes = existing_course_codes
                 self.possibleNotations = possibleNotations 
                 self.weights = weights
+                self.possibleCredits = possibleCredits
 
                 self.container = ttk.Frame(self)
                 self.container.grid(row=0, column=0)
@@ -811,11 +812,11 @@ class GradeUpdater(ttk.Frame) :
                 self.new_course_lang_entry = ttk.Entry(self.adderer_container, textvariable=self.new_course_lang)
                 self.new_course_lang_entry.grid(row=1, column=2)
 
-                self.new_course_credit_entry = ttk.Entry(self.adderer_container, textvariable=self.new_course_credit)
-                self.new_course_credit_entry.grid(row=1, column=3)
+                self.new_course_credit_combobox = ttk.Combobox(self.adderer_container, textvariable=self.new_course_credit, values=self.possibleCredits, state="readonly")
+                self.new_course_credit_combobox.grid(row=1, column=3)
 
-                self.new_course_grade_entry = ttk.Entry(self.adderer_container, textvariable=self.new_course_grade)
-                self.new_course_grade_entry.grid(row=1, column=4)
+                self.new_course_grade_combobox = ttk.Combobox(self.adderer_container, textvariable=self.new_course_grade, values=self.possibleNotations, state="readonly")
+                self.new_course_grade_combobox.grid(row=1, column=4)
 
                 self.new_course_grade_point_entry = ttk.Entry(self.adderer_container, textvariable=self.new_course_grade_point, state="disabled")
                 self.new_course_grade_point_entry.grid(row=1, column=5)
@@ -838,8 +839,6 @@ class GradeUpdater(ttk.Frame) :
                 if (credit < 0 or credit > 7) or grade not in self.possibleNotations :
                     return
                 
-                self.new_course_grade.set(grade)
-
                 weight = self.weights[grade]
 
                 grade_point = credit * weight
@@ -893,8 +892,8 @@ class GradeUpdater(ttk.Frame) :
                     "course_code" : self.new_course_code_entry.get(),
                     "course_name" : self.new_course_name_entry.get(),
                     "course_lang" : self.new_course_lang_entry.get(),
-                    "course_credit" : self.new_course_credit_entry.get(),
-                    "course_grade" : self.new_course_grade_entry.get().upper(),
+                    "course_credit" : self.new_course_credit_combobox.get(),
+                    "course_grade" : self.new_course_grade_combobox.get().upper(),
                     "course_grade_point" : self.new_course_grade_point_entry.get()
                 }
 
@@ -906,7 +905,7 @@ class GradeUpdater(ttk.Frame) :
                 self.result = self.result
                 self.destroy()
 
-        obj = CourseAdder(self, existing_course_codes, self.parsing_language, self.possibleNotations, self.weights)
+        obj = CourseAdder(self, existing_course_codes, self.parsing_language, self.possibleNotations, self.weights, self.possibleCredits)
         result = obj.get_result()
         if result is not None :
             self.added_course_list.append(result)
