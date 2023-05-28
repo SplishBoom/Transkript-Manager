@@ -265,6 +265,7 @@ class GradeUpdater(ttk.Frame) :
         self.filter_button.config(text=self._get_text("Filtering"), state="disabled")
 
         available_filterings = {"course_lang" : [], "course_credit" : [], "course_grade" : [], "course_grade_point" : []}
+        available_filterings_text_display = {self._get_text("Language") : "course_lang", self._get_text("Credit") : "course_credit", self._get_text("Grade") : "course_grade", self._get_text("Grade Point"): "course_grade_point"}
 
         for course in self.modified_course_list :
             current_course_lang = course["course_lang"]
@@ -282,11 +283,20 @@ class GradeUpdater(ttk.Frame) :
                 available_filterings["course_grade_point"].append(current_course_grade_point)
 
         for key in available_filterings :
-            available_filterings[key].sort()
+            current_value_list = available_filterings[key]
+            # if key is "course_grade_point", make every element is float, then sort, and then convert back to string
+            if key == "course_grade_point" :
+                current_value_list = [float(value) for value in current_value_list]
+                current_value_list.sort()
+                current_value_list = [str(value) for value in current_value_list]
+            else :
+                current_value_list.sort()
+            available_filterings[key] = current_value_list
+            
 
         class FilterSelecter(Toplevel) :
 
-            def __init__(self, master, filtering, available_filterings, parsing_language) :
+            def __init__(self, master, filtering, available_filterings, available_filterings_text_display, parsing_language) :
                 super().__init__(master)
 
                 self.parsing_language = parsing_language
@@ -297,6 +307,7 @@ class GradeUpdater(ttk.Frame) :
                 self.result = filtering.copy()
                 self.current_filtering = filtering.copy()
                 self.available_filterings = available_filterings
+                self.available_filterings_text_display = available_filterings_text_display
 
                 self.container = ttk.Frame(self)
                 self.container.grid(row=0, column=0)
@@ -375,7 +386,7 @@ class GradeUpdater(ttk.Frame) :
                     remove_filter_button = ttk.Button(self.filter_change_container, text=self._get_text("Remove"), command=___WRAPS_remove_filter)
                     remove_filter_button.grid(row=grid_row_index, column=2)
 
-                self.filter_key_combobox = ttk.Combobox(self.filter_change_container, values=list(available_filterings.keys()), state="readonly")
+                self.filter_key_combobox = ttk.Combobox(self.filter_change_container, values=list(self.available_filterings_text_display.keys()), state="readonly")
                 self.filter_key_combobox.grid(row=self.row_count-1, column=0)
 
                 self.filter_key_combobox.bind("<<ComboboxSelected>>", self.__load_filter_value_combobox)
@@ -387,7 +398,7 @@ class GradeUpdater(ttk.Frame) :
                 self.filter_with_label.grid(row=0, column=1)
                 self.operation_label.grid(row=0, column=2)
 
-                self.filter_value_combobox = ttk.Combobox(self.filter_change_container, values=available_filterings[self.filter_key_combobox.get()], state="readonly")
+                self.filter_value_combobox = ttk.Combobox(self.filter_change_container, values=self.available_filterings[self.available_filterings_text_display[self.filter_key_combobox.get()]], state="readonly")
                 self.filter_value_combobox.grid(row=self.row_count-1, column=1)
 
                 self.add_filter_button = ttk.Button(self.filter_change_container, text=self._get_text("Add"), command=self.__add_filter)
@@ -395,18 +406,21 @@ class GradeUpdater(ttk.Frame) :
 
             def __add_filter(self) :
                 
+                taken_filter_key = self.available_filterings_text_display[self.filter_key_combobox.get()]
+                taken_filter_value = self.filter_value_combobox.get()
+
                 # check if the new filter exists
                 for current_filter in self.current_filtering :
-                    if current_filter["filter_key"] == self.filter_key_combobox.get() and current_filter["filter_value"] == self.filter_value_combobox.get() :
+                    if current_filter["filter_key"] == taken_filter_key and current_filter["filter_value"] == taken_filter_value :
                         messagebox.showerror(self._get_text("Error"), self._get_text("This filter already exists"))
                         return
                     
                 # check if the new filter_key or filter_value is empty
-                if self.filter_value_combobox.get() == "" :
+                if taken_filter_value == "" :
                     messagebox.showerror(self._get_text("Error"), self._get_text("Please select a filter value"))
                     return
 
-                self.current_filtering.append({"filter_key" : self.filter_key_combobox.get(), "filter_value" : self.filter_value_combobox.get()})
+                self.current_filtering.append({"filter_key" : taken_filter_key, "filter_value" : taken_filter_value})
 
                 self.filter_key_combobox.destroy()
                 self.filter_value_combobox.destroy()
@@ -443,7 +457,7 @@ class GradeUpdater(ttk.Frame) :
 
         previous_filter_count = len(self.filtering)
 
-        obj = FilterSelecter(self, self.filtering, available_filterings, self.parsing_language)
+        obj = FilterSelecter(self, self.filtering, available_filterings, available_filterings_text_display, self.parsing_language)
         self.filtering = obj.get_result()
 
         current_filter_count = len(self.filtering)
