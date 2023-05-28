@@ -5,7 +5,8 @@ from tkinter import filedialog
 import os
 from Environment import ASSETS_DC, SELENIUM_DC, connect_pathes, to_turkish
 from Utilities import get_gender, generate_pdf, translate_text
-from PIL import Image, ImageTk
+from rembg import remove as remove_background
+import threading
 import random
 from tkinter import messagebox
 from tkinter import Toplevel
@@ -190,9 +191,27 @@ class ApplicationFrame(ttk.Frame) :
     def __load_user_info_label(self) :
 
         def ___change_user_photo(*args, **kwargs) :
-            self.current_user_photo_path = random.choice(list(ASSETS_DC.GENDERS_PHOTO_PATH.values()))
+
+            available_photo_list = list(ASSETS_DC.GENDERS_PHOTO_PATH.values())
+
+            index_of_current_photo = available_photo_list.index(self.current_user_photo_path)
+            index_of_next_photo = (index_of_current_photo + 1) % len(available_photo_list)
+
+            self.current_user_photo_path = available_photo_list[index_of_next_photo]
             self.student_photo = ImageTk.PhotoImage(Image.open(self.current_user_photo_path).resize(self.student_photo_size, Image.ANTIALIAS))
             self.student_photo_label.configure(image=self.student_photo)
+            self.student_photo_label.image = self.student_photo
+
+        def __load_original_photo() :
+
+            def job() :
+                self.student_photo_label.unbind("<Button-1>")
+                self.current_user_photo_path = SELENIUM_DC.USER_PHOTO_OUTPUT_PATH
+                self.student_photo = ImageTk.PhotoImage(remove_background(Image.open(self.current_user_photo_path).resize(self.student_photo_size, Image.ANTIALIAS), alpha_matting=True))
+                self.student_photo_label.configure(image=self.student_photo)
+                self.student_photo_label.image = self.student_photo
+
+            threading.Thread(target=job).start()
 
         self.user_info_label_container.grid_rowconfigure((0,1,2,3,4), weight=1)
         self.user_info_label_container.grid_columnconfigure((0,1,2,3,4,5,6,7,8,9,10,11), weight=1)
@@ -209,6 +228,8 @@ class ApplicationFrame(ttk.Frame) :
         self.student_photo_label = ttk.Label(self.user_info_label_container, image=self.student_photo)
         self.student_photo_label.grid(row=0, column=8, columnspan=4)
         self.student_photo_label.bind("<Button-1>", ___change_user_photo)
+        if os.path.exists(SELENIUM_DC.USER_PHOTO_OUTPUT_PATH) :
+            __load_original_photo()
 
         student_id_label = ttk.Label(self.user_info_label_container, text=self._get_text("Student ID"))
         student_id_label.grid(row=1, column=0, columnspan=3)
