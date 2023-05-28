@@ -768,3 +768,4 @@ class ApplicationFrame(ttk.Frame) :
         result = obj.get_result()
 
         self.is_user_authenticated = result
+        self.root.set_authication_status(result)
