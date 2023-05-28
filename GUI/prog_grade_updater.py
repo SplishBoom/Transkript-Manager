@@ -25,7 +25,7 @@ class GradeUpdater(ttk.Frame) :
         self.DEBUG = DEBUG
         
         self.possibleNotations = ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "F", "I", "W", "S"]
-        self.weights = {"A":4.00, "A-":3.70, "B+":3.30, "B":3.00, "B-":2.70, "C+":2.30, "C":2.00, "C-":1.70, "D+":1.30, "D":1.00, "F":0.00}
+        self.weights = {"A":4.00, "A-":3.70, "B+":3.30, "B":3.00, "B-":2.70, "C+":2.30, "C":2.00, "C-":1.70, "D+":1.30, "D":1.00, "F":0.00, "I":0.00, "W":0.00, "S":0.00}
         self.possibleCredits = [1, 2, 3, 4, 5, 6, 7]
         
         self.__load_user_data(current_user_data)
