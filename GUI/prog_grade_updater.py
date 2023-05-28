@@ -292,7 +292,7 @@ class GradeUpdater(ttk.Frame) :
             else :
                 current_value_list.sort()
             available_filterings[key] = current_value_list
-            
+
 
         class FilterSelecter(Toplevel) :
 
@@ -455,14 +455,14 @@ class GradeUpdater(ttk.Frame) :
                 self.result = self.result
                 self.destroy()
 
-        previous_filter_count = len(self.filtering)
+        previous_filtering = self.filtering.copy()
 
         obj = FilterSelecter(self, self.filtering, available_filterings, available_filterings_text_display, self.parsing_language)
         self.filtering = obj.get_result()
 
-        current_filter_count = len(self.filtering)
+        current_filtering = self.filtering.copy()
 
-        if current_filter_count < previous_filter_count :
+        if previous_filtering != current_filtering :
             self.modified_course_list = self.original_course_list.copy()
             for course in self.added_course_list :
                 self.modified_course_list = add_course(self.modified_course_list, course)
