@@ -137,6 +137,7 @@ class LoginFrame(ttk.Frame) :
         self.mef_logo_image = ImageTk.PhotoImage(Image.open(ASSETS_DC.LOGO_PATH).resize((192, 126), Image.ANTIALIAS))
         self.mef_logo_label = ttk.Label(self.mef_label_container, image=self.mef_logo_image)
         self.mef_logo_label.grid(row=0, column=0)
+
     def __load_online_login(self) :
         
         self.online_login_container.grid_rowconfigure((0,1,3), weight=1)
@@ -157,6 +158,7 @@ class LoginFrame(ttk.Frame) :
 
         self.online_login_button = ttk.Button(self.online_login_container, text="Login", command=self.__handle_login)
         self.online_login_button.grid(row=3, column=0, columnspan=2)
+
     def __load_offline_login(self) :
         
         self.offline_login_container.grid_rowconfigure((0,1,2), weight=1)
@@ -170,6 +172,7 @@ class LoginFrame(ttk.Frame) :
 
         self.offline_login_button = ttk.Button(self.offline_login_container, text="Login", command=self.__handle_login)
         self.offline_login_button.grid(row=2, column=0)
+
     def __load_output(self) :
         
         self.gif_frame_count = get_gif_frame_count(ASSETS_DC.LOADING_ANIMATION_PATH)
@@ -186,6 +189,7 @@ class LoginFrame(ttk.Frame) :
         self.output_loading_label.grid(row=0, column=0)
 
         self.animation_id = self.root.after(0, self.__animate_loading, 0)
+
     def __animate_loading(self, frame_index) :
 
         if not self.thread.is_alive() :
@@ -199,6 +203,7 @@ class LoginFrame(ttk.Frame) :
         self.output_loading_label.configure(image=self.current_frame)
 
         self.animation_id = self.root.after(20, self.__animate_loading, frame_index + 1)
+        
     def __stop_loading_animation(self) :
         self.root.after_cancel(self.animation_id)
         self.output_loading_label.grid_remove()
