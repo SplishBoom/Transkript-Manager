@@ -467,6 +467,13 @@ class UserVerifier() :
 
         student_info_a_tag = client.create_element(SELENIUM_DC.OLEXER_STUDENT_INFO_XPATH)
 
+        if student_info_a_tag.text == "" :
+            
+            profile_selection_label = client.create_element(SELENIUM_DC.OLEXER_PROFILE_SELECTION_XPATH)
+            profile_selection_label.click()
+
+            student_info_a_tag = client.create_element(SELENIUM_DC.OLEXER_STUDENT_INFO_XPATH)
+
         self.received_id = re.findall(r"\d+", student_info_a_tag.text)[0]
 
     def _compare_ids(self) -> bool:
