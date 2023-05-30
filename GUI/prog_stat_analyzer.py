@@ -115,22 +115,22 @@ class StatAnalyzer(ttk.Frame) :
         expected_credits = len(self.semesters) * 30
 
         if credits_attempted < expected_credits:
-            self.scholarship_status = {"percentage":0, "message":"You are not eligible for a scholarship.", "note":"You haven't taken enough courses to apply for scholarship"}
+            self.scholarship_status = {"percentage":0, "message":"You are not eligible for a scholarship", "note":"You haven't taken enough courses to apply for scholarship"}
         if credits_included_in_gpa < expected_credits:
-            self.scholarship_status = {"percentage":0, "message":"You are not eligible for a scholarship.", "note":"You haven't completed enough credits for scholarship"}
+            self.scholarship_status = {"percentage":0, "message":"You are not eligible for a scholarship", "note":"You haven't completed enough credits for scholarship"}
         else :
             if 3.75 <= gpa <= 4 :
-                self.scholarship_status = {"percentage":50, "message":"You are eligible for a %50 scholarship.", "note":"You have a perfect GPA for scholarship"}
+                self.scholarship_status = {"percentage":50, "message":"You are eligible for a %50 scholarship", "note":"You have a perfect GPA for scholarship"}
             elif 3.60 <= gpa < 3.75 :
-                self.scholarship_status = {"percentage":40, "message":"You are eligible for a %40 scholarship.", "note":"You have a high GPA for scholarship"}
+                self.scholarship_status = {"percentage":40, "message":"You are eligible for a %40 scholarship", "note":"You have a high GPA for scholarship"}
             elif 3.50 <= gpa < 3.60 :
-                self.scholarship_status = {"percentage":25, "message":"You are eligible for a %25 scholarship.", "note":"You have a nice GPA for scholarship"}
+                self.scholarship_status = {"percentage":25, "message":"You are eligible for a %25 scholarship", "note":"You have a nice GPA for scholarship"}
             elif 3.00 <= gpa < 3.50 :
-                self.scholarship_status = {"percentage":0, "message":"You are not eligible for a scholarship.", "note":"You have a good GPA for scholarship"}
+                self.scholarship_status = {"percentage":0, "message":"You are not eligible for a scholarship", "note":"You have a good GPA for scholarship"}
             elif 2.00 <= gpa < 3.00 :
-                self.scholarship_status = {"percentage":0, "message":"You are not eligible for a scholarship.", "note":"You have a low GPA for scholarship"}
+                self.scholarship_status = {"percentage":0, "message":"You are not eligible for a scholarship", "note":"You have a low GPA for scholarship"}
             elif 0 <= gpa < 2.00 :
-                self.scholarship_status = {"percentage":0, "message":"You are not eligible for a scholarship.", "note":"You have a very low GPA for scholarship"}
+                self.scholarship_status = {"percentage":0, "message":"You are not eligible for a scholarship", "note":"You have a very low GPA for scholarship"}
                 
     def ___create_course_info_status_data(self) :
         
@@ -179,7 +179,7 @@ class StatAnalyzer(ttk.Frame) :
         self.scholarship_status_treeview.column("_message", anchor="center", width=250)
         self.scholarship_status_treeview.column("_note", anchor="center", width=250)
 
-        self.scholarship_status_treeview.insert("", "end", values=(self.scholarship_status["percentage"], self.scholarship_status["message"], self.scholarship_status["note"]))
+        self.scholarship_status_treeview.insert("", "end", values=(self.scholarship_status["percentage"], self._get_text(self.scholarship_status["message"]), self._get_text(self.scholarship_status["note"])))
 
     def __load_course_info_status(self):
 

@@ -141,8 +141,12 @@ class AchievementAnalyzer(ttk.Frame) :
             semester_grade = semester_performance["gpa"]
             semester_index = semester_index + 1
             semester_name = " ".join(current_semester["semester_definition"].split(" ")[0:2])
-            semester_year, semester_semester = semester_name.split(" ")
-            semester_name = semester_year + " " + self._get_text(semester_semester)
+            
+            try :
+                semester_year, semester_semester = semester_name.split(" ")
+                semester_name = semester_year + " " + self._get_text(semester_semester)
+            except :
+                pass
 
             self.semester_based_plot_data["semester_grade"].append(semester_grade)
             self.semester_based_plot_data["semester_index"].append(semester_index)

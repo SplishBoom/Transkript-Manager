@@ -165,12 +165,12 @@ class GradeUpdater(ttk.Frame) :
 
         self.display_treeview["columns"] = ("_code", "_name", "_canguage", "_credit", "_crade", "_crade_point")
 
-        self.display_treeview.heading("_code", text="Course Code")
-        self.display_treeview.heading("_name", text="Course Name")
-        self.display_treeview.heading("_canguage", text="Course Language")
-        self.display_treeview.heading("_credit", text="Course Credit")
-        self.display_treeview.heading("_crade", text="Course Grade")
-        self.display_treeview.heading("_crade_point", text="Course Grade Point")
+        self.display_treeview.heading("_code", text=self._get_text("Course Code"))
+        self.display_treeview.heading("_name", text=self._get_text("Course Name"))
+        self.display_treeview.heading("_canguage", text=self._get_text("Course Language"))
+        self.display_treeview.heading("_credit", text=self._get_text("Course Credit"))
+        self.display_treeview.heading("_crade", text=self._get_text("Course Grade"))
+        self.display_treeview.heading("_crade_point", text=self._get_text("Course Grade Point"))
 
         self.display_treeview.column("_code", anchor="center", width=120)
         self.display_treeview.column("_name", anchor="center", width=120)

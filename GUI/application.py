@@ -6,7 +6,6 @@ from tkinter import PhotoImage
 import os
 from Environment import ASSETS_DC, SELENIUM_DC, connect_pathes, to_turkish
 from Utilities import UserVerifier, get_gender, generate_pdf, translate_text, authenticate, get_gif_frame_count
-from rembg import remove as remove_background
 import threading
 import random
 from tkinter import messagebox
@@ -198,7 +197,7 @@ class ApplicationFrame(ttk.Frame) :
 
         def ___change_user_photo(*args, **kwargs) :
 
-            available_photo_list = list(ASSETS_DC.GENDERS_PHOTO_PATH.values())
+            available_photo_list = list(self.available_photos.values())
 
             index_of_current_photo = available_photo_list.index(self.current_user_photo_path)
             index_of_next_photo = (index_of_current_photo + 1) % len(available_photo_list)
@@ -207,17 +206,6 @@ class ApplicationFrame(ttk.Frame) :
             self.student_photo = ImageTk.PhotoImage(Image.open(self.current_user_photo_path).resize(self.student_photo_size, Image.ANTIALIAS))
             self.student_photo_label.configure(image=self.student_photo)
             self.student_photo_label.image = self.student_photo
-
-        def __load_original_photo() :
-
-            def job() :
-                self.student_photo_label.unbind("<Button-1>")
-                self.current_user_photo_path = SELENIUM_DC.USER_PHOTO_OUTPUT_PATH
-                self.student_photo = ImageTk.PhotoImage(remove_background(Image.open(self.current_user_photo_path).resize(self.student_photo_size, Image.ANTIALIAS), alpha_matting=True))
-                self.student_photo_label.configure(image=self.student_photo)
-                self.student_photo_label.image = self.student_photo
-
-            threading.Thread(target=job).start()
 
         self.user_info_label_container.grid_rowconfigure((0,1,2,3,4,5), weight=1)
         self.user_info_label_container.grid_columnconfigure((0,1,2,3,4,5,6,7,8,9,10,11), weight=1)
@@ -232,13 +220,16 @@ class ApplicationFrame(ttk.Frame) :
         self.document_date_label = ttk.Label(self.user_info_label_container, text=self.transcript_creation_date)
         self.document_date_label.grid(row=1, column=4, columnspan=4)
 
-        self.current_user_photo_path = ASSETS_DC.GENDERS_PHOTO_PATH[self.student_gender]
+        self.available_photos = ASSETS_DC.GENDERS_PHOTO_PATH
+        if os.path.exists(SELENIUM_DC.USER_PHOTO_OUTPUT_PATH) :
+            self.available_photos["user_photo"] = SELENIUM_DC.USER_PHOTO_OUTPUT_PATH
+            self.current_user_photo_path = SELENIUM_DC.USER_PHOTO_OUTPUT_PATH
+        else :
+            self.current_user_photo_path = ASSETS_DC.GENDERS_PHOTO_PATH[self.student_gender]
         self.student_photo = ImageTk.PhotoImage(Image.open(self.current_user_photo_path).resize(self.student_photo_size, Image.ANTIALIAS))
         self.student_photo_label = ttk.Label(self.user_info_label_container, image=self.student_photo)
         self.student_photo_label.grid(row=0, column=8, columnspan=4, rowspan=2)
         self.student_photo_label.bind("<Button-1>", ___change_user_photo)
-        if os.path.exists(SELENIUM_DC.USER_PHOTO_OUTPUT_PATH) :
-            __load_original_photo()
 
         student_id_label = ttk.Label(self.user_info_label_container, text=self._get_text("Student ID"))
         student_id_label.grid(row=2, column=0, columnspan=3)
@@ -518,7 +509,7 @@ class ApplicationFrame(ttk.Frame) :
                     messagebox.showerror(self._get_text("Error"), self._get_text("A document with this name already exists"))
                     return
                 
-                if new_document_name == "Untitled Document" :
+                if new_document_name == "Transcript Document" :
                     messagebox.showerror(self._get_text("Error"), self._get_text("This name is reserved, please enter another name"))
                     return
 
