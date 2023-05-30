@@ -4,7 +4,7 @@ from tkinter import ttk
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import matplotlib.colors as mcolors
-from Utilities import calculate_performance, generate_gradient_colors
+from Utilities import calculate_performance, generate_gradient_colors, filter_by
 
 class AchievementAnalyzer(ttk.Frame) :
 
@@ -121,6 +121,16 @@ class AchievementAnalyzer(ttk.Frame) :
                     new_course_list.append(current_course)
 
             current_semester["course_list"] = new_course_list
+
+        for semester in self.semesters :
+
+            current_semester = self.semesters[semester]
+            current_course_list = current_semester["course_list"]
+
+            for current_filter in self.filtering :
+                current_course_list = filter_by(current_course_list, current_filter)
+
+            current_semester["course_list"] = current_course_list
           
         for semester_index, semester in enumerate(self.semesters) :
 
