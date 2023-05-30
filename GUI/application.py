@@ -14,7 +14,7 @@ from tkinter import Toplevel
 from datetime import datetime
 from tkinter import filedialog
 import threading
-
+import copy
 from GUI import AchievementAnalyzer, GradeUpdater, StatAnalyzer
 
 class ApplicationFrame(ttk.Frame) :
@@ -63,8 +63,6 @@ class ApplicationFrame(ttk.Frame) :
                 
         current_mode = self.current_program_mode.get()
 
-        # unneccessary at this point.
-        #current_user_info = self.__create_user_info()
         current_user_data = self.__create_user_data()
 
         if current_mode == "Stat Analyzer" or current_mode == "Istatistik Analizcisi" :
@@ -118,15 +116,15 @@ class ApplicationFrame(ttk.Frame) :
             "parsing_language" : self.parsing_language,
             "transcript_manager_date" : self.transcript_manager_date,
             "transcript_creation_date" : self.transcript_creation_date,
-            "semesters" : self.semesters,
-            "original_course_list" : self.original_course_list,
-            "filtering" : self.filtering,
-            "sorting" : self.sorting,
-            "modified_course_list" : self.modified_course_list,
+            "semesters" : copy.deepcopy(self.semesters),
+            "original_course_list" : copy.deepcopy(self.original_course_list),
+            "filtering" : copy.deepcopy(self.filtering),
+            "sorting" : copy.deepcopy(self.sorting),
+            "modified_course_list" : copy.deepcopy(self.modified_course_list),
             "document_name" : self.document_name,
-            "updated_course_list" : self.updated_course_list,
-            "subtracted_course_list" : self.subtracted_course_list,
-            "added_course_list" : self.added_course_list
+            "updated_course_list" : copy.deepcopy(self.updated_course_list),
+            "subtracted_course_list" : copy.deepcopy(self.subtracted_course_list),
+            "added_course_list" : copy.deepcopy(self.added_course_list)
         }
         return new_document
 
