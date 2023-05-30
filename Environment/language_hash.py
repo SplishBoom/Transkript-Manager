@@ -121,4 +121,19 @@ to_turkish = {
     "You have a good GPA for scholarship" : "Burs için iyi bir GPA'nız var",
     "You have a low GPA for scholarship" : "Burs için düşük bir GPA'nız var",
     "You have a very low GPA for scholarship" : "Burs için çok düşük bir GPA'nız var",
+
+    "Fall" : "Güz",
+    "Spring" : "Bahar",
+    "Summer" : "Yaz",
+    "Semester Based Performance" : "Dönem Bazlı Performans",
+    "Grade Point Average" : "Not Ortalaması",
+    "Course Based Performance" : "Ders Bazlı Performans",
+    "Grade Notation" : "Notasyon",
+    "Percentage" : "Yüzde",
+    "Message" : "Mesaj",
+    "Footnote" : "Dipnot",
+    "Courses Must Taken Again" : "Tekrar Alınması Gereken Dersler",
+    "Scholarship Status" : "Burs Durumu",
+    "Courses Should Taken Again" : "Tekrar Alınması Gereken Dersler",
+
 }
