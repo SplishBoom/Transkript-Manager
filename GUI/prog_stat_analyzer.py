@@ -103,8 +103,6 @@ class StatAnalyzer(ttk.Frame) :
         gpa = performance["gpa"]
 
         expected_credits = len(self.semesters) * 30
-        print(expected_credits)
-        print(credits_attempted, credits_successful, credits_included_in_gpa, gpa)
 
         if credits_attempted < expected_credits:
             self.scholarship_status = {"percentage":0, "message":"You are not eligible for a scholarship.", "note":"You haven't taken enough courses to apply for scholarship"}
@@ -192,25 +190,29 @@ class StatAnalyzer(ttk.Frame) :
         self.course_info_status_treeview_MUST_TAKEN = ttk.Treeview(self.program_course_info_status_container, height=min(len(self.grades_must_taken), maximum_height), show="headings", selectmode="none")
         self.course_info_status_treeview_MUST_TAKEN.grid(row=1, column=0)
 
-        self.course_info_status_treeview_MUST_TAKEN["columns"] = ("_code", "_name", "_canguage", "_credit", "_crade", "_crade_point")
-
-        self.course_info_status_treeview_MUST_TAKEN.heading("_code", text=self._get_text("Course Code"))
-        self.course_info_status_treeview_MUST_TAKEN.heading("_name", text=self._get_text("Course Name"))
-        self.course_info_status_treeview_MUST_TAKEN.heading("_canguage", text=self._get_text("Course Language"))
-        self.course_info_status_treeview_MUST_TAKEN.heading("_credit", text=self._get_text("Course Credit"))
-        self.course_info_status_treeview_MUST_TAKEN.heading("_crade", text=self._get_text("Course Grade"))
-        self.course_info_status_treeview_MUST_TAKEN.heading("_crade_point", text=self._get_text("Course Grade Point"))
-
-        self.course_info_status_treeview_MUST_TAKEN.column("_code", anchor="center", width=120)
-        self.course_info_status_treeview_MUST_TAKEN.column("_name", anchor="center", width=120)
-        self.course_info_status_treeview_MUST_TAKEN.column("_canguage", anchor="center", width=120)
-        self.course_info_status_treeview_MUST_TAKEN.column("_credit", anchor="center", width=120)
-        self.course_info_status_treeview_MUST_TAKEN.column("_crade", anchor="center", width=120)
-        self.course_info_status_treeview_MUST_TAKEN.column("_crade_point", anchor="center", width=120)
-
         if self.grades_must_taken == [] :
-            self.course_info_status_treeview_MUST_TAKEN.insert("", "end", values=("None", "None", "None", "None", "None", "None"))
+            self.course_info_status_treeview_MUST_TAKEN["columns"] = ("_column")
+
+            self.course_info_status_treeview_MUST_TAKEN.heading("_column", text=self._get_text("No Course Must Taken Again"))
+            self.course_info_status_treeview_MUST_TAKEN.column("_column", anchor="center", width=720)
         else :
+            self.course_info_status_treeview_MUST_TAKEN["columns"] = ("_code", "_name", "_canguage", "_credit", "_crade", "_crade_point")
+
+            self.course_info_status_treeview_MUST_TAKEN.heading("_code", text=self._get_text("Course Code"))
+            self.course_info_status_treeview_MUST_TAKEN.heading("_name", text=self._get_text("Course Name"))
+            self.course_info_status_treeview_MUST_TAKEN.heading("_canguage", text=self._get_text("Course Language"))
+            self.course_info_status_treeview_MUST_TAKEN.heading("_credit", text=self._get_text("Course Credit"))
+            self.course_info_status_treeview_MUST_TAKEN.heading("_crade", text=self._get_text("Course Grade"))
+            self.course_info_status_treeview_MUST_TAKEN.heading("_crade_point", text=self._get_text("Course Grade Point"))
+
+            self.course_info_status_treeview_MUST_TAKEN.column("_code", anchor="center", width=120)
+            self.course_info_status_treeview_MUST_TAKEN.column("_name", anchor="center", width=120)
+            self.course_info_status_treeview_MUST_TAKEN.column("_canguage", anchor="center", width=120)
+            self.course_info_status_treeview_MUST_TAKEN.column("_credit", anchor="center", width=120)
+            self.course_info_status_treeview_MUST_TAKEN.column("_crade", anchor="center", width=120)
+            self.course_info_status_treeview_MUST_TAKEN.column("_crade_point", anchor="center", width=120)
+
+        if not self.grades_must_taken == [] :
             for course in self.grades_must_taken :
                 self.course_info_status_treeview_MUST_TAKEN.insert("", "end", values=(course["course_code"], course["course_name"], course["course_lang"], course["course_credit"], course["course_grade"], course["course_grade_point"]))
 
@@ -223,24 +225,28 @@ class StatAnalyzer(ttk.Frame) :
         self.course_info_status_treeview_SHOULD_TAKEN = ttk.Treeview(self.program_course_info_status_container, height=min(len(self.grades_should_taken), maximum_height), show="headings", selectmode="none")
         self.course_info_status_treeview_SHOULD_TAKEN.grid(row=3, column=0)
 
-        self.course_info_status_treeview_SHOULD_TAKEN["columns"] = ("_code", "_name", "_canguage", "_credit", "_crade", "_crade_point")
-
-        self.course_info_status_treeview_SHOULD_TAKEN.heading("_code", text=self._get_text("Course Code"))
-        self.course_info_status_treeview_SHOULD_TAKEN.heading("_name", text=self._get_text("Course Name"))
-        self.course_info_status_treeview_SHOULD_TAKEN.heading("_canguage", text=self._get_text("Course Language"))
-        self.course_info_status_treeview_SHOULD_TAKEN.heading("_credit", text=self._get_text("Course Credit"))
-        self.course_info_status_treeview_SHOULD_TAKEN.heading("_crade", text=self._get_text("Course Grade"))
-        self.course_info_status_treeview_SHOULD_TAKEN.heading("_crade_point", text=self._get_text("Course Grade Point"))
-
-        self.course_info_status_treeview_SHOULD_TAKEN.column("_code", anchor="center", width=120)
-        self.course_info_status_treeview_SHOULD_TAKEN.column("_name", anchor="center", width=120)
-        self.course_info_status_treeview_SHOULD_TAKEN.column("_canguage", anchor="center", width=120)
-        self.course_info_status_treeview_SHOULD_TAKEN.column("_credit", anchor="center", width=120)
-        self.course_info_status_treeview_SHOULD_TAKEN.column("_crade", anchor="center", width=120)
-        self.course_info_status_treeview_SHOULD_TAKEN.column("_crade_point", anchor="center", width=120)
-
         if self.grades_should_taken == [] :
-            self.course_info_status_treeview_SHOULD_TAKEN.insert("", "end", values=("None", "None", "None", "None", "None", "None"))
+            self.course_info_status_treeview_SHOULD_TAKEN["columns"] = ("_column")
+
+            self.course_info_status_treeview_SHOULD_TAKEN.heading("_column", text=self._get_text("No Course Should Taken Again"))
+            self.course_info_status_treeview_SHOULD_TAKEN.column("_column", anchor="center", width=720)
         else :
+            self.course_info_status_treeview_SHOULD_TAKEN["columns"] = ("_code", "_name", "_canguage", "_credit", "_crade", "_crade_point")
+
+            self.course_info_status_treeview_SHOULD_TAKEN.heading("_code", text=self._get_text("Course Code"))
+            self.course_info_status_treeview_SHOULD_TAKEN.heading("_name", text=self._get_text("Course Name"))
+            self.course_info_status_treeview_SHOULD_TAKEN.heading("_canguage", text=self._get_text("Course Language"))
+            self.course_info_status_treeview_SHOULD_TAKEN.heading("_credit", text=self._get_text("Course Credit"))
+            self.course_info_status_treeview_SHOULD_TAKEN.heading("_crade", text=self._get_text("Course Grade"))
+            self.course_info_status_treeview_SHOULD_TAKEN.heading("_crade_point", text=self._get_text("Course Grade Point"))
+
+            self.course_info_status_treeview_SHOULD_TAKEN.column("_code", anchor="center", width=120)
+            self.course_info_status_treeview_SHOULD_TAKEN.column("_name", anchor="center", width=120)
+            self.course_info_status_treeview_SHOULD_TAKEN.column("_canguage", anchor="center", width=120)
+            self.course_info_status_treeview_SHOULD_TAKEN.column("_credit", anchor="center", width=120)
+            self.course_info_status_treeview_SHOULD_TAKEN.column("_crade", anchor="center", width=120)
+            self.course_info_status_treeview_SHOULD_TAKEN.column("_crade_point", anchor="center", width=120)
+
+        if not self.grades_should_taken == [] :
             for course in self.grades_should_taken :
                 self.course_info_status_treeview_SHOULD_TAKEN.insert("", "end", values=(course["course_code"], course["course_name"], course["course_lang"], course["course_credit"], course["course_grade"], course["course_grade_point"]))
