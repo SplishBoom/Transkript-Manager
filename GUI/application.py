@@ -69,10 +69,12 @@ class ApplicationFrame(ttk.Frame) :
 
         if current_mode == "Stat Analyzer" or current_mode == "Istatistik Analizcisi" :
             self.stat_analyzer_frame.grid_forget()
+            self.stat_analyzer_frame = None
         elif current_mode == "Grade Updater" or current_mode == "Not Güncelleyici" :
             self.grade_updater_frame.grid_forget()
         elif current_mode == "Achievement Analyzer" or current_mode == "Başari Analizcisi" :
             self.achievement_analyzer_frame.grid_forget()
+            self.achievement_analyzer_frame = None
 
         if new_mode == "Stat Analyzer" or new_mode == "Istatistik Analizcisi" :
             self.stat_analyzer_frame = StatAnalyzer(self.program_container, self, self.root, current_user_data, DEBUG=self.DEBUG)
