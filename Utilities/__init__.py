@@ -34,7 +34,9 @@ from Utilities.utils import (
     add_course,
     subtract_course,
     update_course,
-    calculate_performance
+    calculate_performance,
+
+    generate_gradient_colors
 
 )
 

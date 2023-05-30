@@ -299,3 +299,12 @@ def calculate_performance(course_list, skip_retakens=False):
 		"credits_included_in_gpa" : credits_included_in_gpa,
 		"gpa" : gpa
 	}
+
+def generate_gradient_colors(num_colors, start_color=(0, 0, 1), end_color=(1, 0, 0)):
+	gradient_colors = []
+	for i in range(num_colors):
+		r = start_color[0] + (i / (num_colors - 1)) * (end_color[0] - start_color[0])
+		g = start_color[1] + (i / (num_colors - 1)) * (end_color[1] - start_color[1])
+		b = start_color[2] + (i / (num_colors - 1)) * (end_color[2] - start_color[2])
+		gradient_colors.append((r, g, b))
+	return gradient_colors
