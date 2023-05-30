@@ -106,4 +106,5 @@ to_turkish = {
     "Login" : "Giriş",
     "Enter your credentials to authorize" : "Yetkilendirmek için kimlik bilgilerinizi girin",
     "Login to Authorize :" : "Yetkilendirmek için Giriş Yap :",
+    "The entered user does not have the required permissions" : "Girilen kullanıcının gerekli izinleri yok",
 }
