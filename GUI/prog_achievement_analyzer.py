@@ -40,15 +40,15 @@ class AchievementAnalyzer(ttk.Frame) :
         self.parsing_language : str = use_case["parsing_language"]
         self.transcript_manager_date : str = use_case["transcript_manager_date"]
         self.transcript_creation_date : str = use_case["transcript_creation_date"]
-        self.semesters : dict = use_case["semesters"].copy()
-        self.original_course_list : list = use_case["original_course_list"].copy()
-        self.filtering : tuple = use_case["filtering"].copy()
-        self.sorting : tuple = use_case["sorting"].copy()
-        self.modified_course_list : list = use_case["modified_course_list"].copy()
+        self.semesters : dict = use_case["semesters"]
+        self.original_course_list : list = use_case["original_course_list"]
+        self.filtering : tuple = use_case["filtering"]
+        self.sorting : tuple = use_case["sorting"]
+        self.modified_course_list : list = use_case["modified_course_list"]
         self.document_name : str = use_case["document_name"]
-        self.updated_course_list : list = use_case["updated_course_list"].copy()
-        self.subtracted_course_list : list = use_case["subtracted_course_list"].copy()
-        self.added_course_list : list = use_case["added_course_list"].copy()
+        self.updated_course_list : list = use_case["updated_course_list"]
+        self.subtracted_course_list : list = use_case["subtracted_course_list"]
+        self.added_course_list : list = use_case["added_course_list"]
 
     def ___create_course_based_plot_data(self):
 
@@ -87,7 +87,6 @@ class AchievementAnalyzer(ttk.Frame) :
             self.semesters["Temp Semester"] = dummy_semester
 
         updated_course_codes = [course["course_code"] for course in self.updated_course_list]
-
         for semester in self.semesters :
 
             current_semester = self.semesters[semester]
@@ -99,6 +98,22 @@ class AchievementAnalyzer(ttk.Frame) :
                 if current_course_code in updated_course_codes :
                     updated_course_data = self.updated_course_list[updated_course_codes.index(current_course_code)]
                     new_course_list.append(updated_course_data)
+                else :
+                    new_course_list.append(current_course)
+
+            current_semester["course_list"] = new_course_list
+
+        removed_course_codes = [course["course_code"] for course in self.subtracted_course_list]
+        for semester in self.semesters :
+                
+            current_semester = self.semesters[semester]
+            current_course_list = current_semester["course_list"]
+
+            new_course_list = []
+            for current_course in current_course_list :
+                current_course_code = current_course["course_code"]
+                if current_course_code in removed_course_codes :
+                    continue
                 else :
                     new_course_list.append(current_course)
 
