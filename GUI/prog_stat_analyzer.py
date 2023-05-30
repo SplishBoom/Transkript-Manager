@@ -1,5 +1,5 @@
 import tkinter as tk
-from Utilities import calculate_performance
+from Utilities import calculate_performance, filter_by
 from tkinter import ttk
 
 class StatAnalyzer(ttk.Frame) :
@@ -89,6 +89,16 @@ class StatAnalyzer(ttk.Frame) :
                     new_course_list.append(current_course)
 
             current_semester["course_list"] = new_course_list
+
+        for semester in self.semesters :
+
+            current_semester = self.semesters[semester]
+            current_course_list = current_semester["course_list"]
+
+            for current_filter in self.filtering :
+                current_course_list = filter_by(current_course_list, current_filter)
+
+            current_semester["course_list"] = current_course_list
 
     def ___create_scholarship_status_data(self):
 
