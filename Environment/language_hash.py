@@ -107,4 +107,18 @@ to_turkish = {
     "Enter your credentials to authorize" : "Yetkilendirmek için kimlik bilgilerinizi girin",
     "Login to Authorize :" : "Yetkilendirmek için Giriş Yap :",
     "The entered user does not have the required permissions" : "Girilen kullanıcının gerekli izinleri yok",
+
+
+    "You are eligible for a %50 scholarship" : "Bir %50 burs için uygunsunuz",
+    "You are eligible for a %40 scholarship" : "Bir %40 burs için uygunsunuz",
+    "You are eligible for a %25 scholarship" : "Bir %25 burs için uygunsunuz",
+    "You are not eligible for a scholarship" : "Bir burs için uygun değilsiniz",
+    "You haven't taken enough courses to apply for scholarship" : "Burs için yeterli ders almadınız",
+    "You haven't completed enough credits for scholarship" : "Burs için yeterli kredi tamamlamadınız",
+    "You have a perfect GPA for scholarship" : "Burs için mükemmel bir GPA'nız var",
+    "You have a high GPA for scholarship" : "Burs için yüksek bir GPA'nız var",
+    "You have a nice GPA for scholarship" : "Burs için güzel bir GPA'nız var",
+    "You have a good GPA for scholarship" : "Burs için iyi bir GPA'nız var",
+    "You have a low GPA for scholarship" : "Burs için düşük bir GPA'nız var",
+    "You have a very low GPA for scholarship" : "Burs için çok düşük bir GPA'nız var",
 }
