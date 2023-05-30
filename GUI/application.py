@@ -41,15 +41,15 @@ class ApplicationFrame(ttk.Frame) :
         self.__update_user_authitication()
 
         if self.parsing_language == "en" :
-            self.available_program_modes = ["Achievement Analyzer", "Grade Updater", "Stat Analyzer"]
-            self.left_program_mode = tk.StringVar(value="Achievement Analyzer")
+            self.available_program_modes = ["Stat Analyzer", "Grade Updater", "Achievement Analyzer"]
+            self.left_program_mode = tk.StringVar(value="Stat Analyzer")
             self.current_program_mode = tk.StringVar(value="Grade Updater")
-            self.right_program_mode = tk.StringVar(value="Stat Analyzer")
+            self.right_program_mode = tk.StringVar(value="Achievement Analyzer")
         else :
-            self.available_program_modes = ["Başari Analizcisi", "Not Güncelleyici", "Istatistik Analizcisi"]
-            self.left_program_mode = tk.StringVar(value="Başari Analizcisi")
+            self.available_program_modes = ["Istatistik Analizcisi", "Not Güncelleyici", "Başari Analizcisi"]
+            self.left_program_mode = tk.StringVar(value="Istatistik Analizcisi")
             self.current_program_mode = tk.StringVar(value="Not Güncelleyici")
-            self.right_program_mode = tk.StringVar(value="Istatistik Analizcisi")
+            self.right_program_mode = tk.StringVar(value="Başari Analizcisi")
         
         self.__load_user_info_label()
         self.__load_controller()
@@ -67,21 +67,21 @@ class ApplicationFrame(ttk.Frame) :
         #current_user_info = self.__create_user_info()
         current_user_data = self.__create_user_data()
 
-        if current_mode == "Achievement Analyzer" or current_mode == "Başari Analizcisi" :
-            self.achievement_analyzer_frame.grid_forget()
+        if current_mode == "Stat Analyzer" or current_mode == "Istatistik Analizcisi" :
+            self.stat_analyzer_frame.grid_forget()
         elif current_mode == "Grade Updater" or current_mode == "Not Güncelleyici" :
             self.grade_updater_frame.grid_forget()
-        elif current_mode == "Stat Analyzer" or current_mode == "Istatistik Analizcisi" :
-            self.stat_analyzer_frame.grid_forget()
+        elif current_mode == "Achievement Analyzer" or current_mode == "Başari Analizcisi" :
+            self.achievement_analyzer_frame.grid_forget()
 
-        if new_mode == "Achievement Analyzer" or new_mode == "Başari Analizcisi" :
-            self.achievement_analyzer_frame = AchievementAnalyzer(self.program_container, self, self.root, current_user_data, DEBUG=self.DEBUG)
-            self.achievement_analyzer_frame.grid(row=0, column=0)
-        elif new_mode == "Grade Updater" or new_mode == "Not Güncelleyici" :
-            self.grade_updater_frame.grid(row=0, column=0)
-        elif new_mode == "Stat Analyzer" or new_mode == "Istatistik Analizcisi" :
+        if new_mode == "Stat Analyzer" or new_mode == "Istatistik Analizcisi" :
             self.stat_analyzer_frame = StatAnalyzer(self.program_container, self, self.root, current_user_data, DEBUG=self.DEBUG)
             self.stat_analyzer_frame.grid(row=0, column=0)
+        elif new_mode == "Grade Updater" or new_mode == "Not Güncelleyici" :
+            self.grade_updater_frame.grid(row=0, column=0)
+        elif new_mode == "Achievement Analyzer" or new_mode == "Başari Analizcisi" :
+            self.achievement_analyzer_frame = AchievementAnalyzer(self.program_container, self, self.root, current_user_data, DEBUG=self.DEBUG)
+            self.achievement_analyzer_frame.grid(row=0, column=0)
 
         self.current_program_mode.set(new_mode)
         self.left_program_mode.set(self.available_program_modes[(self.available_program_modes.index(new_mode) - 1) % len(self.available_program_modes)])
@@ -337,11 +337,8 @@ class ApplicationFrame(ttk.Frame) :
         self.grade_updater_frame = GradeUpdater(self.program_container, self, self.root, current_user_data, DEBUG=self.DEBUG)
         self.grade_updater_frame.grid(row=0, column=0)
 
-        # IF YOU WANT TO, ONLY SHOW ORIGINAL COURSE RESULT INFOS AFFECT TO ANALYZERS, THAN DO THE BELOW AND JUST "GRID" IN SWITCHING
-        #self.achievement_analyzer_frame = AchievementAnalyzer(self.program_container, self, self.root, DEBUG=self.DEBUG)
-        #self.stat_analyzer_frame = StatAnalyzer(self.program_container, self, self.root, DEBUG=self.DEBUG)
-        # IF YOU WANT TO, CHANGES COURSE RESULTS AFFECTS TO ANALYZERS, THAN DO THE BELOW AND "SET & GRID" IN SWITCHING
         self.achievement_analyzer_frame = None
+        
         self.stat_analyzer_frame = None
 
     def __load_db_data(self, *args, **kwargs) :
@@ -700,10 +697,19 @@ class ApplicationFrame(ttk.Frame) :
                 self.animation_id = self.after(20, self.__animate_loading, frame_index + 1)
                 
             def __stop_loading_animation(self) :
+                
                 self.after_cancel(self.animation_id)
                 self.output_loading_label.grid_remove()
-                self.__clean_exit()
-            
+                
+                if self.result == True :
+                    self.__clean_exit()
+                else :
+                    messagebox.showerror(self._get_text("Error"), self._get_text("The entered user does not have the required permissions"))
+                    self.login_button.config(state="normal", text=self._get_text("Apply"))
+                    # clear entries
+                    self.username_entry.delete(0, "end")
+                    self.password_entry.delete(0, "end")
+
             def __init_login(self) :
 
                 self.login_container.grid_rowconfigure((0, 1), weight=1)
