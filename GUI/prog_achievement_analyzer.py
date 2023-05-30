@@ -22,6 +22,9 @@ class AchievementAnalyzer(ttk.Frame) :
 
         self.__load_program_plot()
 
+    def _get_text(self, text) :
+        return self.parent._get_text(text, self.parsing_language)
+
     def __load_containers(self) :
 
         self.container = ttk.Frame(self)
@@ -128,6 +131,8 @@ class AchievementAnalyzer(ttk.Frame) :
             semester_grade = semester_performance["gpa"]
             semester_index = semester_index + 1
             semester_name = " ".join(current_semester["semester_definition"].split(" ")[0:2])
+            semester_year, semester_semester = semester_name.split(" ")
+            semester_name = semester_year + " " + self._get_text(semester_semester)
 
             self.semester_based_plot_data["semester_grade"].append(semester_grade)
             self.semester_based_plot_data["semester_index"].append(semester_index)
@@ -157,8 +162,8 @@ class AchievementAnalyzer(ttk.Frame) :
         self.semester_based_plot_figure.patch.set_alpha(0.5)
 
         self.semester_based_plot = self.semester_based_plot_figure.add_subplot(111)
-        self.semester_based_plot.set_title("Semester Based Performance")
-        self.semester_based_plot.set_ylabel("Grade Point Average")
+        self.semester_based_plot.set_title(self._get_text("Semester Based Performance"))
+        self.semester_based_plot.set_ylabel(self._get_text("Grade Point Average"))
         self.semester_based_plot.set_facecolor("#F0F0F0")
         self.semester_based_plot.grid(color="#FFFFFF", linestyle="-", linewidth=1)
         self.semester_based_plot.set_axisbelow(True)
@@ -199,8 +204,8 @@ class AchievementAnalyzer(ttk.Frame) :
         self.course_based_plot_figure.patch.set_alpha(0.5)
 
         self.course_based_plot = self.course_based_plot_figure.add_subplot(111)
-        self.course_based_plot.set_title("Course Based Performance")
-        self.course_based_plot.set_ylabel("Grade Notation")
+        self.course_based_plot.set_title(self._get_text("Course Based Performance"))
+        self.course_based_plot.set_ylabel(self._get_text("Grade Notation"))
         self.course_based_plot.set_facecolor("#F0F0F0")
         self.course_based_plot.grid(color="#FFFFFF", linestyle="-", linewidth=1)
         self.course_based_plot.set_axisbelow(True)

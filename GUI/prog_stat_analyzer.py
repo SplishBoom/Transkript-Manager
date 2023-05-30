@@ -19,6 +19,9 @@ class StatAnalyzer(ttk.Frame) :
         self.__load_scholarship_status()
         self.__load_course_info_status()
 
+    def _get_text(self, text) :
+        return self.parent._get_text(text, self.parsing_language)
+
     def __load_containers(self) :
 
         self.container = ttk.Frame(self)
@@ -152,7 +155,7 @@ class StatAnalyzer(ttk.Frame) :
         self.program_scholarship_status_container.grid_rowconfigure((0,1), weight=1)
         self.program_scholarship_status_container.grid_columnconfigure(0, weight=1)
 
-        self.scholarship_status_label = ttk.Label(self.program_scholarship_status_container, text="Scholarship Status")
+        self.scholarship_status_label = ttk.Label(self.program_scholarship_status_container, text=self._get_text("Scholarship Status"))
         self.scholarship_status_label.grid(row=0, column=0)
 
         self.scholarship_status_treeview = ttk.Treeview(self.program_scholarship_status_container, height=1, show="headings", selectmode="none")
@@ -160,9 +163,9 @@ class StatAnalyzer(ttk.Frame) :
 
         self.scholarship_status_treeview["columns"] = ("_percentage", "_message", "_note")
 
-        self.scholarship_status_treeview.heading("_percentage", text="Percentage")
-        self.scholarship_status_treeview.heading("_message", text="Message")
-        self.scholarship_status_treeview.heading("_note", text="Footnote")
+        self.scholarship_status_treeview.heading("_percentage", text=self._get_text("Percentage"))
+        self.scholarship_status_treeview.heading("_message", text=self._get_text("Message"))
+        self.scholarship_status_treeview.heading("_note", text=self._get_text("Footnote"))
 
         self.scholarship_status_treeview.column("_percentage", anchor="center", width=90)
         self.scholarship_status_treeview.column("_message", anchor="center", width=250)
@@ -182,7 +185,7 @@ class StatAnalyzer(ttk.Frame) :
 
     def course_info_status_treeview_MUST_TAKEN(self) :
         
-        self.course_info_status_treeview_MUST_TAKEN_info_label = tk.Label(self.program_course_info_status_container, text="Courses Must Taken Again")
+        self.course_info_status_treeview_MUST_TAKEN_info_label = tk.Label(self.program_course_info_status_container, text=self._get_text("Courses Must Taken Again"))
         self.course_info_status_treeview_MUST_TAKEN_info_label.grid(row=0, column=0)
 
         maximum_height = 5
@@ -191,12 +194,12 @@ class StatAnalyzer(ttk.Frame) :
 
         self.course_info_status_treeview_MUST_TAKEN["columns"] = ("_code", "_name", "_canguage", "_credit", "_crade", "_crade_point")
 
-        self.course_info_status_treeview_MUST_TAKEN.heading("_code", text="Course Code")
-        self.course_info_status_treeview_MUST_TAKEN.heading("_name", text="Course Name")
-        self.course_info_status_treeview_MUST_TAKEN.heading("_canguage", text="Course Language")
-        self.course_info_status_treeview_MUST_TAKEN.heading("_credit", text="Course Credit")
-        self.course_info_status_treeview_MUST_TAKEN.heading("_crade", text="Course Grade")
-        self.course_info_status_treeview_MUST_TAKEN.heading("_crade_point", text="Course Grade Point")
+        self.course_info_status_treeview_MUST_TAKEN.heading("_code", text=self._get_text("Course Code"))
+        self.course_info_status_treeview_MUST_TAKEN.heading("_name", text=self._get_text("Course Name"))
+        self.course_info_status_treeview_MUST_TAKEN.heading("_canguage", text=self._get_text("Course Language"))
+        self.course_info_status_treeview_MUST_TAKEN.heading("_credit", text=self._get_text("Course Credit"))
+        self.course_info_status_treeview_MUST_TAKEN.heading("_crade", text=self._get_text("Course Grade"))
+        self.course_info_status_treeview_MUST_TAKEN.heading("_crade_point", text=self._get_text("Course Grade Point"))
 
         self.course_info_status_treeview_MUST_TAKEN.column("_code", anchor="center", width=120)
         self.course_info_status_treeview_MUST_TAKEN.column("_name", anchor="center", width=120)
@@ -213,7 +216,7 @@ class StatAnalyzer(ttk.Frame) :
 
     def course_info_status_treeview_SHOULD_TAKEN(self) :
 
-        self.course_info_status_treeview_SHOULD_TAKEN_info_label = tk.Label(self.program_course_info_status_container, text="Courses Should Taken Again")
+        self.course_info_status_treeview_SHOULD_TAKEN_info_label = tk.Label(self.program_course_info_status_container, text=self._get_text("Courses Should Taken Again"))
         self.course_info_status_treeview_SHOULD_TAKEN_info_label.grid(row=2, column=0)
 
         maximum_height = 5
@@ -222,12 +225,12 @@ class StatAnalyzer(ttk.Frame) :
 
         self.course_info_status_treeview_SHOULD_TAKEN["columns"] = ("_code", "_name", "_canguage", "_credit", "_crade", "_crade_point")
 
-        self.course_info_status_treeview_SHOULD_TAKEN.heading("_code", text="Course Code")
-        self.course_info_status_treeview_SHOULD_TAKEN.heading("_name", text="Course Name")
-        self.course_info_status_treeview_SHOULD_TAKEN.heading("_canguage", text="Course Language")
-        self.course_info_status_treeview_SHOULD_TAKEN.heading("_credit", text="Course Credit")
-        self.course_info_status_treeview_SHOULD_TAKEN.heading("_crade", text="Course Grade")
-        self.course_info_status_treeview_SHOULD_TAKEN.heading("_crade_point", text="Course Grade Point")
+        self.course_info_status_treeview_SHOULD_TAKEN.heading("_code", text=self._get_text("Course Code"))
+        self.course_info_status_treeview_SHOULD_TAKEN.heading("_name", text=self._get_text("Course Name"))
+        self.course_info_status_treeview_SHOULD_TAKEN.heading("_canguage", text=self._get_text("Course Language"))
+        self.course_info_status_treeview_SHOULD_TAKEN.heading("_credit", text=self._get_text("Course Credit"))
+        self.course_info_status_treeview_SHOULD_TAKEN.heading("_crade", text=self._get_text("Course Grade"))
+        self.course_info_status_treeview_SHOULD_TAKEN.heading("_crade_point", text=self._get_text("Course Grade Point"))
 
         self.course_info_status_treeview_SHOULD_TAKEN.column("_code", anchor="center", width=120)
         self.course_info_status_treeview_SHOULD_TAKEN.column("_name", anchor="center", width=120)
