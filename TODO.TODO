@@ -4,13 +4,7 @@ BEGIN
 GUI
    MAIN
       ADD STYLES
-      TRMAN
-         Achievement Analyzer
-            create a matplot for given data
-            directly show a matplot for given data inside class
-         Stat Aanalyzer
-            DO SOMETHING
-
+   
 PDF
    ENTEGRATE TO APPLICATION_FRAME
 
