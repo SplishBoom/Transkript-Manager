@@ -1077,6 +1077,8 @@ class GradeUpdater(ttk.Frame) :
         result = obj.get_result()
         if result is not None :
             self.subtracted_course_list.append(result)
+            # check if this result exists in added course list, then remove from added course list
+            self.added_course_list = subtract_course(self.added_course_list, result["course_code"])
             self.modified_course_list = subtract_course(self.modified_course_list, result["course_code"])
 
         self.remove_course_button.config(text=self._get_text("Remove Course"), state="normal")
