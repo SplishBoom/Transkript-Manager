@@ -163,10 +163,8 @@ class GradeUpdater(ttk.Frame) :
         self.display_treeview = ttk.Treeview(self.program_display_container, height=15, show="headings", selectmode="browse")
         self.display_treeview.grid(row=0, column=0)
 
-        # set columns
         self.display_treeview["columns"] = ("_code", "_name", "_canguage", "_credit", "_crade", "_crade_point")
 
-        # set headings
         self.display_treeview.heading("_code", text="Course Code")
         self.display_treeview.heading("_name", text="Course Name")
         self.display_treeview.heading("_canguage", text="Course Language")
@@ -174,7 +172,6 @@ class GradeUpdater(ttk.Frame) :
         self.display_treeview.heading("_crade", text="Course Grade")
         self.display_treeview.heading("_crade_point", text="Course Grade Point")
 
-        # when headings are clicked, it will be sorted
         self.display_treeview.column("_code", anchor="center", width=120)
         self.display_treeview.column("_name", anchor="center", width=120)
         self.display_treeview.column("_canguage", anchor="center", width=120)
@@ -182,7 +179,6 @@ class GradeUpdater(ttk.Frame) :
         self.display_treeview.column("_crade", anchor="center", width=120)
         self.display_treeview.column("_crade_point", anchor="center", width=120)
 
-        # add data
         self.__update_program_display()
 
     def __update_program_display(self) :
