@@ -132,8 +132,10 @@ to_turkish = {
     "Percentage" : "Yüzde",
     "Message" : "Mesaj",
     "Footnote" : "Dipnot",
-    "Courses Must Taken Again" : "Tekrar Alınması Gereken Dersler",
+    "Courses Must Taken Again" : "Tekrar Alınması Zorunlu Olan Dersler",
     "Scholarship Status" : "Burs Durumu",
     "Courses Should Taken Again" : "Tekrar Alınması Gereken Dersler",
+    "No Course Must Taken Again" : "Tekrar Alınmak Zorunda Olan Ders Yok",
+    "No Course Should Taken Again" : "Tekrar Alınması Gereken Ders Yok",
 
 }
