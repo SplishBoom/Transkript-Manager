@@ -206,7 +206,7 @@ class AchievementAnalyzer(ttk.Frame) :
             len(self.course_based_plot_data["course_index"]) + 0.5 + x_padding
         )
         self.course_based_plot.set_xticks(self.course_based_plot_data["course_index"])
-        self.course_based_plot.set_xticklabels(labels=self.course_based_plot_data["course_code"], rotation=45, ha="right", fontsize=5)
+        self.course_based_plot.set_xticklabels(labels=self.course_based_plot_data["course_code"], rotation=55, ha="right", fontsize=6)
         
         all_grade_indices = list(reversed(range(len(self.all_grades))))
         self.course_based_plot.set_yticks(all_grade_indices)
