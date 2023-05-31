@@ -1,24 +1,29 @@
-from Utilities.web import (
+# Init Custom Selenium Module 
+from    Utilities.web   import (
     Web, 
     By
 )
 
-from Utilities.database import (
+# Init Database
+from    Utilities.database  import (
     MongoClient, 
     check_database_connection
 )
 
-from Utilities.lexer import (
+# Init Selenium Classes
+from    Utilities.lexer import (
     OfflineParser, 
     OnlineParser,
     UserVerifier
 )
 
-from Utilities.pdf_export import (
+# Init PDF Export module
+from    Utilities.pdf_export    import (
     generate_pdf
 )
 
-from Utilities.utils import (
+# Init Utillity Functions
+from    Utilities.utils import (
     get_gif_frame_count,
     authenticate,
     validate_transcript,
@@ -28,7 +33,7 @@ from Utilities.utils import (
     push_dpi,
     get_gender,
     translate_text,
-    
+
     sort_by,
     filter_by,
     add_course,
@@ -37,10 +42,10 @@ from Utilities.utils import (
     calculate_performance,
 
     generate_gradient_colors
-
 )
 
-from Utilities.safe_run import (
+# Init Safe Run module
+from    Utilities.safe_run  import (
     safe_start,
     safe_execute,
     safe_end

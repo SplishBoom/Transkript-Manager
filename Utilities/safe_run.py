@@ -1,22 +1,36 @@
-from    Environment import EXECUTION_DC, SELENIUM_DC, ASCII_LOG, DEBUG
-import  colorama
-import  shutil
-from GUI import TranscriptManager
-import  os
-from Utilities import check_internet_connection, get_connection_details, download_chrome_driver, check_database_connection
+from    Utilities   import check_internet_connection, get_connection_details, download_chrome_driver, check_database_connection # -> Utility functions
+from    Environment import EXECUTION_DC, SELENIUM_DC, ASCII_LOG, DEBUG # -> Environment variables
+from    GUI         import TranscriptManager # -> DRIVER CODE
+import  colorama # -> Colorful terminal
+import  shutil # -> File operations
+import  os # -> Path operations
 
+# Apply the debug affect
 if not DEBUG :
     prints_enabled = True
 else :
     prints_enabled = False
 
 def safe_start() -> None:
-    
+    """
+    Method to start the application safely. It does checkout_pre_existing_checklist_must, checkout_pre_existing_checklist_relative, checkout_internet_connection, checkout_chrome_driver and checkout_database.
+    @Parameters:
+        None
+    @Returns:
+        None
+    """
     if prints_enabled : print(colorama.Fore.MAGENTA, "Welcome to the \"Transcript Manager\" !\n", colorama.Fore.RESET)
 
     if prints_enabled : print(colorama.Fore.CYAN, "Starting application...\n |", colorama.Fore.RESET)
 
     def __checkout_pre_existing_checklist_must() -> None:
+        """
+        Method to checkout_pre_existing_checklist_must.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
         # Check for folders that must exist. If not, terminate the application.
         if prints_enabled : print(colorama.Fore.YELLOW, ASCII_LOG["PROCCESS"], f"Checking for required modules...", colorama.Fore.RESET)
         pre_existing_checklist_must_STATUS = []
@@ -30,6 +44,13 @@ def safe_start() -> None:
             if prints_enabled : print(colorama.Fore.GREEN, ASCII_LOG["SUCCESS"], f"All required modules approved -> {[os.path.basename(fname) for fname in EXECUTION_DC.PRE_EXISTING_CHECKLIST_MUST]}", colorama.Fore.RESET)
 
     def __checkout_pre_existing_checklist_relative() -> None:
+        """
+        Method to checkout_pre_existing_checklist_relative.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
         # Check for folders that should exist. If not, create them. If yes, clean them.
         if prints_enabled : print(colorama.Fore.YELLOW, ASCII_LOG["PROCCESS"], f"Checking for relative packs...", colorama.Fore.RESET)
         pre_existing_checklist_relative_STATUS = []
@@ -43,6 +64,13 @@ def safe_start() -> None:
             if prints_enabled : print(colorama.Fore.GREEN, ASCII_LOG["SUCCESS"], f"All relative packs approved -> {[os.path.basename(fname) for fname in EXECUTION_DC.PRE_EXISTING_CHECKLIST_RELATIVE]}", colorama.Fore.RESET)
     
     def __checkout_internet_connection() -> None:
+        """
+        Method to checkout_internet_connection.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
         # Check for internet connection. If not, terminate the application.
         if prints_enabled : print(colorama.Fore.YELLOW, ASCII_LOG["PROCCESS"], f"Checking for internet connection...", colorama.Fore.RESET)    
         retrieval = check_internet_connection()
@@ -53,6 +81,13 @@ def safe_start() -> None:
             exit()
 
     def __checkout_chrome_driver() -> None:
+        """
+        Method to checkout_chrome_driver.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
         # Check for chrome driver. If not, download it.
         if prints_enabled : print(colorama.Fore.YELLOW, ASCII_LOG["PROCCESS"], f"Checking for chrome driver...", colorama.Fore.RESET)
         if not os.path.exists(SELENIUM_DC.CHROME_DRIVER_PATH) :
@@ -67,6 +102,13 @@ def safe_start() -> None:
             if prints_enabled : print(colorama.Fore.GREEN, ASCII_LOG["SUCCESS"], f"Chrome driver found -> {SELENIUM_DC.CHROME_DRIVER_PATH}", colorama.Fore.RESET)
 
     def __checkout_database() -> None:
+        """
+        Method to checkout_database.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
         # Check if mongoDB is reachable. If not, terminate the application.
         if prints_enabled : print(colorama.Fore.YELLOW, ASCII_LOG["PROCCESS"], f"Checking for database connection...", colorama.Fore.RESET)
         is_database_connection_successfull, message = check_database_connection()
@@ -76,6 +118,7 @@ def safe_start() -> None:
             if prints_enabled : print(colorama.Fore.RED, ASCII_LOG["ERROR"], f"Database connection failure -> {message}", colorama.Fore.RESET)
             exit()
 
+    # Call all checkout methods in order
     __checkout_pre_existing_checklist_must()
     __checkout_pre_existing_checklist_relative()
     __checkout_internet_connection()
@@ -83,22 +126,44 @@ def safe_start() -> None:
     __checkout_database()
 
 def safe_execute() -> None:
+    """
+    Method to safe_execute. It call the Driver Code inside handlers, for any stat it can directly terminate and restart the application.
+    @Parameters:
+        None
+    @Returns:
+        None
+    """
 
     if prints_enabled : print(colorama.Fore.LIGHTCYAN_EX, "\n Executing application...\n |", colorama.Fore.RESET)
 
     try :
+        # Call the mainloop() of TranscriptManager
         TranscriptManager(DEBUG=DEBUG).mainloop()
     except Exception as e:
         print(colorama.Fore.LIGHTRED_EX, colorama.Back.WHITE, ASCII_LOG["ERROR"], f"An error occured -> {e}", colorama.Fore.RESET, colorama.Back.RESET)
-        exit()
+        # Recursively call safe_execute() to restart the application
+        safe_execute()
 
     if prints_enabled : print(colorama.Fore.LIGHTCYAN_EX, "Application executed successfully", colorama.Fore.RESET)
 
 def safe_end() -> None:
-    
+    """
+    Method to safe_end. It does checkout_post_cache_cleanup_list and checkout_post_cleanup_list.
+    @Parameters:
+        None
+    @Returns:
+        None
+    """
     if prints_enabled : print(colorama.Fore.CYAN, "\n Terminating application...\n |", colorama.Fore.RESET)
 
     def __checkout_post_cache_cleanup_list() -> None:
+        """
+        Method to checkout_post_cache_cleanup_list.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
         # Check for folders that includes cache files. If yes, clean them.
         if prints_enabled : print(colorama.Fore.YELLOW, ASCII_LOG["PROCCESS"], f"Cleaning cache files...", colorama.Fore.RESET)
         post_cache_cleanup_list_STATUS = []
@@ -114,6 +179,13 @@ def safe_end() -> None:
             if prints_enabled : print(colorama.Fore.GREEN, ASCII_LOG["SUCCESS"], f"All folders \"cache_approved\" -> {[os.path.basename(fname) for fname in EXECUTION_DC.POST_CACHE_CLEANUP_LIST]}", colorama.Fore.RESET)
     
     def __checkout_post_cleanup_list() -> None:
+        """
+        Method to checkout_post_cleanup_list.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
         # Check for folders that should be cleaned. If yes, clean them.
         if prints_enabled : print(colorama.Fore.YELLOW, ASCII_LOG["PROCCESS"], f"Cleaning temp folders...", colorama.Fore.RESET)
         post_cleanup_list_STATUS = []
@@ -126,6 +198,7 @@ def safe_end() -> None:
         else :
             if prints_enabled : print(colorama.Fore.GREEN, ASCII_LOG["SUCCESS"], f"All folders \"clean_approved\" -> {[os.path.basename(fname) for fname in EXECUTION_DC.POST_CLEANUP_LIST]}", colorama.Fore.RESET)
 
+    # Call all checkout methods in order
     __checkout_post_cache_cleanup_list()
     __checkout_post_cleanup_list()
 
