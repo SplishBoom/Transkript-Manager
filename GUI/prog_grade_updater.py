@@ -241,12 +241,18 @@ class GradeUpdater(ttk.Frame) :
             None
         """
         # Configure program display container.
-        self.program_display_container.grid_columnconfigure((0), weight=1)
+        self.program_display_container.grid_columnconfigure((0,1), weight=1)
         self.program_display_container.grid_rowconfigure((0), weight=1)
 
+        # Set a scrollbar for treeview.
+        self.treeview_scrollbar = ttk.Scrollbar(self.program_display_container, orient="vertical")
+        self.treeview_scrollbar.grid(row=0, column=1, sticky="ns")
+
         # Openup main treeview table.
-        self.display_treeview = ttk.Treeview(self.program_display_container, height=15, show="headings", selectmode="browse")
+        self.display_treeview = ttk.Treeview(self.program_display_container, height=15, show="headings", selectmode="browse", yscrollcommand=self.treeview_scrollbar.set)
         self.display_treeview.grid(row=0, column=0)
+        # Configure scrollbar.
+        self.treeview_scrollbar.config(command=self.display_treeview.yview)
 
         # Set columns
         self.display_treeview["columns"] = ("_code", "_name", "_canguage", "_credit", "_crade", "_crade_point")

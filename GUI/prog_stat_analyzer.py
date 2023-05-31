@@ -271,7 +271,7 @@ class StatAnalyzer(ttk.Frame) :
 
         # Create course info status container.
         self.program_course_info_status_container.grid_rowconfigure((0,1,2,3), weight=1)
-        self.program_course_info_status_container.grid_columnconfigure(0, weight=1)
+        self.program_course_info_status_container.grid_columnconfigure((0,1), weight=1)
 
         # Load treeview for courses must taken and again.
         self.course_info_status_treeview_MUST_TAKEN()
@@ -287,12 +287,22 @@ class StatAnalyzer(ttk.Frame) :
         """
         # Create course info status treeview for courses must taken again.
         self.course_info_status_treeview_MUST_TAKEN_info_label = tk.Label(self.program_course_info_status_container, text=self._get_text("Courses Must Taken Again"))
-        self.course_info_status_treeview_MUST_TAKEN_info_label.grid(row=0, column=0)
+        self.course_info_status_treeview_MUST_TAKEN_info_label.grid(row=0, column=0, columnspan=2)
+
+        # Set a scrollbar for treeview.
+        self.course_info_status_treeview_MUST_TAKEN_scrollbar = ttk.Scrollbar(self.program_course_info_status_container, orient="vertical")
+        self.course_info_status_treeview_MUST_TAKEN_scrollbar.grid(row=1, column=1, sticky="ns")
 
         # Openup course info status treeview for courses must taken again.
         maximum_height = 5
-        self.course_info_status_treeview_MUST_TAKEN = ttk.Treeview(self.program_course_info_status_container, height=min(len(self.grades_must_taken), maximum_height), show="headings", selectmode="none")
+        self.course_info_status_treeview_MUST_TAKEN = ttk.Treeview(self.program_course_info_status_container, height=min(len(self.grades_must_taken), maximum_height), show="headings", selectmode="none", yscrollcommand=self.course_info_status_treeview_MUST_TAKEN_scrollbar.set)
         self.course_info_status_treeview_MUST_TAKEN.grid(row=1, column=0)
+        # Configure scrollbar.
+        self.course_info_status_treeview_MUST_TAKEN_scrollbar.config(command=self.course_info_status_treeview_MUST_TAKEN.yview)
+
+        # Secure scrollbar.
+        if len(self.grades_must_taken) <= maximum_height :
+            self.course_info_status_treeview_MUST_TAKEN_scrollbar.grid_remove()
 
         # Configure course info status treeview for courses must taken again.
         if self.grades_must_taken == [] :
@@ -336,12 +346,22 @@ class StatAnalyzer(ttk.Frame) :
         """
         # Create course info status treeview for courses should taken again.
         self.course_info_status_treeview_SHOULD_TAKEN_info_label = tk.Label(self.program_course_info_status_container, text=self._get_text("Courses Should Taken Again"))
-        self.course_info_status_treeview_SHOULD_TAKEN_info_label.grid(row=2, column=0)
+        self.course_info_status_treeview_SHOULD_TAKEN_info_label.grid(row=2, column=0, columnspan=2)
+
+        # Set a scrollbar for treeview.
+        self.course_info_status_treeview_SHOULD_TAKEN_scrollbar = ttk.Scrollbar(self.program_course_info_status_container, orient="vertical")
+        self.course_info_status_treeview_SHOULD_TAKEN_scrollbar.grid(row=3, column=1, sticky="ns")
 
         # Openup course info status treeview for courses should taken again.
         maximum_height = 5
-        self.course_info_status_treeview_SHOULD_TAKEN = ttk.Treeview(self.program_course_info_status_container, height=min(len(self.grades_should_taken), maximum_height), show="headings", selectmode="none")
+        self.course_info_status_treeview_SHOULD_TAKEN = ttk.Treeview(self.program_course_info_status_container, height=min(len(self.grades_should_taken), maximum_height), show="headings", selectmode="none", yscrollcommand=self.course_info_status_treeview_SHOULD_TAKEN_scrollbar.set)
         self.course_info_status_treeview_SHOULD_TAKEN.grid(row=3, column=0)
+        # Configure scrollbar.
+        self.course_info_status_treeview_SHOULD_TAKEN_scrollbar.config(command=self.course_info_status_treeview_SHOULD_TAKEN.yview)
+
+        # Secure scrollbar.
+        if len(self.grades_should_taken) <= maximum_height :
+            self.course_info_status_treeview_SHOULD_TAKEN_scrollbar.grid_remove()
 
         # Configure course info status treeview for courses should taken again.
         if self.grades_should_taken == [] :
