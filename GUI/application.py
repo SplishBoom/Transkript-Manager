@@ -599,14 +599,14 @@ class ApplicationFrame(ttk.Frame) :
 
         # DEBUG MODE NO COMMENT
         if not self.DEBUG :
-            output_file_folder = filedialog.askdirectory(initialdir = self.work_dir, title = self._get_text("Select Output Folder"))
+            output_file_folder = filedialog.asksaveasfilename(initialdir=self.work_dir, initialfile=self.document_name, defaultextension=".pdf", filetypes=[("PDF File", "*.pdf")])
         else :
-            output_file_folder = filedialog.askdirectory(initialdir = self.desktop_path, title = self._get_text("Select Output Folder"))
+            output_file_folder = filedialog.asksaveasfilename(initialdir=self.desktop_path, initialfile=self.document_name, defaultextension=".pdf", filetypes=[("PDF File", "*.pdf")])
 
         # Check if the user selected a folder.
         if output_file_folder is not None and output_file_folder != "" and output_file_folder != " " :
             # If selected, create the output file path.
-            output_file_path = connect_pathes(output_file_folder, self.document_name + ".pdf")
+            output_file_path = output_file_folder
 
             # Create the user data & info documents.
             current_user_info_document = self.__create_user_info()
