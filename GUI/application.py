@@ -766,3 +766,10 @@ class ApplicationFrame(ttk.Frame) :
 
         self.is_user_authenticated = result
         self.root.set_authication_status(result)
+
+        if result == True :
+            messagebox.showinfo(self._get_text("Success"), self._get_text("User is verified, access provided"))
+            return True
+        else :
+            messagebox.showerror(self._get_text("Error"), self._get_text("User is not verified, no access provided"))
+            return False

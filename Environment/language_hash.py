@@ -139,4 +139,8 @@ to_turkish = {
     "No Course Must Taken Again" : "Tekrar Alınmak Zorunda Olan Ders Yok",
     "No Course Should Taken Again" : "Tekrar Alınması Gereken Ders Yok",
 
+    "Success" : "Başarılı",
+    "User is not verified, no access provided" : "Kullanıcı doğrulanmadı, erişim sağlanmadı",
+    "User is verified, access provided" : "Kullanıcı doğrulandı, erişim sağlandı",
+
 }
