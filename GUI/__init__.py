@@ -1,6 +1,6 @@
-from GUI.services.user_authenticator import UserAuthenticator
-from GUI.services.data_loader import DataLoader
-from GUI.services.data_saver import DataSaver
+from GUI.Services.user_authenticator import UserAuthenticator
+from GUI.Services.data_loader import DataLoader
+from GUI.Services.data_saver import DataSaver
 
 from GUI.prog_stat_analyzer import StatAnalyzer
 from GUI.prog_achievement_analyzer import AchievementAnalyzer
