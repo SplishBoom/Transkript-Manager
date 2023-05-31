@@ -1,11 +1,32 @@
-from os import path
-from dataclasses import dataclass
+from    dataclasses import  dataclass
+from    os          import  path
 
-def connect_pathes(*pathes): return path.join(*pathes)
-def connect_urls(*urls): return "/".join(urls)
+def connect_pathes(*pathes : tuple) -> str:
+    """
+    Connects pathes with the OS's path seperator.
+    @Parameters:
+        pathes - Required : The list of pathes to be connected. (tuple) -> List of strings
+    @Returns:
+        The connected pathes. (str)
+    """ 
+    # Returns the connected pathes.
+    return path.join(*pathes)
 
+def connect_urls(*urls : tuple) -> str: 
+    """
+    Connects urls with the OS's path seperator.
+    @Parameters:
+        urls - Required : The list of urls to be connected. (tuple) -> List of strings
+    @Returns:
+        The connected urls. (str)
+    """
+    # Returns the connected urls.
+    return "/".join(urls)
+
+# The project's directory.
 PROJECT_DIRECTORY = path.dirname(path.dirname(path.abspath(__file__)))
 
+# Set the structure pathes.
 ASSETS_FOLDER = connect_pathes(PROJECT_DIRECTORY, "Assets")
 ENVIRONMENT_FOLDER = connect_pathes(PROJECT_DIRECTORY, "Environment")
 GUI_FOLDER = connect_pathes(PROJECT_DIRECTORY, "GUI")
@@ -16,6 +37,14 @@ UTILITIES_FOLDER = connect_pathes(PROJECT_DIRECTORY, "Utilities")
 
 @dataclass
 class ExecutionDC:
+    """
+    The dataclass that holds the execution constants.
+    @Attributes:
+        PRE_EXISTING_CHECKLIST_MUST: list
+        PRE_EXISTING_CHECKLIST_RELATIVE: list
+        POST_CACHE_CLEANUP_LIST: list
+        POST_CLEANUP_LIST: list
+    """
     PRE_EXISTING_CHECKLIST_MUST: list
     PRE_EXISTING_CHECKLIST_RELATIVE: list
     POST_CACHE_CLEANUP_LIST: list
@@ -23,6 +52,16 @@ class ExecutionDC:
 
 @dataclass
 class AssetsDC:
+    """
+    The dataclass that holds the assets constants.
+    @Attributes:
+        LOADING_ANIMATION_PATH : str
+        LOGO_PATH : str
+        ICON : str
+        GENDERS_PHOTO_PATH : dict
+        LEFT_ARROW_PATH : str
+        RIGHT_ARROW_PATH : str
+    """
     LOADING_ANIMATION_PATH : str
     LOGO_PATH : str
     ICON : str
@@ -32,6 +71,24 @@ class AssetsDC:
 
 @dataclass
 class SeleniumDC:
+    """
+    The dataclass that holds the selenium constants.
+    @Attributes:
+        CHROME_DRIVER_PATH : str
+        USER_PHOTO_OUTPUT_PATH : str
+        OLEXER_SYSTEM_LOGIN_URL : str
+        OLEXER_USERNAME_ENTRY_XPATH : str
+        OLEXER_PASSWORD_ENTRY_XPATH : str
+        OLEXER_LOGIN_BUTTON_XPATH : str
+        OLEXER_CONTINUE_BUTTON_XPATH : str
+        OLEXER_USER_PHOTO_LABEL_XPATH : str
+        OLEXER_SOURCE_ATTRIBUTE_TAGS : list
+        OLEXER_PROFILE_SELECTION_XPATH : str
+        OLEXER_STUDENT_INFO_XPATH : str
+        OLEXER_DROP_DOWN_MENU_XPATH : str
+        OLEXER_ID_SELECTION_XPATH : str
+        OLEXER_TRANSCRIPT_URL : str
+    """
     CHROME_DRIVER_PATH : str
     USER_PHOTO_OUTPUT_PATH : str
     OLEXER_SYSTEM_LOGIN_URL : str
@@ -49,6 +106,14 @@ class SeleniumDC:
 
 @dataclass
 class PackagesDC:
+    """
+    The dataclass that holds the packages constants.
+    @Attributes:
+        CHROME_DRIVER_DOWNLOAD_URL : str
+        CONNECTION_TEST_URL : str
+        CHROME_DRIVER_DOWNLOAD_PARTITION : dict
+        EXTRACTION_SITE : str
+    """
     CHROME_DRIVER_DOWNLOAD_URL : str
     CONNECTION_TEST_URL : str
     CHROME_DRIVER_DOWNLOAD_PARTITION : dict
@@ -56,20 +121,40 @@ class PackagesDC:
 
 @dataclass
 class UtilitiesDC:
+    """
+    The dataclass that holds the utilities constants.
+    @Attributes:
+        AUTH_LOG_URL : str
+        AUTH_SEC_URL : str
+        AUTH_PAYLOAD : dict
+    """
     AUTH_LOG_URL : str
     AUTH_SEC_URL : str
     AUTH_PAYLOAD : dict
 
 @dataclass
 class DatabaseDC:
+    """
+    The dataclass that holds the database constants.
+    @Attributes:
+        CONNECTION_STRING : str
+        DATABASE_NAME : str
+        COLLECTION_NAMES : dict
+    """
     CONNECTION_STRING : str
     DATABASE_NAME : str
     COLLECTION_NAMES : dict
 
 @dataclass
 class GUIDC:
+    """
+    The dataclass that holds the GUI constants.
+    @Attributes:
+        TITLE : str
+    """
     TITLE : str
 
+# Post initialization of all dataclasses' instances.
 EXECUTION_DC = ExecutionDC(
     PRE_EXISTING_CHECKLIST_MUST = [ASSETS_FOLDER, ENVIRONMENT_FOLDER, GUI_FOLDER, SERVICES_FOLDER, UTILITIES_FOLDER],
     PRE_EXISTING_CHECKLIST_RELATIVE = [SOURCES_FOLDER, TEMP_FOLDER],
@@ -127,6 +212,7 @@ GUI_DC = GUIDC(
     TITLE = "Transcript Manager",
 )
 
+# An logging style dictionary for the logger.
 log_style = {
     "ASCII" : {
         "PROCCESS" : "\n***LOGGER (⌐■_■)",
@@ -141,6 +227,8 @@ log_style = {
         "ERROR"    : "     |_LOG"
     }
 }
-ASCII_LOG = log_style["CONSOLE"]
+# Select the logging style. "ASCII_LOG" or "CONSOLE_LOG".
+ASCII_LOG = log_style["CONSOLE"] # You can change this to "ASCII_LOG" or "CONSOLE_LOG".
 
+# DEBUG option initialization.
 DEBUG = True
