@@ -1,5 +1,6 @@
-from    Utilities   import  UserVerifier, authenticate, get_gif_frame_count # -> Utility functions
+from    Utilities   import  authenticate, get_gif_frame_count # -> Utility functions
 from    Environment import  ASSETS_DC, to_turkish # -> Environment variables
+from    Utilities   import  UserVerifier # -> Utility classes 
 from    tkinter     import  messagebox # -> Ask file path
 from    tkinter     import  PhotoImage # Embed images
 from    tkinter     import  Toplevel # -> Create a pop up window
