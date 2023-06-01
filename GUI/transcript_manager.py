@@ -1,11 +1,32 @@
-from    Environment import  GUI_DC, ASSETS_DC, to_turkish # -> Environment variables
-from    GUI         import  LoginFrame, ApplicationFrame # -> GUI
-from    Utilities   import  MongoClient, OfflineParser # -> Database and parsing
-from    Utilities   import  push_dpi # -> DPI
-from    tkinter     import  ttk # -> GUI
-import  tkinter     as      tk # -> GUI
+from    Environment     import  GUI_DC, ASSETS_DC, to_turkish # -> Environment variables
+from    GUI             import  LoginFrame, ApplicationFrame # -> GUI
+from    Utilities       import  MongoClient, OfflineParser # -> Database and parsing
+from    Utilities       import  push_dpi # -> DPI
+#from    tkinter         import  ttk # -> GUI
+import  customtkinter   as      ctk # -> GUI
+#import  tkinter         as      tk # -> GUI
 
-class TranscriptManager(tk.Tk) :
+# set mode to dark
+ctk.set_appearance_mode("dark")
+# close scaling
+#ctk.deactivate_automatic_dpi_awareness()
+
+class TranscriptManager(ctk.CTk) :
+
+    light_background = "#DFE3E9" 
+    dark_background = "#323a45"
+    secondary_dark_background = "#4E5963"
+
+    button_light_blue = "#349FE3"
+    button_light_blue_hover = "#34afe3"
+    button_light_green = "#27AE60"
+    button_light_green_hover = "#2abf69"
+    button_light_red = "#e33c2b"
+    button_light_red_hover = "#e85d4c"
+
+    entry_light_background = "#E8F0FE"
+    
+    general_padding = 15
 
     def __init__(self, DEBUG : bool = False, *args, **kwargs) -> None:
         """
@@ -22,6 +43,9 @@ class TranscriptManager(tk.Tk) :
         self.title(GUI_DC.TITLE)
         self.iconbitmap(ASSETS_DC.ICON)
 
+        #DEBUG
+        self.configure(fg_color = self.dark_background, bg_color = self.dark_background)
+
         # Set class variables.
         self.DEBUG = DEBUG
         self.db_client = MongoClient()
@@ -29,9 +53,13 @@ class TranscriptManager(tk.Tk) :
         self.user_data_document = None
         self.is_user_authenticated = False
 
+        # Configure window's gridding.
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
         # Setup the main container.
-        self.main_container = ttk.Frame(self)
-        self.main_container.grid(row=0, column=0)
+        self.main_container = ctk.CTkFrame(self)
+        self.main_container.grid(row=0, column=0, padx=self.general_padding, pady=self.general_padding)
         # Configure the main container.
         self.main_container.grid_rowconfigure(0, weight=1)
         self.main_container.grid_columnconfigure(0, weight=1)
@@ -40,10 +68,10 @@ class TranscriptManager(tk.Tk) :
             # Load the initial frame.
             self.login_frame = LoginFrame(self.main_container, self, self.DEBUG)
             # Grid the initial frame.
-            self.login_frame.grid(row=0, column=0)
+            self.login_frame.grid(row=0, column=0, stick="nsew")
 
             # Push up the DPI for the application.
-            push_dpi()
+            #push_dpi()
         else :
             # DEBUG MODE NO COMMENT
             parser = OfflineParser(path_to_file=r"C:\GithubProjects\transkript-manager\Data\emir.pdf")
@@ -58,7 +86,7 @@ class TranscriptManager(tk.Tk) :
             self.set_authication_status(is_user_authenticated)
 
             self.application_frame = ApplicationFrame(self.main_container, self, self.DEBUG)
-            self.application_frame.grid(row=0, column=0)
+            self.application_frame.grid(row=0, column=0, stick="nsew")
 
             self.after(100000, self.destroy)
 
@@ -78,7 +106,7 @@ class TranscriptManager(tk.Tk) :
         self.login_frame = None
         # Load the application frame.
         self.application_frame = ApplicationFrame(self.main_container, self, self.DEBUG)
-        self.application_frame.grid(row=0, column=0)
+        self.application_frame.grid(row=0, column=0, stick="nsew")
 
     def restart_application(self) -> None:
         """
@@ -93,7 +121,7 @@ class TranscriptManager(tk.Tk) :
         self.application_frame = None
         # Load the application frame.
         self.application_frame = ApplicationFrame(self.main_container, self, self.DEBUG)
-        self.application_frame.grid(row=0, column=0)
+        self.application_frame.grid(row=0, column=0, stick="nsew")
 
     def _switch_to_login(self) -> None:
         """
@@ -108,7 +136,7 @@ class TranscriptManager(tk.Tk) :
         self.application_frame = None
         # Load the login frame.
         self.login_frame = LoginFrame(self.main_container, self, self.DEBUG)
-        self.login_frame.grid(row=0, column=0)
+        self.login_frame.grid(row=0, column=0, stick="nsew")
 
     def set_current_data(self, user_info_document : dict = None, user_data_document : dict = None) -> None:
         """
