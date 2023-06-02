@@ -1,8 +1,6 @@
 from    Utilities       import  get_gif_frame_count, authenticate, validate_transcript # -> Utilitiy functions
 from    Utilities       import  OfflineParser, OnlineParser # -> Utilitiy classes
-from    PIL             import  Image, ImageTk # -> Image processing
-from    tkinter         import  PhotoImage # -> Image processing
-from    tkinter         import  filedialog # -> Ask file path
+from    PIL             import  Image # -> Image processing
 from    Environment     import  ASSETS_DC, GUI_DC # -> Environment variables
 import  customtkinter   as      ctk # -> GUI
 import  os # -> Get current working directory
@@ -257,9 +255,9 @@ class LoginFrame(ctk.CTkFrame) :
 
         # DEBUG MODE NO COMMENT
         if not self.DEBUG :
-            input_file_path = filedialog.askopenfile(initialdir = self.work_dir, title = "Select Transcript", filetypes = [('pdf files only', '*.pdf')])
+            input_file_path = ctk.filedialog.askopenfile(initialdir = self.work_dir, title = "Select Transcript", filetypes = [('pdf files only', '*.pdf')])
         else :
-            input_file_path = filedialog.askopenfile(initialdir = self.desktop_path, title = "Select Transcript", filetypes = [('pdf files only', '*.pdf')])
+            input_file_path = ctk.filedialog.askopenfile(initialdir = self.desktop_path, title = "Select Transcript", filetypes = [('pdf files only', '*.pdf')])
 
         # Set literal for user interraction
         file_selected = False
