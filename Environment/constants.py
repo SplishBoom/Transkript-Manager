@@ -167,7 +167,7 @@ class GUIDC:
         ENTRY_LIGHT_BACKGROUND : str
         GENERAL_PADDING : str
         MEF_LOGO_SIZE : tuple
-        GIF_SIZE : tuple
+        GIF_SIZE : str
     """
     TITLE : str
     LIGHT_BACKGROUND : str
@@ -184,9 +184,16 @@ class GUIDC:
     BUTTON_LIGHT_RED : str
     BUTTON_LIGHT_RED_HOVER : str
     ENTRY_LIGHT_BACKGROUND : str
-    GENERAL_PADDING : str
-    MEF_LOGO_SIZE : tuple
-    GIF_SIZE : tuple
+    GENERAL_PADDING : int
+    INNER_PADDING : int
+    LOGIN_MEF_LOGO_SIZE : tuple
+    LOGIN_GIF_SIZE : tuple
+    STUDENT_PHOTO_SIZE : tuple
+    APP_MEF_LOGO_SIZE : tuple
+    APP_SLIDER_ARROW_SIZE : tuple
+    BORDER_COLOR : tuple
+    BUTTON_LIGHT_PURPLE : str
+    BUTTON_LIGHT_PURPLE_HOVER : str
 
 # Post initialization of all dataclasses' instances.
 EXECUTION_DC = ExecutionDC(
@@ -258,9 +265,16 @@ GUI_DC = GUIDC(
     BUTTON_LIGHT_RED = "#E33C2B",
     BUTTON_LIGHT_RED_HOVER = "#E85D4C",
     ENTRY_LIGHT_BACKGROUND = "#E8F0FE",
-    GENERAL_PADDING = 15,
-    MEF_LOGO_SIZE = (216, 140),
-    GIF_SIZE = (50, 50)
+    GENERAL_PADDING = 10,
+    INNER_PADDING = 5,
+    LOGIN_MEF_LOGO_SIZE = (216, 140),
+    LOGIN_GIF_SIZE = (50, 50),
+    STUDENT_PHOTO_SIZE = (120, 100),
+    APP_MEF_LOGO_SIZE = (120, 100),
+    APP_SLIDER_ARROW_SIZE = (25, 25),
+    BORDER_COLOR = "#f2f7ff",
+    BUTTON_LIGHT_PURPLE = "#8E44AD",
+    BUTTON_LIGHT_PURPLE_HOVER = "#9B59B6",
 )
 
 # An logging style dictionary for the logger.
@@ -282,4 +296,4 @@ log_style = {
 ASCII_LOG = log_style["CONSOLE"] # You can change this to "ASCII_LOG" or "CONSOLE_LOG".
 
 # DEBUG option initialization.
-DEBUG = False
+DEBUG = True
