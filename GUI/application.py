@@ -552,10 +552,6 @@ class ApplicationFrame(ctk.CTkFrame) :
         @Returns:
             None
         """
-        """
-        self.export_button.configure(text=self._get_text("Not Exported"), fg_color=GUI_DC.BUTTON_LIGHT_RED)
-        self.after(750, lambda : self.export_button.configure(text=self._get_text("Export Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
-        """
         # Disable the button to prevent multiple clicks.
         self.load_db_data_button.configure(text=self._get_text("Loading Data"), state="disabled")
 
@@ -565,7 +561,7 @@ class ApplicationFrame(ctk.CTkFrame) :
         # If not authenticated, fix the button and cancel operation.
         if not self.is_user_authenticated :
             self.load_db_data_button.configure(text=self._get_text("Auth Eror"), fg_color=GUI_DC.BUTTON_LIGHT_RED)
-            self.after(750, lambda : self.load_db_data_button.configure(text=self._get_text("Load Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
+            self.after(500, lambda : self.load_db_data_button.configure(text=self._get_text("Load Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
             return
 
         # Initialize the match data.
@@ -576,7 +572,7 @@ class ApplicationFrame(ctk.CTkFrame) :
         if document_list == [] :
             messagebox.showerror(self._get_text("Error"), self._get_text("No data found for this user"))
             self.load_db_data_button.configure(text=self._get_text("No Data"), fg_color=GUI_DC.BUTTON_LIGHT_RED)
-            self.after(750, lambda : self.load_db_data_button.configure(text=self._get_text("Load Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
+            self.after(500, lambda : self.load_db_data_button.configure(text=self._get_text("Load Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
             return
 
         # If data found, load the available data.
@@ -592,7 +588,7 @@ class ApplicationFrame(ctk.CTkFrame) :
         # If no data selected, fix the button and cancel operation.
         if selected_option == "" :
             self.load_db_data_button.configure(text=self._get_text("No Selection"), fg_color=GUI_DC.BUTTON_LIGHT_RED)
-            self.after(750, lambda : self.load_db_data_button.configure(text=self._get_text("Load Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
+            self.after(500, lambda : self.load_db_data_button.configure(text=self._get_text("Load Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
             return
         
         # If data selected, load the data.
@@ -602,8 +598,7 @@ class ApplicationFrame(ctk.CTkFrame) :
 
         # Reset the ApplicationFrame to take effect. Also fix the button.
         self.load_db_data_button.configure(text=self._get_text("Loaded"), fg_color=GUI_DC.BUTTON_LIGHT_GREEN)
-        self.after(750, lambda : self.load_db_data_button.configure(text=self._get_text("Load Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
-        self.after(1000, self.__reset)
+        self.after(500, self.__reset)
 
     def __save_db_data(self, *args, **kwargs) -> None:
         """
@@ -622,7 +617,7 @@ class ApplicationFrame(ctk.CTkFrame) :
         # If not authenticated, fix the button and cancel operation.
         if not self.is_user_authenticated :
             self.save_db_data_button.configure(text=self._get_text("Auth Eror"), fg_color=GUI_DC.BUTTON_LIGHT_RED)
-            self.after(750, lambda : self.save_db_data_button.configure(text=self._get_text("Save Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
+            self.after(500, lambda : self.save_db_data_button.configure(text=self._get_text("Save Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
             return
 
         # Initialize the match data.
@@ -641,7 +636,7 @@ class ApplicationFrame(ctk.CTkFrame) :
         # If no document name selected, fix the button and cancel operation.
         if new_document_name == "" :
             self.save_db_data_button.configure(text=self._get_text("No Input"), fg_color=GUI_DC.BUTTON_LIGHT_RED)
-            self.after(750, lambda : self.save_db_data_button.configure(text=self._get_text("Save Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
+            self.after(500, lambda : self.save_db_data_button.configure(text=self._get_text("Save Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
             return
         
         # If document name selected, save the data.
@@ -663,8 +658,7 @@ class ApplicationFrame(ctk.CTkFrame) :
 
         # Fix the button and reset the ApplicationFrame to take effect.
         self.save_db_data_button.configure(text=self._get_text("Saved"), fg_color=GUI_DC.BUTTON_LIGHT_GREEN)
-        self.after(750, lambda : self.save_db_data_button.configure(text=self._get_text("Save Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
-        self.after(1000, self.__reset)
+        self.after(500, self.__reset)
 
     def __reset(self, *args, **kwargs) -> None:
         """
@@ -688,7 +682,7 @@ class ApplicationFrame(ctk.CTkFrame) :
             None
         """
         # Disable the button to prevent multiple clicks.
-        self.export_button.configure(text=self._get_text("Exporting Data"), state="disabled")
+        self.export_button.configure(text=self._get_text("Exporting"), state="disabled")
 
         # DEBUG MODE NO COMMENT
         if not self.DEBUG :
@@ -720,10 +714,10 @@ class ApplicationFrame(ctk.CTkFrame) :
         # Fix the button and reset the ApplicationFrame to take effect. If not selected or selected, it does not matter.
         if is_exported :
             self.export_button.configure(text=self._get_text("Exported"), fg_color=GUI_DC.BUTTON_LIGHT_GREEN)
-            self.after(750, lambda : self.export_button.configure(text=self._get_text("Export Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
+            self.after(500, lambda : self.export_button.configure(text=self._get_text("Export Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
         else :
             self.export_button.configure(text=self._get_text("Not Exported"), fg_color=GUI_DC.BUTTON_LIGHT_RED)
-            self.after(750, lambda : self.export_button.configure(text=self._get_text("Export Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
+            self.after(500, lambda : self.export_button.configure(text=self._get_text("Export Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
 
     def __change_mode_index(self, operation : str, *args, **kwargs) -> None:
         """

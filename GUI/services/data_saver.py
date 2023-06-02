@@ -1,12 +1,10 @@
-from    Environment import  ASSETS_DC, to_turkish # -> Environment variables
-from    tkinter     import  messagebox # -> Ask file path
-from    tkinter     import  Toplevel # -> Create a pop up window
-from    tkinter     import  ttk # -> GUI
-import  tkinter     as      tk # -> GUI
+from    Environment     import  ASSETS_DC, GUI_DC, to_turkish # -> Environment variables
+from    tkinter         import  messagebox # -> User interaction
+import  customtkinter   as      ctk # -> Custom tkinter widgets
 
-class DataSaver(Toplevel) :
+class DataSaver(ctk.CTkToplevel) :
 
-    def __init__(self, master : ttk.Frame, existing_document_names : list, parsing_language : str) -> None:
+    def __init__(self, master : ctk.CTkFrame, existing_document_names : list, parsing_language : str) -> None:
         """
         Constructor of the DataLoader class. Asks user to select a filename to save.
         @Parameters:
@@ -18,6 +16,8 @@ class DataSaver(Toplevel) :
         """
         # Initialize the Toplevel window.
         super().__init__(master)
+        self.grid_rowconfigure((0), weight=1)
+        self.grid_columnconfigure((0), weight=1)
 
         # Set the parsing language.
         self.parsing_language = parsing_language
@@ -28,13 +28,12 @@ class DataSaver(Toplevel) :
         
         # Set the class variables.
         self.existing_document_names = existing_document_names
-        self.new_document_name = tk.StringVar(self)
+        self.new_document_name = ctk.StringVar(self)
 
         # Setup the main container.
-        self.container = ttk.Frame(self)
-        self.container.grid(row=0, column=0)
-
-        # Configure the container.
+        self.container = ctk.CTkFrame(self, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.container.grid(row=0, column=0, sticky="nsew")
+        # Configure the main container.
         self.container.grid_rowconfigure((0), weight=1)
         self.container.grid_columnconfigure((0), weight=1)
 
@@ -82,18 +81,49 @@ class DataSaver(Toplevel) :
         @Return:
             None
         """
+        # Create the widgets container.
+        self.widgets_container = ctk.CTkFrame(self.container, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.widgets_container.grid(row=0, column=0, sticky="nsew")
+        # Configure the widgets container.
+        self.widgets_container.grid_rowconfigure((0, 1, 2), weight=1)
+        self.widgets_container.grid_columnconfigure((0, 1), weight=1)
+
         # Create the widgets.
-        self.new_document_name_label = ttk.Label(self.container, text=self._get_text("Enter a name for the document"))
+        self.new_document_name_label = ctk.CTkLabel(self.widgets_container, text=self._get_text("Enter a name for the document"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 15, "bold"),
+            anchor="center",
+        )
         self.new_document_name_label.grid(row=0, column=0, columnspan=2)
 
-        self.new_document_name_entry = ttk.Entry(self.container, textvariable=self.new_document_name)
-        self.new_document_name_entry.grid(row=1, column=0, columnspan=2)
+        self.new_document_name_entry = ctk.CTkEntry(self.widgets_container, textvariable=self.new_document_name,
 
-        self.save_button = ttk.Button(self.container, text=self._get_text("Save"), command=self.__save)
-        self.save_button.grid(row=2, column=0)
+        )
+        self.new_document_name_entry.grid(row=1, column=0, columnspan=2, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
-        self.cancel_button = ttk.Button(self.container, text=self._get_text("Cancel"), command=self.__clean_exit)
-        self.cancel_button.grid(row=2, column=1)
+        self.save_button = ctk.CTkButton(self.widgets_container, text=self._get_text("Save"), command=self.__save,
+            fg_color=GUI_DC.LIGHT_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            hover_color=GUI_DC.SECONDARY_LIGHT_BACKGROUND,
+            text_color=GUI_DC.DARK_TEXT_COLOR,
+            text_color_disabled=GUI_DC.MEDIUM_TEXT_COLOR,
+            anchor="center",
+            font=("Arial", 12, "bold")
+        )
+        self.save_button.grid(row=2, column=0, pady=GUI_DC.INNER_PADDING, padx=GUI_DC.INNER_PADDING)
+
+        self.cancel_button = ctk.CTkButton(self.widgets_container, text=self._get_text("Cancel"), command=self.__clean_exit,
+            fg_color=GUI_DC.LIGHT_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            hover_color=GUI_DC.SECONDARY_LIGHT_BACKGROUND,
+            text_color=GUI_DC.DARK_TEXT_COLOR,
+            text_color_disabled=GUI_DC.MEDIUM_TEXT_COLOR,
+            anchor="center",
+            font=("Arial", 12, "bold")
+        )
+        self.cancel_button.grid(row=2, column=1, pady=GUI_DC.INNER_PADDING, padx=GUI_DC.INNER_PADDING)
 
     def __save(self) -> None:
         """

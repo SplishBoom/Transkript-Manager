@@ -1,15 +1,14 @@
-from    Utilities   import  authenticate, get_gif_frame_count # -> Utility functions
-from    Environment import  ASSETS_DC, to_turkish # -> Environment variables
-from    Utilities   import  UserVerifier # -> Utility classes 
-from    tkinter     import  messagebox # -> Ask file path
-from    tkinter     import  PhotoImage # Embed images
-from    tkinter     import  Toplevel # -> Create a pop up window
-from    tkinter     import  ttk # -> GUI
+from    Utilities       import  authenticate, get_gif_frame_count # -> Utility functions
+from    Environment     import  ASSETS_DC, GUI_DC, to_turkish # -> Environment variables
+from    Utilities       import  UserVerifier # -> Utility classes 
+from    tkinter         import  messagebox # -> Ask file path
+from    PIL             import  Image # -> Load the gif
+import  customtkinter   as      ctk # -> Custom tkinter classes
 import  threading # -> Run the authentication in a different thread
 
-class UserAuthenticator(Toplevel) :
+class UserAuthenticator(ctk.CTkToplevel) :
 
-    def __init__(self, master : ttk.Frame, match_id : str, parsing_language : str) -> None:
+    def __init__(self, master : ctk.CTkFrame, match_id : str, parsing_language : str) -> None:
         """
         Constructor of the Authenticator class. Asks user to enter their credentials to authorize.
         @Parameters:
@@ -21,12 +20,14 @@ class UserAuthenticator(Toplevel) :
         """
         # Initialize the Toplevel window.
         super().__init__(master)
+        self.grid_rowconfigure((0), weight=1)
+        self.grid_columnconfigure((0), weight=1)
 
         # Set the parsing language.
         self.parsing_language = parsing_language
 
         # Set the title and icon of the window.
-        self.title(self._get_text("Unauthorized Access Verification"))
+        self.title(self._get_text("Unauthorized Access"))
         self.iconbitmap(ASSETS_DC.ICON)
 
         # Set the class variables.
@@ -34,8 +35,8 @@ class UserAuthenticator(Toplevel) :
         self.result = False
 
         # Setup the main container.
-        self.container = ttk.Frame(self)
-        self.container.grid(row=0, column=0)
+        self.container = ctk.CTkFrame(self, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.container.grid(row=0, column=0, sticky="nsew")
         # Configure the main container.
         self.container.grid_rowconfigure((0), weight=1)
         self.container.grid_columnconfigure((0), weight=1)
@@ -60,29 +61,58 @@ class UserAuthenticator(Toplevel) :
             None
         """
         # Create the widgets container.
-        self.widgets_container = ttk.Frame(self.container)
-        self.widgets_container.grid(row=0, column=0)
+        self.widgets_container = ctk.CTkFrame(self.container, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.widgets_container.grid(row=0, column=0, sticky="nsew")
         # Configure the widgets container.
-        self.widgets_container.grid_rowconfigure((0, 1, 2, 3), weight=1)
+        self.widgets_container.grid_rowconfigure((0, 1, 2), weight=1)
         self.widgets_container.grid_columnconfigure((0, 1), weight=1)
 
         # Create the widgets.
-        self.info_label = ttk.Label(self.widgets_container, text=self._get_text("Enter your credentials to authorize"))
+        self.info_label = ctk.CTkLabel(self.widgets_container, text=self._get_text("Enter your credentials to authorize"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 15, "bold"),
+            anchor="center",
+        )
         self.info_label.grid(row=0, column=0, columnspan=2)
 
-        self.login_container = ttk.Frame(self.widgets_container)
-        self.login_container.grid(row=1, column=0, columnspan=2)
+        self.login_container = ctk.CTkFrame(self.widgets_container, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.login_container.grid(row=1, column=0, columnspan=2, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
         self.__init_login()
 
-        self.login_button = ttk.Button(self.widgets_container, text=self._get_text("Apply"), command=self.__login)
-        self.login_button.grid(row=2, column=0)
+        self.login_button = ctk.CTkButton(self.widgets_container, text=self._get_text("Apply"), command=self.__login,
+            fg_color=GUI_DC.LIGHT_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            hover_color=GUI_DC.SECONDARY_LIGHT_BACKGROUND,
+            text_color=GUI_DC.DARK_TEXT_COLOR,
+            text_color_disabled=GUI_DC.MEDIUM_TEXT_COLOR,
+            anchor="center",
+            font=("Arial", 12, "bold")
+        )
+        self.login_button.grid(row=2, column=0, pady=GUI_DC.INNER_PADDING, padx=GUI_DC.INNER_PADDING)
 
-        self.cancel_button = ttk.Button(self.widgets_container, text=self._get_text("Cancel"), command=self.__clean_exit)
-        self.cancel_button.grid(row=2, column=1)
+        self.cancel_button = ctk.CTkButton(self.widgets_container, text=self._get_text("Cancel"), command=self.__clean_exit,
+            fg_color=GUI_DC.LIGHT_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            hover_color=GUI_DC.SECONDARY_LIGHT_BACKGROUND,
+            text_color=GUI_DC.DARK_TEXT_COLOR,
+            text_color_disabled=GUI_DC.MEDIUM_TEXT_COLOR,
+            anchor="center",
+            font=("Arial", 12, "bold")
+        )
+        self.cancel_button.grid(row=2, column=1, pady=GUI_DC.INNER_PADDING, padx=GUI_DC.INNER_PADDING)
 
         self.gif_frame_count = get_gif_frame_count(ASSETS_DC.LOADING_ANIMATION_PATH)
-        self.gif_frames = [PhotoImage(file=ASSETS_DC.LOADING_ANIMATION_PATH, format = 'gif -index %i' %(i)) for i in range(self.gif_frame_count)]
-        self.output_loading_label = ttk.Label(self.widgets_container)
+        # Load each embeddable frame of the gif.
+        self.gif_frames = []
+        for frame in range(self.gif_frame_count):
+            # Get the current frame.
+            current_pil_image = Image.open(ASSETS_DC.LOADING_ANIMATION_PATH)
+            current_pil_image.seek(frame)
+            # Append it in to the frame list.
+            current_gif_object = ctk.CTkImage(light_image=current_pil_image, dark_image=current_pil_image, size=GUI_DC.AUTH_GIF_SIZE)
+            self.gif_frames.append(current_gif_object)
         
     def __start_loading_animation(self) -> None:
         """
@@ -92,8 +122,8 @@ class UserAuthenticator(Toplevel) :
         @Return:
             None
         """
-        # Grids the loading gif's label.
-        self.output_loading_label.grid(row=3, column=0, columnspan=2)
+        # Set the loading gif's label.
+        self.login_button.configure(state="disabled", text=None, command=None)
         # Initialize the animation.
         self.animation_id = self.after(0, self.__animate_loading, 0)
 
@@ -116,7 +146,7 @@ class UserAuthenticator(Toplevel) :
 
         # Set the current frame.
         self.current_frame = self.gif_frames[frame_index]
-        self.output_loading_label.configure(image=self.current_frame)
+        self.login_button.configure(image=self.current_frame, text=None)
 
         # Animate the next frame.
         self.animation_id = self.after(20, self.__animate_loading, frame_index + 1)
@@ -131,15 +161,17 @@ class UserAuthenticator(Toplevel) :
         """
         # Stop the animation.
         self.after_cancel(self.animation_id)
-        self.output_loading_label.grid_remove()
         
+        # Set the login button's label.
+        self.login_button.configure(state="normal", text=self._get_text("Apply"), command=self.__login, image=None)
+
         # If result is true, than destroy the window.
         if self.result == True :
             self.__clean_exit()
         else :
             # When the result is false, than enable the login button. Show an error message and clear the entries. So the user can try again.
             messagebox.showerror(self._get_text("Error"), self._get_text("The entered user does not have the required permissions"))
-            self.login_button.config(state="normal", text=self._get_text("Apply"))
+            self.login_button.configure(state="normal", text=self._get_text("Apply"))
 
             # Clear the entries.
             self.username_entry.delete(0, "end")
@@ -158,15 +190,39 @@ class UserAuthenticator(Toplevel) :
         self.login_container.grid_columnconfigure((0, 1), weight=1)
 
         # Create the login widgets.
-        self.username_label = ttk.Label(self.login_container, text=self._get_text("Username"))
-        self.username_label.grid(row=0, column=0)
-        self.username_entry = ttk.Entry(self.login_container)
-        self.username_entry.grid(row=0, column=1)
+        self.username_label = ctk.CTkLabel(self.login_container, text=self._get_text("Username"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 12, "bold"),
+            anchor="center",
+        )
+        self.username_label.grid(row=0, column=0, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
+        self.username_entry = ctk.CTkEntry(self.login_container,
+            fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            border_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 12, "bold")
+        )
+        self.username_entry.grid(row=0, column=1, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
-        self.password_label = ttk.Label(self.login_container, text=self._get_text("Password"))
-        self.password_label.grid(row=1, column=0)
-        self.password_entry = ttk.Entry(self.login_container, show="*")
-        self.password_entry.grid(row=1, column=1)
+        self.password_label = ctk.CTkLabel(self.login_container, text=self._get_text("Password"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 12, "bold"),
+            anchor="center",
+        )
+        self.password_label.grid(row=1, column=0, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
+        self.password_entry = ctk.CTkEntry(self.login_container, show="*",
+            fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            border_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 12, "bold")
+        )
+        self.password_entry.grid(row=1, column=1, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
     def __load_thread(self) -> None:
         """
@@ -203,7 +259,7 @@ class UserAuthenticator(Toplevel) :
             None
         """
         # Disable the login button and set the text to processing. So the user can't click the button again.
-        self.login_button.config(text=self._get_text("Processing"), state="disabled")
+        self.login_button.configure(text=self._get_text("Processing"), state="disabled")
 
         # Get the username and password.
         username = self.username_entry.get()
@@ -212,7 +268,7 @@ class UserAuthenticator(Toplevel) :
         # Check if the username or password is empty. Than show an error message and enable the login button.
         if username == "" or password == "" :
             messagebox.showerror(self._get_text("Error"), self._get_text("Username or Password is Empty"))
-            self.login_button.config(text=self._get_text("Login"), state="normal")
+            self.login_button.configure(text=self._get_text("Login"), state="normal")
             return
         
         # Authenticate the user credentials with the system
@@ -221,7 +277,7 @@ class UserAuthenticator(Toplevel) :
         # Check if the authentication is false. Than show an error message and enable the login button. So the user can try again.
         if auth == False :
             messagebox.showerror(self._get_text("Error"), self._get_text("Username or Password is Incorrect"))
-            self.login_button.config(text=self._get_text("Login"), state="normal")
+            self.login_button.configure(text=self._get_text("Login"), state="normal")
             return
         
         # If nothin is wrong, than start the retrieving process.

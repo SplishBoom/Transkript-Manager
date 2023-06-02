@@ -194,6 +194,7 @@ class GUIDC:
     BORDER_COLOR : tuple
     BUTTON_LIGHT_PURPLE : str
     BUTTON_LIGHT_PURPLE_HOVER : str
+    AUTH_GIF_SIZE : tuple
 
 # Post initialization of all dataclasses' instances.
 EXECUTION_DC = ExecutionDC(
@@ -275,6 +276,7 @@ GUI_DC = GUIDC(
     BORDER_COLOR = "#f2f7ff",
     BUTTON_LIGHT_PURPLE = "#8E44AD",
     BUTTON_LIGHT_PURPLE_HOVER = "#9B59B6",
+    AUTH_GIF_SIZE = (25, 25),
 )
 
 # An logging style dictionary for the logger.

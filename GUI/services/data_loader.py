@@ -1,12 +1,10 @@
-from    Environment import  ASSETS_DC, to_turkish # -> Environment variables
-from    tkinter     import  messagebox # -> Ask file path
-from    tkinter     import  Toplevel # -> Create a pop up window
-from    tkinter     import  ttk # -> GUI
-import  tkinter     as      tk # -> GUI
+from    Environment     import  ASSETS_DC, GUI_DC, to_turkish # -> Environment variables
+from    tkinter         import  messagebox # -> User interaction
+import  customtkinter   as      ctk # -> Custom tkinter widgets
 
-class DataLoader(Toplevel) :
+class DataLoader(ctk.CTkToplevel) :
 
-    def __init__(self, master : ttk.Frame, options : tuple, parsing_language : str) -> None:
+    def __init__(self, master : ctk.CTkFrame, options : tuple, parsing_language : str) -> None:
         """
         Constructor of the DataLoader class. Asks user to select a file to load.
         @Parameters:
@@ -18,6 +16,8 @@ class DataLoader(Toplevel) :
         """
         # Initialize the Toplevel window.
         super().__init__(master)
+        self.grid_rowconfigure((0), weight=1)
+        self.grid_columnconfigure((0), weight=1)
 
         # Set the parsing language.
         self.parsing_language = parsing_language
@@ -28,12 +28,12 @@ class DataLoader(Toplevel) :
 
         # Set the class variables.
         self.options = options
-        self.selected_option = tk.StringVar(self)
+        self.selected_option = ctk.StringVar(self)
 
         # Setup the main container.
-        self.container = ttk.Frame(self)
-        self.container.grid(row=0, column=0)
-        # Configure the container.
+        self.container = ctk.CTkFrame(self, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.container.grid(row=0, column=0, sticky="nsew")
+        # Configure the main container.
         self.container.grid_rowconfigure((0), weight=1)
         self.container.grid_columnconfigure((0), weight=1)
 
@@ -81,18 +81,50 @@ class DataLoader(Toplevel) :
         @Return:
             None
         """
+        # Create the widgets container.
+        self.widgets_container = ctk.CTkFrame(self.container, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.widgets_container.grid(row=0, column=0, sticky="nsew")
+        # Configure the widgets container.
+        self.widgets_container.grid_rowconfigure((0, 1, 2), weight=1)
+        self.widgets_container.grid_columnconfigure((0, 1), weight=1)
+
         # Create the widgets.
-        self.options_label = ttk.Label(self.container, text=self._get_text("Select a document to load"))
+        self.options_label = ctk.CTkLabel(self.widgets_container, text=self._get_text("Select a document to load"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 15, "bold"),
+            anchor="center",
+        )
         self.options_label.grid(row=0, column=0, columnspan=2)
 
-        self.options_combobox = ttk.Combobox(self.container, textvariable=self.selected_option, values=self.options)
-        self.options_combobox.grid(row=1, column=0, columnspan=2)
+        self.options_combobox = ctk.CTkComboBox(self.widgets_container, variable=self.selected_option, values=self.options,
+            justify="center",
+            state="readonly",
+        )
+        self.options_combobox.grid(row=1, column=0, columnspan=2, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
-        self.load_button = ttk.Button(self.container, text=self._get_text("Load"), command=self.__load)
-        self.load_button.grid(row=2, column=0)
+        self.load_button = ctk.CTkButton(self.widgets_container, text=self._get_text("Load"), command=self.__load,
+            fg_color=GUI_DC.LIGHT_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            hover_color=GUI_DC.SECONDARY_LIGHT_BACKGROUND,
+            text_color=GUI_DC.DARK_TEXT_COLOR,
+            text_color_disabled=GUI_DC.MEDIUM_TEXT_COLOR,
+            anchor="center",
+            font=("Arial", 12, "bold")
+        )
+        self.load_button.grid(row=2, column=0, pady=GUI_DC.INNER_PADDING, padx=GUI_DC.INNER_PADDING)
 
-        self.cancel_button = ttk.Button(self.container, text=self._get_text("Cancel"), command=self.__clean_exit)
-        self.cancel_button.grid(row=2, column=1)
+        self.cancel_button = ctk.CTkButton(self.widgets_container, text=self._get_text("Cancel"), command=self.__clean_exit,
+            fg_color=GUI_DC.LIGHT_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            hover_color=GUI_DC.SECONDARY_LIGHT_BACKGROUND,
+            text_color=GUI_DC.DARK_TEXT_COLOR,
+            text_color_disabled=GUI_DC.MEDIUM_TEXT_COLOR,
+            anchor="center",
+            font=("Arial", 12, "bold")
+        )
+        self.cancel_button.grid(row=2, column=1, pady=GUI_DC.INNER_PADDING, padx=GUI_DC.INNER_PADDING)
 
     def __load(self) -> None:
         """
