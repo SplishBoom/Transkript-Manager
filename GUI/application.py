@@ -553,7 +553,7 @@ class ApplicationFrame(ctk.CTkFrame) :
             None
         """
         # Disable the button to prevent multiple clicks.
-        self.load_db_data_button.configure(text=self._get_text("Loading Data"), state="disabled")
+        self.load_db_data_button.configure(text=self._get_text("Processing"), state="disabled")
 
         # Check if the user is authenticated.
         self.__check_authentication()
@@ -609,7 +609,7 @@ class ApplicationFrame(ctk.CTkFrame) :
             None
         """
         # Disable the button to prevent multiple clicks.
-        self.save_db_data_button.configure(text=self._get_text("Saving Data"), state="disabled")
+        self.save_db_data_button.configure(text=self._get_text("Processing"), state="disabled")
 
         # Check if the user is authenticated.
         self.__check_authentication()
@@ -669,7 +669,7 @@ class ApplicationFrame(ctk.CTkFrame) :
             None
         """
         # Disable the button to prevent multiple clicks.
-        self.reset_button.configure(text=self._get_text("Refreshing"), state="disabled")
+        self.reset_button.configure(text=self._get_text("Processing"), state="disabled")
         # Reset the ApplicationFrame. By restarting the application.
         self.root.restart_application()
     
@@ -682,7 +682,7 @@ class ApplicationFrame(ctk.CTkFrame) :
             None
         """
         # Disable the button to prevent multiple clicks.
-        self.export_button.configure(text=self._get_text("Exporting"), state="disabled")
+        self.export_button.configure(text=self._get_text("Processing"), state="disabled")
 
         # DEBUG MODE NO COMMENT
         if not self.DEBUG :
