@@ -38,7 +38,6 @@ class LoginFrame(ctk.CTkFrame) :
         self.password = ctk.StringVar(value=None)
         self.path_to_transcript = ctk.StringVar(value=None)
         self.name_of_transcript = ctk.StringVar(value=None)
-        self.execution_mode = ctk.StringVar(value="online")
         self.work_dir = os.getcwd()
         self.desktop_path = os.path.join(os.path.join(os.environ["USERPROFILE"]), "Desktop")
 
@@ -47,8 +46,7 @@ class LoginFrame(ctk.CTkFrame) :
 
         # # Load widgets.
         self.__load_mef_label()
-        self.__load_online_login()
-        self.__load_output()
+        self.__load_input_field()
 
     def __load_containers(self) -> None:
         """
@@ -62,30 +60,20 @@ class LoginFrame(ctk.CTkFrame) :
         self.container = ctk.CTkFrame(self, fg_color=self.root.light_background, bg_color=self.root.dark_background, corner_radius=25)
         self.container.grid(row=0, column=0)
         # Configure the main container.
-        self.container.grid_rowconfigure((0,1,2), weight=1)
+        self.container.grid_rowconfigure((0,1), weight=1)
         self.container.grid_columnconfigure(0, weight=1)
 
         # Create the sub containers.
         self.mef_label_container = ctk.CTkFrame(self.container)
         self.mef_label_container.grid(row=0, column=0)
 
-        self.online_login_container = ctk.CTkFrame(self.container)
-        self.online_login_container.grid(row=1, column=0)
-
-        self.offline_login_container = ctk.CTkFrame(self.container)
-        self.offline_login_container.grid(row=1, column=0)
-
-        self.output_container = ctk.CTkFrame(self.container)
-        self.output_container.grid(row=2, column=0)
+        self.input_field_container = ctk.CTkFrame(self.container)
+        self.input_field_container.grid(row=1, column=0)
 
         # Iterate over containers, and configure them.
         for container in self.container.winfo_children() :
             container.configure(fg_color=self.root.light_background)
             container.grid_configure(padx=self.root.general_padding, pady=self.root.general_padding, sticky="nsew")
-
-        # Remove the containers that shouldn't be visible at the beginning.
-        self.offline_login_container.grid_remove()
-        self.output_container.grid_remove()
 
     def __load_mef_label(self) -> None:
         """
@@ -104,7 +92,51 @@ class LoginFrame(ctk.CTkFrame) :
         self.mef_logo_label = ctk.CTkLabel(self.mef_label_container, image=self.mef_logo_image, text=None, anchor="center")
         self.mef_logo_label.grid(row=0, column=0, sticky="nsew")
 
-    def __load_online_login(self) -> None:
+    def __load_input_field(self) -> None:
+        """
+        Method to load the online & offline login widgets and wires logic.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
+        # Configure the input field container.
+        self.input_field_container.grid_rowconfigure((0), weight=1)
+        self.input_field_container.grid_columnconfigure((0), weight=1)
+
+        # Create the tabview widget for the input field.
+        ctk.CTkTabview._segmented_button_border_width = 4
+        ctk.CTkTabview._button_height = 30
+        ctk.CTkTabview._top_button_overhang = 9
+        self.tab_view = ctk.CTkTabview(self.input_field_container, 
+                                       fg_color=self.root.dark_background, 
+                                       bg_color=self.root.light_background,
+                                       text_color=self.root.light_text_color,
+                                       text_color_disabled=self.root.medium_text_color,
+                                       segmented_button_fg_color=self.root.dark_background,
+                                       segmented_button_selected_color=self.root.button_light_blue,
+                                       segmented_button_selected_hover_color=self.root.button_light_blue_hover,
+                                       segmented_button_unselected_color=self.root.dark_background,
+                                       segmented_button_unselected_hover_color=self.root.dark_background,
+                                       corner_radius=25,
+                                       width=0,
+                                       height=317
+        )
+        self.tab_view.grid(row=0, column=0, sticky="nsew")
+
+        # Add the tabs
+        self.tab_view.add("Online Login")
+        self.tab_view.add("Offline Login")
+
+        # Set the current tab to online login.
+        self.tab_view.set("Online Login")
+
+        # Load the online login widgets into the tab.
+        self.___load_online_login()
+        # Load the offline login widgets into the tab.
+        self.___load_offline_login()
+
+    def ___load_online_login(self) -> None:
         """
         Method to load the online login widgets and wires logic.
         @Parameters:
@@ -113,77 +145,64 @@ class LoginFrame(ctk.CTkFrame) :
             None
         """
         # Configure the online login container.
-        self.online_login_container.grid_rowconfigure((0,1,3,4,5), weight=1)
-        self.online_login_container.grid_columnconfigure((0), weight=1)
-
-        """
-        self.root.button_light_blue
-        self.root.button_light_green
-        self.root.inner_padding
-        """
+        self.tab_view.tab("Online Login").grid_rowconfigure((0,1,3,4,5,6), weight=1)
+        self.tab_view.tab("Online Login").grid_columnconfigure((0), weight=1)
 
         # Create the online login widgets.
-        self.online_login_label_button = ctk.CTkButton(self.online_login_container, text="Online Login", command=self.__switch_login_mode, 
-                                                       fg_color=self.root.button_light_blue, 
-                                                       hover_color=self.root.button_light_blue_hover, 
-                                                       border_color=self.root.light_background, 
-                                                       bg_color=self.root.light_background, 
-                                                       corner_radius=50,
-                                                       text_color="white",
-                                                       text_color_disabled="gray",
-                                                       font=("Arial", 14, "bold")
-        )
-        self.online_login_label_button.grid(row=0, column=0)
-
-        self.online_login_username_label = ctk.CTkLabel(self.online_login_container, text="Username",
-                                                        fg_color=self.root.light_background,
-                                                        bg_color=self.root.light_background,
-                                                        text_color=self.root.secondary_dark_background,
+        self.offline_status_label = ctk.CTkLabel(self.tab_view.tab("Online Login"), text="Username",
+                                                        fg_color=self.root.dark_background,
+                                                        bg_color=self.root.dark_background,
+                                                        text_color=self.root.light_background,
                                                         font=("Arial", 12, "bold")
         )
-        self.online_login_username_label.grid(row=1, column=0, sticky="w", padx=15)
-        self.online_login_username_entry = ctk.CTkEntry(self.online_login_container, textvariable=self.username,
-                                                        fg_color=self.root.entry_light_background,
-                                                        bg_color=self.root.light_background,
+        self.offline_status_label.grid(row=0, column=0, sticky="w", padx=15)
+        self.online_login_username_entry = ctk.CTkEntry(self.tab_view.tab("Online Login"), textvariable=self.username,
+                                                        fg_color=self.root.secondary_dark_background,
+                                                        bg_color=self.root.dark_background,
                                                         border_color=self.root.secondary_dark_background,
                                                         placeholder_text="username",
-                                                        placeholder_text_color="gray",
-                                                        text_color=self.root.dark_background,
+                                                        placeholder_text_color=self.root.dark_text_color,
+                                                        text_color=self.root.light_text_color,
                                                         font=("Arial", 12, "bold")
         )
-        self.online_login_username_entry.grid(row=2, column=0, sticky="we", padx=15)
+        self.online_login_username_entry.grid(row=1, column=0, sticky="we", padx=15)
         
-        self.online_login_password_label = ctk.CTkLabel(self.online_login_container, text="Password",
-                                                        fg_color=self.root.light_background,
-                                                        bg_color=self.root.light_background,
-                                                        text_color=self.root.secondary_dark_background,
+        # Dummy label for spacing. *** The pady is not working propely on customtkinter, so this is a workaround. ***
+        ctk.CTkLabel(self.tab_view.tab("Online Login"), height=0, text=None).grid(row=2, column=0)
+
+        self.online_login_password_label = ctk.CTkLabel(self.tab_view.tab("Online Login"), text="Password",
+                                                        fg_color=self.root.dark_background,
+                                                        bg_color=self.root.dark_background,
+                                                        text_color=self.root.light_background,
                                                         font=("Arial", 12, "bold")
         )
         self.online_login_password_label.grid(row=3, column=0, sticky="w", padx=15)
-        self.online_login_password_entry = ctk.CTkEntry(self.online_login_container, textvariable=self.password, show="*",
-                                                        fg_color=self.root.entry_light_background,
-                                                        bg_color=self.root.light_background,
+        self.online_login_password_entry = ctk.CTkEntry(self.tab_view.tab("Online Login"), textvariable=self.password, show="*",
+                                                        fg_color=self.root.secondary_dark_background,
+                                                        bg_color=self.root.dark_background,
                                                         border_color=self.root.secondary_dark_background,
                                                         placeholder_text="password",
-                                                        placeholder_text_color="gray",
-                                                        text_color=self.root.dark_background,
+                                                        placeholder_text_color=self.root.dark_text_color,
+                                                        text_color=self.root.light_text_color,
                                                         font=("Arial", 12, "bold")
         )
         self.online_login_password_entry.grid(row=4, column=0, sticky="we", padx=15)
 
-        self.online_login_button = ctk.CTkButton(self.online_login_container, text="Login", command=self.__handle_login, 
+        ctk.CTkLabel(self.tab_view.tab("Online Login"), height=0, text=None).grid(row=5, column=0)
+
+        self.online_login_button = ctk.CTkButton(self.tab_view.tab("Online Login"), text="Login", command=self.__handle_login, 
                                                  fg_color=self.root.button_light_green, 
                                                  hover_color=self.root.button_light_green_hover, 
                                                  border_color=self.root.light_background, 
-                                                 bg_color=self.root.light_background, 
+                                                 bg_color=self.root.dark_background, 
                                                  corner_radius=50,
-                                                 text_color="white",
-                                                 text_color_disabled="gray",
+                                                 text_color=self.root.light_text_color,
+                                                 text_color_disabled=self.root.dark_text_color,
                                                  font=("Arial", 14, "bold")
         )
-        self.online_login_button.grid(row=5, column=0, pady=12)
+        self.online_login_button.grid(row=6, column=0, pady=12)
 
-    def __load_offline_login(self) -> None:
+    def ___load_offline_login(self) -> None:
         """
         Method to load the offline login widgets and wires logic.
         @Parameters:
@@ -192,75 +211,41 @@ class LoginFrame(ctk.CTkFrame) :
             None
         """
         # Configure the offline login container.
-        self.offline_login_container.grid_rowconfigure((0,1,2), weight=1)
-        self.offline_login_container.grid_columnconfigure(0, weight=1)
+        self.tab_view.tab("Offline Login").grid_rowconfigure((0,1,2), weight=1)
+        self.tab_view.tab("Offline Login").grid_columnconfigure(0, weight=1)
 
         # Create the offline login widgets.
-        self.offline_login_label_button = ctk.CTkButton(self.offline_login_container, text="Offline Login", command=self.__switch_login_mode,
-                                                        fg_color=self.root.button_light_blue, 
-                                                        hover_color=self.root.button_light_blue_hover, 
-                                                        border_color=self.root.light_background, 
-                                                        bg_color=self.root.light_background, 
-                                                        corner_radius=50,
-                                                        text_color="white",
-                                                        text_color_disabled="gray",
-                                                        font=("Arial", 14, "bold")
-        )
-        self.offline_login_label_button.grid(row=0, column=0, pady=12)
-
-        self.offline_open_file_button = ctk.CTkButton(self.offline_login_container, text=self.name_of_transcript.get() or "Select Transcript", command=self.__handle_ask_file_dialog,
-                                                      fg_color=self.root.dark_background,
-                                                      hover_color=self.root.secondary_dark_background,
+        self.offline_open_file_button = ctk.CTkButton(self.tab_view.tab("Offline Login"), text=self.name_of_transcript.get() or "Select Transcript", command=self.__handle_ask_file_dialog,
+                                                      fg_color=self.root.button_light_blue,
+                                                      hover_color=self.root.button_light_blue_hover,
                                                       border_color=self.root.light_background,
-                                                      bg_color=self.root.light_background,
+                                                      bg_color=self.root.dark_background,
                                                       corner_radius=50,
-                                                      text_color="white",
-                                                      text_color_disabled="gray",
-                                                      font=("Arial", 14, "bold")
+                                                      text_color=self.root.light_text_color,
+                                                      text_color_disabled=self.root.dark_text_color,
+                                                      font=("Arial", 14, "bold"),
         )
-        self.offline_open_file_button.grid(row=1, column=0, pady=12)
+        self.offline_open_file_button.grid(row=0, column=0, pady=12)
 
-        self.offline_login_button = ctk.CTkButton(self.offline_login_container, text="Login", command=self.__handle_login, 
+        self.offline_status_label = ctk.CTkLabel(self.tab_view.tab("Offline Login"), text="Offline Mode Available",
+                                                        fg_color=self.root.dark_background,
+                                                        bg_color=self.root.dark_background,
+                                                        text_color=self.root.button_light_green,
+                                                        font=("Arial", 12, "bold")
+        )
+        self.offline_status_label.grid(row=1, column=0, sticky="we", padx=15)
+
+        self.offline_login_button = ctk.CTkButton(self.tab_view.tab("Offline Login"), text="Login", command=self.__handle_login, 
                                                   fg_color=self.root.button_light_green, 
                                                   hover_color=self.root.button_light_green_hover, 
                                                   border_color=self.root.light_background, 
-                                                  bg_color=self.root.light_background, 
+                                                  bg_color=self.root.dark_background, 
                                                   corner_radius=50,
-                                                  text_color="white",
-                                                  text_color_disabled="gray",
+                                                  text_color=self.root.light_text_color,
+                                                  text_color_disabled=self.root.dark_text_color,
                                                   font=("Arial", 14, "bold")
         )
         self.offline_login_button.grid(row=2, column=0, pady=12)
-
-    def __load_output(self) -> None:
-        """
-        Method to load the output widgets. Used for gif animation
-        @Parameters:
-            None
-        @Returns:
-            None
-        """
-        # Get the number of frames in the gif file.
-        self.gif_frame_count = get_gif_frame_count(ASSETS_DC.LOADING_ANIMATION_PATH)
-
-        # Load each embeddable frame of the gif.
-        #self.gif_frames = [ctk.CTkImage(file=ASSETS_DC.LOADING_ANIMATION_PATH, format = 'gif -index %i' %(i)) for i in range(self.gif_frame_count)]
-        self.gif_frames = []
-        for frame in range(self.gif_frame_count):
-            
-            current_pil_image = Image.open(ASSETS_DC.LOADING_ANIMATION_PATH)
-            current_pil_image.seek(frame)
-            
-            current_gif_object = ctk.CTkImage(light_image=current_pil_image, dark_image=current_pil_image, size=self.gif_size)
-            self.gif_frames.append(current_gif_object)
-
-        # Configure the output container.
-        self.output_container.grid_rowconfigure(0, weight=1)
-        self.output_container.grid_columnconfigure(0, weight=1)
-
-        # Create the output widget.
-        self.output_loading_label = ctk.CTkLabel(self.output_container, text=None)
-        self.output_loading_label.grid(row=0, column=0, sticky="nsew")
 
 
 
@@ -295,10 +280,11 @@ class LoginFrame(ctk.CTkFrame) :
 
         # Fix the buttons. So, user can try again.
         if not file_selected :
-            self.offline_open_file_button.configure(text="No File Selected", fg_color=self.root.button_light_red, text_color_disabled="white")
-            self.after(500, lambda : self.offline_open_file_button.configure(state="normal", text=self.name_of_transcript.get() or "Select Transcript", fg_color=self.root.dark_background, text_color_disabled="gray"))
+            self.offline_open_file_button.configure(text="No File Selected", fg_color=self.root.button_light_red, text_color_disabled=self.root.light_text_color)
+            self.after(500, lambda : self.offline_open_file_button.configure(state="normal", text=self.name_of_transcript.get() or "Select Transcript", fg_color=self.root.button_light_blue, text_color_disabled=self.root.dark_text_color))
         else :
             self.offline_open_file_button.configure(state="normal", text=self.name_of_transcript.get() or "Select Transcript")
+
 
     def __handle_login(self, *args, **kwargs) -> None:
         """
@@ -309,19 +295,17 @@ class LoginFrame(ctk.CTkFrame) :
             None
         """
         # Check the execution mode. (online or offline) Than, get the correctness of the login parameters. Also disable buttons to prevent multiple login attempts.
-        if self.execution_mode.get() == "online" :
+        if self.tab_view.get() == "Online Login" :
             self.online_login_button.configure(state="disabled", text="Processing")
-            self.online_login_label_button.configure(state="disabled")
             self.online_login_username_entry.configure(state="disabled")
             self.online_login_password_entry.configure(state="disabled")
             if (self.username.get() is None or self.username.get() == "" or self.username.get() == " ") or (self.password.get() is None or self.password.get() == "" or self.password.get() == " ") :
                 isAllowed = False
             else :            
                 isAllowed = authenticate(username=self.username.get(), password=self.password.get())
-        elif self.execution_mode.get() == "offline" :
+        elif self.tab_view.get() == "Offline Login" :
             self.offline_login_button.configure(state="disabled", text="Processing")
             self.offline_open_file_button.configure(state="disabled")
-            self.offline_login_label_button.configure(state="disabled")
             if self.path_to_transcript.get() is None or self.path_to_transcript.get() == "" or self.path_to_transcript.get() == " " :
                 isAllowed = False
             else :
@@ -331,25 +315,22 @@ class LoginFrame(ctk.CTkFrame) :
 
         # If the login parameters are correct, start the loading animation and load the thread.
         if isAllowed :
+            self.tab_view.configure(state="disabled")
             self.__start_loading_animation()
             self.__load_thread()
         else :
             # If the login parameters are incorrect, show the error message and fix the buttons. So, user can try again. Use after to show animation effect on buttons.
-            if self.execution_mode.get() == "online" :
+            if self.tab_view.get() == "Online Login" :
                 self.online_login_username_entry.configure(state="normal")
                 self.online_login_password_entry.configure(state="normal")
-                self.online_login_button.configure(text="Wrong Credentials", fg_color=self.root.button_light_red, text_color_disabled="white")
-                self.after(500, lambda : self.online_login_button.configure(state="normal", text="Login", fg_color=self.root.button_light_green, text_color_disabled="gray"))
-                self.after(500, lambda : self.online_login_label_button.configure(state="normal"))
-            elif self.execution_mode.get() == "offline" :
+                self.online_login_button.configure(text="Wrong Credentials", fg_color=self.root.button_light_red, text_color_disabled=self.root.light_text_color)
+                self.after(500, lambda : self.online_login_button.configure(state="normal", text="Login", fg_color=self.root.button_light_green, text_color_disabled=self.root.dark_text_color))
+            elif self.tab_view.get() == "Offline Login" :
                 self.offline_open_file_button.configure(state="normal")
-                self.offline_login_button.configure(text="Invalid Transcript", fg_color=self.root.button_light_red, text_color_disabled="white")
-                self.after(500, lambda : self.offline_login_button.configure(state="normal", text="Login", fg_color=self.root.button_light_green, text_color_disabled="gray"))
-                self.after(500, lambda : self.offline_login_label_button.configure(state="normal"))
+                self.offline_login_button.configure(text="Invalid Transcript", fg_color=self.root.button_light_red, text_color_disabled=self.root.light_text_color)
+                self.after(500, lambda : self.offline_login_button.configure(state="normal", text="Login", fg_color=self.root.button_light_green, text_color_disabled=self.root.dark_text_color))
             else :
                 raise ValueError("Invalid Execution Mode")
-
-
 
     def __load_thread(self) -> None:
         """
@@ -368,14 +349,16 @@ class LoginFrame(ctk.CTkFrame) :
                 None
             """
             # Create parser object according to the execution mode.
-            if self.execution_mode.get() == "online" :
+            if self.tab_view.get() == "Online Login" :
                 parser = OnlineParser(username=self.username.get(), password=self.password.get())
-            elif self.execution_mode.get() == "offline" :
+            elif self.tab_view.get() == "Offline Login" :
                 parser = OfflineParser(path_to_file=self.path_to_transcript.get())
                 if not self.DEBUG :
                     time.sleep(2.3) # Simulate a long process by fake sleeping for 3 seconds.
                 else :
                     pass
+            else :
+                raise ValueError("Invalid Execution Mode")
 
             # Parse the transcript.
             data = parser.get_transcript_data()
@@ -399,25 +382,6 @@ class LoginFrame(ctk.CTkFrame) :
         # Start the thread.
         self.thread.start()
 
-    def __switch_login_mode(self, *args, **kwargs) -> None:
-        """
-        Method to switch the login mode.
-        @Parameters:
-            None
-        @Returns:
-            None
-        """
-        # Check the execution mode and switch it. Apply remove and grid methods to the containers. than, load the login containers back.
-        if self.execution_mode.get() == "online" :
-            self.execution_mode.set("offline")
-            self.online_login_container.grid_remove()
-            self.offline_login_container.grid(row=1, column=0)
-            self.__load_offline_login()
-        else :
-            self.execution_mode.set("online")
-            self.offline_login_container.grid_remove()
-            self.online_login_container.grid(row=1, column=0)
-            self.__load_online_login()
 
 
     def __start_loading_animation(self) -> None:
@@ -428,8 +392,32 @@ class LoginFrame(ctk.CTkFrame) :
         @Returns:
             None
         """
-        # Grid the container.
-        self.output_container.grid(row=2, column=0)
+
+        # Get the pressed login button.
+        if self.tab_view.get() == "Online Login" :
+            self.pressed_button : ctk.CTkButton = self.online_login_button
+        elif self.tab_view.get() == "Offline Login" :
+            self.pressed_button : ctk.CTkButton = self.offline_login_button
+        else :
+            raise ValueError("Invalid Execution Mode")
+        
+        # Reconfigure the pressed button.
+        self.pressed_button.configure(state="disabled", text=None, command=None, fg_color=self.root.light_background)
+
+        # Get the number of frames in the gif file.
+        self.gif_frame_count = get_gif_frame_count(ASSETS_DC.LOADING_ANIMATION_PATH)
+
+        # Load each embeddable frame of the gif.
+        self.gif_frames = []
+        for frame in range(self.gif_frame_count):
+            
+            # Get the current frame.
+            current_pil_image = Image.open(ASSETS_DC.LOADING_ANIMATION_PATH)
+            current_pil_image.seek(frame)
+            
+            # Append it in to the frame list.
+            current_gif_object = ctk.CTkImage(light_image=current_pil_image, dark_image=current_pil_image, size=self.gif_size)
+            self.gif_frames.append(current_gif_object)
 
         # Initialize the animation.
         self.animation_id = self.root.after(0, self.__animate_loading, 0)
@@ -453,7 +441,9 @@ class LoginFrame(ctk.CTkFrame) :
         
         # Set the current frame.
         self.current_frame = self.gif_frames[frame_index]
-        self.output_loading_label.configure(image=self.current_frame)
+
+        # Set text to None, the ctk currently does not update itself when the image is changed without a text.
+        self.pressed_button.configure(image=self.current_frame, text=None)
 
         # Animate the next frame.
         self.animation_id = self.root.after(20, self.__animate_loading, frame_index + 1)
@@ -468,7 +458,6 @@ class LoginFrame(ctk.CTkFrame) :
         """
         # Cancel the animation.
         self.root.after_cancel(self.animation_id)
-        self.output_container.grid_remove()
 
         # Switch to the application.
         self.root._switch_to_application()

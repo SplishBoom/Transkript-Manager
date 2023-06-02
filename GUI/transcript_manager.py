@@ -13,9 +13,14 @@ ctk.set_appearance_mode("dark")
 
 class TranscriptManager(ctk.CTk) :
 
-    light_background = "#DFE3E9" 
+    light_background = "#DFE3E9"
+    secondary_light_background = "#E8F0FE"
     dark_background = "#323a45"
     secondary_dark_background = "#4E5963"
+
+    light_text_color = "#FFFFFF"
+    medium_text_color = "#D3D3D3"
+    dark_text_color = "#000000"
 
     button_light_blue = "#349FE3"
     button_light_blue_hover = "#34afe3"
