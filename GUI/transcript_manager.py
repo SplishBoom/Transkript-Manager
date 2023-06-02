@@ -39,7 +39,7 @@ class TranscriptManager(ctk.CTk) :
 
         # Setup the main container.
         self.main_container = ctk.CTkFrame(self)
-        self.main_container.grid(row=0, column=0, padx=GUI_DC.GENERAL_PADDING, pady=GUI_DC.GENERAL_PADDING)
+        self.main_container.grid(row=0, column=0, padx=GUI_DC.GENERAL_PADDING, pady=GUI_DC.GENERAL_PADDING, stick="nsew")
         # Configure the main container.
         self.main_container.grid_rowconfigure(0, weight=1)
         self.main_container.grid_columnconfigure(0, weight=1)

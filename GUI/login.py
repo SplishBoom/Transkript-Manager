@@ -48,9 +48,12 @@ class LoginFrame(ctk.CTkFrame) :
         @Returns:
             None
         """
+        # Set the initial configuration, to make expandable affect on window.
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
         # Create the main container.
         self.container = ctk.CTkFrame(self, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND, corner_radius=25)
-        self.container.grid(row=0, column=0)
+        self.container.grid(row=0, column=0, sticky="nsew")
         # Configure the main container.
         self.container.grid_rowconfigure((0,1), weight=1)
         self.container.grid_columnconfigure(0, weight=1)
@@ -64,7 +67,7 @@ class LoginFrame(ctk.CTkFrame) :
 
         # Iterate over containers, and configure them.
         for container in self.container.winfo_children() :
-            container.configure(fg_color=GUI_DC.LIGHT_BACKGROUND)
+            container.configure(fg_color=GUI_DC.LIGHT_BACKGROUND, border_color=GUI_DC.BORDER_COLOR, border_width=2, corner_radius=25, bg_color = GUI_DC.LIGHT_BACKGROUND)
             container.grid_configure(padx=GUI_DC.GENERAL_PADDING, pady=GUI_DC.GENERAL_PADDING, sticky="nsew")
 
 
@@ -77,13 +80,15 @@ class LoginFrame(ctk.CTkFrame) :
             None
         """
         # Configure the mef label container.
-        self.mef_label_container.grid_rowconfigure(0, weight=1)
+        self.mef_label_container.grid_rowconfigure((0,1,2), weight=1)
         self.mef_label_container.grid_columnconfigure(0, weight=1)
 
         # Load the mef label.
-        self.mef_logo_image = ctk.CTkImage(dark_image=Image.open(ASSETS_DC.LOGO_PATH), light_image=Image.open(ASSETS_DC.LOGO_PATH), size=GUI_DC.MEF_LOGO_SIZE)
+        ctk.CTkFrame(self.mef_label_container, width=0, height=0, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.LIGHT_BACKGROUND).grid(row=0, column=0, pady=GUI_DC.INNER_PADDING, padx=GUI_DC.INNER_PADDING)
+        self.mef_logo_image = ctk.CTkImage(dark_image=Image.open(ASSETS_DC.LOGO_PATH), light_image=Image.open(ASSETS_DC.LOGO_PATH), size=GUI_DC.LOGIN_MEF_LOGO_SIZE)
         self.mef_logo_label = ctk.CTkLabel(self.mef_label_container, image=self.mef_logo_image, text=None, anchor="center")
-        self.mef_logo_label.grid(row=0, column=0, sticky="nsew")
+        self.mef_logo_label.grid(row=1, column=0, sticky="nsew", padx=GUI_DC.INNER_PADDING)
+        ctk.CTkFrame(self.mef_label_container, width=0, height=0, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.LIGHT_BACKGROUND).grid(row=2, column=0, pady=GUI_DC.INNER_PADDING, padx=GUI_DC.INNER_PADDING)
 
     def __load_input_field(self) -> None:
         """
@@ -94,10 +99,11 @@ class LoginFrame(ctk.CTkFrame) :
             None
         """
         # Configure the input field container.
-        self.input_field_container.grid_rowconfigure((0), weight=1)
+        self.input_field_container.grid_rowconfigure((0,1,2), weight=1)
         self.input_field_container.grid_columnconfigure((0), weight=1)
 
         # Create the tabview widget for the input field.
+        ctk.CTkFrame(self.input_field_container, width=0, height=0, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.LIGHT_BACKGROUND).grid(row=0, column=0, pady=GUI_DC.INNER_PADDING//2, padx=GUI_DC.INNER_PADDING)
         ctk.CTkTabview._segmented_button_border_width = 4
         ctk.CTkTabview._button_height = 30
         ctk.CTkTabview._top_button_overhang = 9
@@ -115,8 +121,8 @@ class LoginFrame(ctk.CTkFrame) :
                                        width=0,
                                        height=317
         )
-        self.tab_view.grid(row=0, column=0, sticky="nsew")
-
+        self.tab_view.grid(row=1, column=0, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
+        ctk.CTkFrame(self.input_field_container, width=0, height=0, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.LIGHT_BACKGROUND).grid(row=2, column=0, pady=GUI_DC.INNER_PADDING//2, padx=GUI_DC.INNER_PADDING)
         # Add the tabs
         self.tab_view.add("Online Login")
         self.tab_view.add("Offline Login")
@@ -406,7 +412,7 @@ class LoginFrame(ctk.CTkFrame) :
             current_pil_image.seek(frame)
             
             # Append it in to the frame list.
-            current_gif_object = ctk.CTkImage(light_image=current_pil_image, dark_image=current_pil_image, size=GUI_DC.GIF_SIZE)
+            current_gif_object = ctk.CTkImage(light_image=current_pil_image, dark_image=current_pil_image, size=GUI_DC.LOGIN_GIF_SIZE)
             self.gif_frames.append(current_gif_object)
 
         # Initialize the animation.
