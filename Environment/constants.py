@@ -151,6 +151,23 @@ class GUIDC:
     The dataclass that holds the GUI constants.
     @Attributes:
         TITLE : str
+        LIGHT_BACKGROUND : str
+        SECONDARY_LIGHT_BACKGROUND : str
+        DARK_BACKGROUND : str
+        SECONDARY_DARK_BACKGROUND : str
+        LIGHT_TEXT_COLOR : str
+        MEDIUM_TEXT_COLOR : str
+        DARK_TEXT_COLOR : str
+        BUTTON_LIGHT_BLUE : str
+        BUTTON_LIGHT_BLUE_HOVER : str
+        BUTTON_LIGHT_GREEN : str
+        BUTTON_LIGHT_GREEN_HOVER : str
+        BUTTON_LIGHT_RED : str
+        BUTTON_LIGHT_RED_HOVER : str
+        ENTRY_LIGHT_BACKGROUND : str
+        GENERAL_PADDING : str
+        MEF_LOGO_SIZE : tuple
+        GIF_SIZE : tuple
     """
     TITLE : str
     LIGHT_BACKGROUND : str
