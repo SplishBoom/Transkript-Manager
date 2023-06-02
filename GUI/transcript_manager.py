@@ -88,21 +88,6 @@ class TranscriptManager(ctk.CTk) :
         self.application_frame = ApplicationFrame(self.main_container, self, self.DEBUG)
         self.application_frame.grid(row=0, column=0, stick="nsew")
 
-    def restart_application(self) -> None:
-        """
-        Restarts the application.
-        @Parameters:
-            None
-        @Return:
-            None
-        """
-        # Remove the application frame.
-        self.application_frame.grid_forget()
-        self.application_frame = None
-        # Load the application frame.
-        self.application_frame = ApplicationFrame(self.main_container, self, self.DEBUG)
-        self.application_frame.grid(row=0, column=0, stick="nsew")
-
     def _switch_to_login(self) -> None:
         """
         Switches the current frame to the login frame.
@@ -118,6 +103,22 @@ class TranscriptManager(ctk.CTk) :
         self.login_frame = LoginFrame(self.main_container, self, self.DEBUG)
         self.login_frame.grid(row=0, column=0, stick="nsew")
 
+    def restart_application(self) -> None:
+        """
+        Restarts the application.
+        @Parameters:
+            None
+        @Return:
+            None
+        """
+        # Remove the application frame.
+        self.application_frame.grid_forget()
+        self.application_frame = None
+        # Load the application frame.
+        self.application_frame = ApplicationFrame(self.main_container, self, self.DEBUG)
+        self.application_frame.grid(row=0, column=0, stick="nsew")
+
+
     def set_current_data(self, user_info_document : dict = None, user_data_document : dict = None) -> None:
         """
         Sets the current data of the user. It detects the None situation and sets the data accordingly.
@@ -132,7 +133,6 @@ class TranscriptManager(ctk.CTk) :
             self.user_info_document = user_info_document
         if user_data_document is not None :
             self.user_data_document = user_data_document
-
     def get_current_data(self) -> tuple:
         """
         Gets the current data of the user.
@@ -157,7 +157,6 @@ class TranscriptManager(ctk.CTk) :
         """
         # Update the authication status.
         self.authication_status = status
-
     def get_authication_status(self) -> bool:
         """
         Gets the authication status of the user.
@@ -168,6 +167,7 @@ class TranscriptManager(ctk.CTk) :
         """
         # Return the authication status.
         return self.authication_status
+
 
     def get_text(self, text : str, parsing_language : str) -> str:
         """
