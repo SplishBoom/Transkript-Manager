@@ -153,6 +153,23 @@ class GUIDC:
         TITLE : str
     """
     TITLE : str
+    LIGHT_BACKGROUND : str
+    SECONDARY_LIGHT_BACKGROUND : str
+    DARK_BACKGROUND : str
+    SECONDARY_DARK_BACKGROUND : str
+    LIGHT_TEXT_COLOR : str
+    MEDIUM_TEXT_COLOR : str
+    DARK_TEXT_COLOR : str
+    BUTTON_LIGHT_BLUE : str
+    BUTTON_LIGHT_BLUE_HOVER : str
+    BUTTON_LIGHT_GREEN : str
+    BUTTON_LIGHT_GREEN_HOVER : str
+    BUTTON_LIGHT_RED : str
+    BUTTON_LIGHT_RED_HOVER : str
+    ENTRY_LIGHT_BACKGROUND : str
+    GENERAL_PADDING : str
+    MEF_LOGO_SIZE : tuple
+    GIF_SIZE : tuple
 
 # Post initialization of all dataclasses' instances.
 EXECUTION_DC = ExecutionDC(
@@ -210,6 +227,23 @@ DATABASE_DC = DatabaseDC(
 )
 GUI_DC = GUIDC(
     TITLE = "Transcript Manager",
+    LIGHT_BACKGROUND = "#DFE3E9",
+    SECONDARY_LIGHT_BACKGROUND = "#E8F0FE",
+    DARK_BACKGROUND = "#323A45",
+    SECONDARY_DARK_BACKGROUND = "#4E5963",
+    LIGHT_TEXT_COLOR = "#FFFFFF",
+    MEDIUM_TEXT_COLOR = "#D3D3D3",
+    DARK_TEXT_COLOR = "#000000",
+    BUTTON_LIGHT_BLUE = "#349FE3",
+    BUTTON_LIGHT_BLUE_HOVER = "#34AFE3",
+    BUTTON_LIGHT_GREEN = "#27AE60",
+    BUTTON_LIGHT_GREEN_HOVER = "#2ABF69",
+    BUTTON_LIGHT_RED = "#E33C2B",
+    BUTTON_LIGHT_RED_HOVER = "#E85D4C",
+    ENTRY_LIGHT_BACKGROUND = "#E8F0FE",
+    GENERAL_PADDING = 15,
+    MEF_LOGO_SIZE = (216, 140),
+    GIF_SIZE = (50, 50)
 )
 
 # An logging style dictionary for the logger.
@@ -231,4 +265,4 @@ log_style = {
 ASCII_LOG = log_style["CONSOLE"] # You can change this to "ASCII_LOG" or "CONSOLE_LOG".
 
 # DEBUG option initialization.
-DEBUG = True
+DEBUG = False

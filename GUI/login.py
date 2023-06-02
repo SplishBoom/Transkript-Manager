@@ -3,19 +3,13 @@ from    Utilities       import  OfflineParser, OnlineParser # -> Utilitiy classe
 from    PIL             import  Image, ImageTk # -> Image processing
 from    tkinter         import  PhotoImage # -> Image processing
 from    tkinter         import  filedialog # -> Ask file path
-from    Environment     import  ASSETS_DC # -> Environment variables
-#from    tkinter         import  ttk # -> GUI
+from    Environment     import  ASSETS_DC, GUI_DC # -> Environment variables
 import  customtkinter   as      ctk # -> GUI
-#import  tkinter         as      tk # -> GUI
 import  os # -> Get current working directory
 import  time # -> Simulate a long process
 import  threading # -> Split long processes into threads
 
 class LoginFrame(ctk.CTkFrame) :
-
-    # Data Fields
-    mef_uni_logo_size  = (216, 140)
-    gif_size           = (50, 50)
 
     def __init__(self, parent : ctk.CTkFrame, root : ctk.CTk, DEBUG : bool = False, *args, **kwargs) -> None:
         """
@@ -57,7 +51,7 @@ class LoginFrame(ctk.CTkFrame) :
             None
         """
         # Create the main container.
-        self.container = ctk.CTkFrame(self, fg_color=self.root.light_background, bg_color=self.root.dark_background, corner_radius=25)
+        self.container = ctk.CTkFrame(self, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND, corner_radius=25)
         self.container.grid(row=0, column=0)
         # Configure the main container.
         self.container.grid_rowconfigure((0,1), weight=1)
@@ -72,8 +66,9 @@ class LoginFrame(ctk.CTkFrame) :
 
         # Iterate over containers, and configure them.
         for container in self.container.winfo_children() :
-            container.configure(fg_color=self.root.light_background)
-            container.grid_configure(padx=self.root.general_padding, pady=self.root.general_padding, sticky="nsew")
+            container.configure(fg_color=GUI_DC.LIGHT_BACKGROUND)
+            container.grid_configure(padx=GUI_DC.GENERAL_PADDING, pady=GUI_DC.GENERAL_PADDING, sticky="nsew")
+
 
     def __load_mef_label(self) -> None:
         """
@@ -88,7 +83,7 @@ class LoginFrame(ctk.CTkFrame) :
         self.mef_label_container.grid_columnconfigure(0, weight=1)
 
         # Load the mef label.
-        self.mef_logo_image = ctk.CTkImage(dark_image=Image.open(ASSETS_DC.LOGO_PATH), light_image=Image.open(ASSETS_DC.LOGO_PATH), size=self.mef_uni_logo_size)
+        self.mef_logo_image = ctk.CTkImage(dark_image=Image.open(ASSETS_DC.LOGO_PATH), light_image=Image.open(ASSETS_DC.LOGO_PATH), size=GUI_DC.MEF_LOGO_SIZE)
         self.mef_logo_label = ctk.CTkLabel(self.mef_label_container, image=self.mef_logo_image, text=None, anchor="center")
         self.mef_logo_label.grid(row=0, column=0, sticky="nsew")
 
@@ -109,15 +104,15 @@ class LoginFrame(ctk.CTkFrame) :
         ctk.CTkTabview._button_height = 30
         ctk.CTkTabview._top_button_overhang = 9
         self.tab_view = ctk.CTkTabview(self.input_field_container, 
-                                       fg_color=self.root.dark_background, 
-                                       bg_color=self.root.light_background,
-                                       text_color=self.root.light_text_color,
-                                       text_color_disabled=self.root.medium_text_color,
-                                       segmented_button_fg_color=self.root.dark_background,
-                                       segmented_button_selected_color=self.root.button_light_blue,
-                                       segmented_button_selected_hover_color=self.root.button_light_blue_hover,
-                                       segmented_button_unselected_color=self.root.dark_background,
-                                       segmented_button_unselected_hover_color=self.root.dark_background,
+                                       fg_color=GUI_DC.DARK_BACKGROUND, 
+                                       bg_color=GUI_DC.LIGHT_BACKGROUND,
+                                       text_color=GUI_DC.LIGHT_TEXT_COLOR,
+                                       text_color_disabled=GUI_DC.MEDIUM_TEXT_COLOR,
+                                       segmented_button_fg_color=GUI_DC.DARK_BACKGROUND,
+                                       segmented_button_selected_color=GUI_DC.BUTTON_LIGHT_BLUE,
+                                       segmented_button_selected_hover_color=GUI_DC.BUTTON_LIGHT_BLUE_HOVER,
+                                       segmented_button_unselected_color=GUI_DC.DARK_BACKGROUND,
+                                       segmented_button_unselected_hover_color=GUI_DC.DARK_BACKGROUND,
                                        corner_radius=25,
                                        width=0,
                                        height=317
@@ -150,19 +145,19 @@ class LoginFrame(ctk.CTkFrame) :
 
         # Create the online login widgets.
         self.offline_status_label = ctk.CTkLabel(self.tab_view.tab("Online Login"), text="Username",
-                                                        fg_color=self.root.dark_background,
-                                                        bg_color=self.root.dark_background,
-                                                        text_color=self.root.light_background,
+                                                        fg_color=GUI_DC.DARK_BACKGROUND,
+                                                        bg_color=GUI_DC.DARK_BACKGROUND,
+                                                        text_color=GUI_DC.LIGHT_BACKGROUND,
                                                         font=("Arial", 12, "bold")
         )
         self.offline_status_label.grid(row=0, column=0, sticky="w", padx=15)
         self.online_login_username_entry = ctk.CTkEntry(self.tab_view.tab("Online Login"), textvariable=self.username,
-                                                        fg_color=self.root.secondary_dark_background,
-                                                        bg_color=self.root.dark_background,
-                                                        border_color=self.root.secondary_dark_background,
+                                                        fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
+                                                        bg_color=GUI_DC.DARK_BACKGROUND,
+                                                        border_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
                                                         placeholder_text="username",
-                                                        placeholder_text_color=self.root.dark_text_color,
-                                                        text_color=self.root.light_text_color,
+                                                        placeholder_text_color=GUI_DC.DARK_TEXT_COLOR,
+                                                        text_color=GUI_DC.LIGHT_TEXT_COLOR,
                                                         font=("Arial", 12, "bold")
         )
         self.online_login_username_entry.grid(row=1, column=0, sticky="we", padx=15)
@@ -171,19 +166,19 @@ class LoginFrame(ctk.CTkFrame) :
         ctk.CTkLabel(self.tab_view.tab("Online Login"), height=0, text=None).grid(row=2, column=0)
 
         self.online_login_password_label = ctk.CTkLabel(self.tab_view.tab("Online Login"), text="Password",
-                                                        fg_color=self.root.dark_background,
-                                                        bg_color=self.root.dark_background,
-                                                        text_color=self.root.light_background,
+                                                        fg_color=GUI_DC.DARK_BACKGROUND,
+                                                        bg_color=GUI_DC.DARK_BACKGROUND,
+                                                        text_color=GUI_DC.LIGHT_BACKGROUND,
                                                         font=("Arial", 12, "bold")
         )
         self.online_login_password_label.grid(row=3, column=0, sticky="w", padx=15)
         self.online_login_password_entry = ctk.CTkEntry(self.tab_view.tab("Online Login"), textvariable=self.password, show="*",
-                                                        fg_color=self.root.secondary_dark_background,
-                                                        bg_color=self.root.dark_background,
-                                                        border_color=self.root.secondary_dark_background,
+                                                        fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
+                                                        bg_color=GUI_DC.DARK_BACKGROUND,
+                                                        border_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
                                                         placeholder_text="password",
-                                                        placeholder_text_color=self.root.dark_text_color,
-                                                        text_color=self.root.light_text_color,
+                                                        placeholder_text_color=GUI_DC.DARK_TEXT_COLOR,
+                                                        text_color=GUI_DC.LIGHT_TEXT_COLOR,
                                                         font=("Arial", 12, "bold")
         )
         self.online_login_password_entry.grid(row=4, column=0, sticky="we", padx=15)
@@ -191,13 +186,13 @@ class LoginFrame(ctk.CTkFrame) :
         ctk.CTkLabel(self.tab_view.tab("Online Login"), height=0, text=None).grid(row=5, column=0)
 
         self.online_login_button = ctk.CTkButton(self.tab_view.tab("Online Login"), text="Login", command=self.__handle_login, 
-                                                 fg_color=self.root.button_light_green, 
-                                                 hover_color=self.root.button_light_green_hover, 
-                                                 border_color=self.root.light_background, 
-                                                 bg_color=self.root.dark_background, 
+                                                 fg_color=GUI_DC.BUTTON_LIGHT_GREEN, 
+                                                 hover_color=GUI_DC.BUTTON_LIGHT_GREEN_HOVER, 
+                                                 border_color=GUI_DC.LIGHT_BACKGROUND, 
+                                                 bg_color=GUI_DC.DARK_BACKGROUND, 
                                                  corner_radius=50,
-                                                 text_color=self.root.light_text_color,
-                                                 text_color_disabled=self.root.dark_text_color,
+                                                 text_color=GUI_DC.LIGHT_TEXT_COLOR,
+                                                 text_color_disabled=GUI_DC.DARK_TEXT_COLOR,
                                                  font=("Arial", 14, "bold")
         )
         self.online_login_button.grid(row=6, column=0, pady=12)
@@ -216,37 +211,36 @@ class LoginFrame(ctk.CTkFrame) :
 
         # Create the offline login widgets.
         self.offline_open_file_button = ctk.CTkButton(self.tab_view.tab("Offline Login"), text=self.name_of_transcript.get() or "Select Transcript", command=self.__handle_ask_file_dialog,
-                                                      fg_color=self.root.button_light_blue,
-                                                      hover_color=self.root.button_light_blue_hover,
-                                                      border_color=self.root.light_background,
-                                                      bg_color=self.root.dark_background,
+                                                      fg_color=GUI_DC.BUTTON_LIGHT_BLUE,
+                                                      hover_color=GUI_DC.BUTTON_LIGHT_BLUE_HOVER,
+                                                      border_color=GUI_DC.LIGHT_BACKGROUND,
+                                                      bg_color=GUI_DC.DARK_BACKGROUND,
                                                       corner_radius=50,
-                                                      text_color=self.root.light_text_color,
-                                                      text_color_disabled=self.root.dark_text_color,
+                                                      text_color=GUI_DC.LIGHT_TEXT_COLOR,
+                                                      text_color_disabled=GUI_DC.DARK_TEXT_COLOR,
                                                       font=("Arial", 14, "bold"),
         )
         self.offline_open_file_button.grid(row=0, column=0, pady=12)
 
         self.offline_status_label = ctk.CTkLabel(self.tab_view.tab("Offline Login"), text="Offline Mode Available",
-                                                        fg_color=self.root.dark_background,
-                                                        bg_color=self.root.dark_background,
-                                                        text_color=self.root.button_light_green,
+                                                        fg_color=GUI_DC.DARK_BACKGROUND,
+                                                        bg_color=GUI_DC.DARK_BACKGROUND,
+                                                        text_color=GUI_DC.BUTTON_LIGHT_GREEN,
                                                         font=("Arial", 12, "bold")
         )
         self.offline_status_label.grid(row=1, column=0, sticky="we", padx=15)
 
         self.offline_login_button = ctk.CTkButton(self.tab_view.tab("Offline Login"), text="Login", command=self.__handle_login, 
-                                                  fg_color=self.root.button_light_green, 
-                                                  hover_color=self.root.button_light_green_hover, 
-                                                  border_color=self.root.light_background, 
-                                                  bg_color=self.root.dark_background, 
+                                                  fg_color=GUI_DC.BUTTON_LIGHT_GREEN, 
+                                                  hover_color=GUI_DC.BUTTON_LIGHT_GREEN_HOVER, 
+                                                  border_color=GUI_DC.LIGHT_BACKGROUND, 
+                                                  bg_color=GUI_DC.DARK_BACKGROUND, 
                                                   corner_radius=50,
-                                                  text_color=self.root.light_text_color,
-                                                  text_color_disabled=self.root.dark_text_color,
+                                                  text_color=GUI_DC.LIGHT_TEXT_COLOR,
+                                                  text_color_disabled=GUI_DC.DARK_TEXT_COLOR,
                                                   font=("Arial", 14, "bold")
         )
         self.offline_login_button.grid(row=2, column=0, pady=12)
-
 
 
     def __handle_ask_file_dialog(self, *args, **kwargs) -> None:
@@ -280,11 +274,10 @@ class LoginFrame(ctk.CTkFrame) :
 
         # Fix the buttons. So, user can try again.
         if not file_selected :
-            self.offline_open_file_button.configure(text="No File Selected", fg_color=self.root.button_light_red, text_color_disabled=self.root.light_text_color)
-            self.after(500, lambda : self.offline_open_file_button.configure(state="normal", text=self.name_of_transcript.get() or "Select Transcript", fg_color=self.root.button_light_blue, text_color_disabled=self.root.dark_text_color))
+            self.offline_open_file_button.configure(text="No File Selected", fg_color=GUI_DC.BUTTON_LIGHT_RED, text_color_disabled=GUI_DC.LIGHT_TEXT_COLOR)
+            self.after(500, lambda : self.offline_open_file_button.configure(state="normal", text=self.name_of_transcript.get() or "Select Transcript", fg_color=GUI_DC.BUTTON_LIGHT_BLUE, text_color_disabled=GUI_DC.DARK_TEXT_COLOR))
         else :
             self.offline_open_file_button.configure(state="normal", text=self.name_of_transcript.get() or "Select Transcript")
-
 
     def __handle_login(self, *args, **kwargs) -> None:
         """
@@ -323,12 +316,12 @@ class LoginFrame(ctk.CTkFrame) :
             if self.tab_view.get() == "Online Login" :
                 self.online_login_username_entry.configure(state="normal")
                 self.online_login_password_entry.configure(state="normal")
-                self.online_login_button.configure(text="Wrong Credentials", fg_color=self.root.button_light_red, text_color_disabled=self.root.light_text_color)
-                self.after(500, lambda : self.online_login_button.configure(state="normal", text="Login", fg_color=self.root.button_light_green, text_color_disabled=self.root.dark_text_color))
+                self.online_login_button.configure(text="Wrong Credentials", fg_color=GUI_DC.BUTTON_LIGHT_RED, text_color_disabled=GUI_DC.LIGHT_TEXT_COLOR)
+                self.after(500, lambda : self.online_login_button.configure(state="normal", text="Login", fg_color=GUI_DC.BUTTON_LIGHT_GREEN, text_color_disabled=GUI_DC.DARK_TEXT_COLOR))
             elif self.tab_view.get() == "Offline Login" :
                 self.offline_open_file_button.configure(state="normal")
-                self.offline_login_button.configure(text="Invalid Transcript", fg_color=self.root.button_light_red, text_color_disabled=self.root.light_text_color)
-                self.after(500, lambda : self.offline_login_button.configure(state="normal", text="Login", fg_color=self.root.button_light_green, text_color_disabled=self.root.dark_text_color))
+                self.offline_login_button.configure(text="Invalid Transcript", fg_color=GUI_DC.BUTTON_LIGHT_RED, text_color_disabled=GUI_DC.LIGHT_TEXT_COLOR)
+                self.after(500, lambda : self.offline_login_button.configure(state="normal", text="Login", fg_color=GUI_DC.BUTTON_LIGHT_GREEN, text_color_disabled=GUI_DC.DARK_TEXT_COLOR))
             else :
                 raise ValueError("Invalid Execution Mode")
 
@@ -383,7 +376,6 @@ class LoginFrame(ctk.CTkFrame) :
         self.thread.start()
 
 
-
     def __start_loading_animation(self) -> None:
         """
         Method to start the loading animation.
@@ -402,7 +394,7 @@ class LoginFrame(ctk.CTkFrame) :
             raise ValueError("Invalid Execution Mode")
         
         # Reconfigure the pressed button.
-        self.pressed_button.configure(state="disabled", text=None, command=None, fg_color=self.root.light_background)
+        self.pressed_button.configure(state="disabled", text=None, command=None, fg_color=GUI_DC.LIGHT_BACKGROUND)
 
         # Get the number of frames in the gif file.
         self.gif_frame_count = get_gif_frame_count(ASSETS_DC.LOADING_ANIMATION_PATH)
@@ -416,7 +408,7 @@ class LoginFrame(ctk.CTkFrame) :
             current_pil_image.seek(frame)
             
             # Append it in to the frame list.
-            current_gif_object = ctk.CTkImage(light_image=current_pil_image, dark_image=current_pil_image, size=self.gif_size)
+            current_gif_object = ctk.CTkImage(light_image=current_pil_image, dark_image=current_pil_image, size=GUI_DC.GIF_SIZE)
             self.gif_frames.append(current_gif_object)
 
         # Initialize the animation.

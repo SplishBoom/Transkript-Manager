@@ -1,37 +1,9 @@
 from    Environment     import  GUI_DC, ASSETS_DC, to_turkish # -> Environment variables
 from    GUI             import  LoginFrame, ApplicationFrame # -> GUI
 from    Utilities       import  MongoClient, OfflineParser # -> Database and parsing
-from    Utilities       import  push_dpi # -> DPI
-#from    tkinter         import  ttk # -> GUI
 import  customtkinter   as      ctk # -> GUI
-#import  tkinter         as      tk # -> GUI
-
-# set mode to dark
-ctk.set_appearance_mode("dark")
-# close scaling
-#ctk.deactivate_automatic_dpi_awareness()
 
 class TranscriptManager(ctk.CTk) :
-
-    light_background = "#DFE3E9"
-    secondary_light_background = "#E8F0FE"
-    dark_background = "#323a45"
-    secondary_dark_background = "#4E5963"
-
-    light_text_color = "#FFFFFF"
-    medium_text_color = "#D3D3D3"
-    dark_text_color = "#000000"
-
-    button_light_blue = "#349FE3"
-    button_light_blue_hover = "#34afe3"
-    button_light_green = "#27AE60"
-    button_light_green_hover = "#2abf69"
-    button_light_red = "#e33c2b"
-    button_light_red_hover = "#e85d4c"
-
-    entry_light_background = "#E8F0FE"
-    
-    general_padding = 15
 
     def __init__(self, DEBUG : bool = False, *args, **kwargs) -> None:
         """
@@ -44,12 +16,15 @@ class TranscriptManager(ctk.CTk) :
         # Initialize the Tkinter window.
         super().__init__(*args, **kwargs)
 
+        # Set the theme of the application.
+        ctk.set_appearance_mode("dark")
+
         # Set the title and icon of the window.
         self.title(GUI_DC.TITLE)
         self.iconbitmap(ASSETS_DC.ICON)
 
-        #DEBUG
-        self.configure(fg_color = self.dark_background, bg_color = self.dark_background)
+        # Set the main windows colors.
+        self.configure(fg_color = GUI_DC.DARK_BACKGROUND, bg_color = GUI_DC.DARK_BACKGROUND)
 
         # Set class variables.
         self.DEBUG = DEBUG
@@ -64,7 +39,7 @@ class TranscriptManager(ctk.CTk) :
 
         # Setup the main container.
         self.main_container = ctk.CTkFrame(self)
-        self.main_container.grid(row=0, column=0, padx=self.general_padding, pady=self.general_padding)
+        self.main_container.grid(row=0, column=0, padx=GUI_DC.GENERAL_PADDING, pady=GUI_DC.GENERAL_PADDING)
         # Configure the main container.
         self.main_container.grid_rowconfigure(0, weight=1)
         self.main_container.grid_columnconfigure(0, weight=1)
