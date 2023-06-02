@@ -208,7 +208,7 @@ class ApplicationFrame(ctk.CTkFrame) :
         # Configure labels.
         for acurrent_text_label in self.texts_container.winfo_children() :
             acurrent_text_label.configure(
-                fg_color=GUI_DC.DARK_BACKGROUND,
+                fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
                 bg_color=GUI_DC.LIGHT_BACKGROUND,
                 text_color=GUI_DC.LIGHT_TEXT_COLOR,
                 font=("Arial", 12, "italic"),
