@@ -3,9 +3,9 @@ from    Utilities       import  OfflineParser, OnlineParser # -> Utilitiy classe
 from    PIL             import  Image # -> Image processing
 from    Environment     import  ASSETS_DC, GUI_DC # -> Environment variables
 import  customtkinter   as      ctk # -> GUI
-import  os # -> Get current working directory
-import  time # -> Simulate a long process
 import  threading # -> Split long processes into threads
+import  time # -> Simulate a long process
+import  os # -> Get current working directory
 
 class LoginFrame(ctk.CTkFrame) :
 
