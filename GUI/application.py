@@ -1,24 +1,17 @@
-from    GUI         import  AchievementAnalyzer, GradeUpdater, StatAnalyzer # -> Program frames
-from    GUI         import  UserAuthenticator, DataLoader, DataSaver # -> Service frames
-from    Utilities   import  get_gender, generate_pdf, translate_text # -> Utilitiy functions
-from    Environment import  ASSETS_DC, SELENIUM_DC, connect_pathes # -> Environment variables
-from    PIL         import  Image, ImageTk # -> Image processing
-from    tkinter     import  filedialog # -> Ask file path
-from    tkinter     import  messagebox # -> Interact with user
-from    datetime    import  datetime # -> Get current date
-from    tkinter     import  ttk # -> GUI
-import  tkinter     as      tk # -> GUI
+from    GUI             import  AchievementAnalyzer, GradeUpdater, StatAnalyzer # -> Program frames
+from    GUI             import  UserAuthenticator, DataLoader, DataSaver # -> Service frames
+from    Utilities       import  get_gender, generate_pdf, translate_text # -> Utilitiy functions
+from    Environment     import  ASSETS_DC, SELENIUM_DC, GUI_DC # -> Environment variables
+from    PIL             import  Image # -> Image processing
+from    tkinter         import  messagebox # -> Interact with user
+from    datetime        import  datetime # -> Get current date
+import  customtkinter   as      ctk # -> GUI
 import  copy # -> Copy objects without reference
 import  os # -> Get current working directory
 
-class ApplicationFrame(ttk.Frame) :
+class ApplicationFrame(ctk.CTkFrame) :
 
-    # Data Fields
-    student_photo_size = (94, 94)
-    mef_uni_logo_size  = (98, 86)
-    slider_arrow_size  = (20, 20)
-
-    def __init__(self, parent : ttk.Frame, root : tk.Tk, DEBUG : bool = False, *args, **kwargs) -> None:
+    def __init__(self, parent : ctk.CTkFrame, root : ctk.CTk, DEBUG : bool = False, *args, **kwargs) -> None:
         """
         Constructor method for ApplicationFrame class. Used to initialize main window of the application.
         @Parameters:
@@ -52,6 +45,301 @@ class ApplicationFrame(ttk.Frame) :
         self.__load_controller()
         self.__load_program_selection()
         self.__load_program()
+
+    def __load_containers(self) -> None:
+        """
+        Loads containers into class fields.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
+        # Set the initial configuration, to make expandable affect on window.
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
+        # If already exists, forget the container.
+        try :
+            self.container.grid_forget()
+        except :
+            pass
+        # Create main container for ApplicationFrame.
+        self.container = ctk.CTkFrame(self, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND, corner_radius=25)
+        self.container.grid(row=0, column=0, sticky="nsew")
+        # Configure main container.
+        self.container.grid_rowconfigure((0,1,2,3,4,5,6,7,8), weight=1)
+        self.container.grid_columnconfigure(0, weight=1)
+
+        # Create containers for ApplicationFrame widgets
+        ctk.CTkFrame(self.container, width=0, height=0, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.LIGHT_BACKGROUND).grid(row=0, column=0, pady=GUI_DC.GENERAL_PADDING//2, padx=GUI_DC.GENERAL_PADDING)
+        self.user_info_label_container = ctk.CTkFrame(self.container, fg_color=GUI_DC.LIGHT_BACKGROUND, border_color=GUI_DC.BORDER_COLOR, border_width=2, corner_radius=25)
+        self.user_info_label_container.grid(row=1, column=0, sticky="nsew", padx=GUI_DC.GENERAL_PADDING)
+        ctk.CTkFrame(self.container, width=0, height=0, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.LIGHT_BACKGROUND).grid(row=2, column=0, pady=GUI_DC.INNER_PADDING, padx=GUI_DC.GENERAL_PADDING)
+        self.controllers_container = ctk.CTkFrame(self.container, fg_color=GUI_DC.LIGHT_BACKGROUND, border_color=GUI_DC.BORDER_COLOR, border_width=2, corner_radius=25)
+        self.controllers_container.grid(row=3, column=0, sticky="nsew", padx=GUI_DC.GENERAL_PADDING)
+        ctk.CTkFrame(self.container, width=0, height=0, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.LIGHT_BACKGROUND).grid(row=4, column=0, pady=GUI_DC.INNER_PADDING, padx=GUI_DC.GENERAL_PADDING)
+        self.program_selection_container = ctk.CTkFrame(self.container, fg_color=GUI_DC.LIGHT_BACKGROUND, border_color=GUI_DC.BORDER_COLOR, border_width=2, corner_radius=25)
+        self.program_selection_container.grid(row=5, column=0, sticky="nsew", padx=GUI_DC.GENERAL_PADDING)
+        ctk.CTkFrame(self.container, width=0, height=0, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.LIGHT_BACKGROUND).grid(row=6, column=0, pady=GUI_DC.INNER_PADDING, padx=GUI_DC.GENERAL_PADDING)
+        self.program_container = ctk.CTkFrame(self.container, fg_color=GUI_DC.LIGHT_BACKGROUND, border_color=GUI_DC.BORDER_COLOR, border_width=2, corner_radius=25)
+        self.program_container.grid(row=7, column=0, sticky="nsew", padx=GUI_DC.GENERAL_PADDING)
+        ctk.CTkFrame(self.container, width=0, height=0, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.LIGHT_BACKGROUND).grid(row=8, column=0, pady=GUI_DC.GENERAL_PADDING//2, padx=GUI_DC.GENERAL_PADDING)
+
+
+    def __load_user_info_label(self) -> None:
+        """
+        Loads user info label on application frame.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
+        def ___change_user_photo(*args, **kwargs) -> None:
+            """
+            Changes user photo. In every click.
+            @Parameters:
+                None
+            @Returns:
+                None
+            """
+            # Get photo list from available photos. Normally data is dict [key : photo_name, value : photo_path]
+            available_photo_list = list(self.available_photos.values())
+            # Get index of current and next photo.
+            index_of_current_photo = available_photo_list.index(self.current_user_photo_path)
+            index_of_next_photo = (index_of_current_photo + 1) % len(available_photo_list)
+            # Change current user photo
+            self.current_user_photo_path = available_photo_list[index_of_next_photo]
+            self.student_photo = ctk.CTkImage(light_image=Image.open(self.current_user_photo_path), dark_image=Image.open(self.current_user_photo_path), size=GUI_DC.STUDENT_PHOTO_SIZE)
+            self.student_photo_label.configure(image=self.student_photo, text=None) # Text attirbute added for ctk bug.
+            self.student_photo_label.image = self.student_photo
+
+        # Configure user info label container.
+        self.user_info_label_container.grid_rowconfigure((0,1,2,3,4), weight=1)
+        self.user_info_label_container.grid_columnconfigure((0), weight=1)
+
+        # Split into two parts
+        ctk.CTkFrame(self.user_info_label_container, width=0, height=0, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.LIGHT_BACKGROUND).grid(row=0, column=0, pady=GUI_DC.INNER_PADDING//1.5, padx=GUI_DC.INNER_PADDING)
+        self.assets_container = ctk.CTkFrame(self.user_info_label_container, fg_color=GUI_DC.LIGHT_BACKGROUND)
+        self.assets_container.grid(row=1, column=0, sticky="nsew", padx=GUI_DC.INNER_PADDING)
+        ctk.CTkFrame(self.user_info_label_container, width=0, height=0, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.LIGHT_BACKGROUND).grid(row=2, column=0, padx=GUI_DC.INNER_PADDING//1.5, pady=GUI_DC.INNER_PADDING)
+        self.texts_container = ctk.CTkFrame(self.user_info_label_container, fg_color=GUI_DC.LIGHT_BACKGROUND)
+        self.texts_container.grid(row=3, column=0, sticky="nsew", padx=GUI_DC.INNER_PADDING)
+        ctk.CTkFrame(self.user_info_label_container, width=0, height=0, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.LIGHT_BACKGROUND).grid(row=4, column=0, pady=GUI_DC.INNER_PADDING//1.5, padx=GUI_DC.INNER_PADDING)
+        
+        # Configure assets container.
+        self.assets_container.grid_rowconfigure((0), weight=1)
+        self.assets_container.grid_columnconfigure((0,1,2), weight=1)
+        # Create mef uni logo label.
+        self.logo_image = ctk.CTkImage(light_image=Image.open(ASSETS_DC.LOGO_PATH), dark_image=Image.open(ASSETS_DC.LOGO_PATH), size=GUI_DC.APP_MEF_LOGO_SIZE)
+        mef_logo_label = ctk.CTkLabel(self.assets_container, image=self.logo_image, text=None)
+        mef_logo_label.grid(row=0, column=0, sticky="nsew")
+
+        # Create document name label.
+        self.document_info_label = ctk.CTkLabel(self.assets_container, text=self.document_name+2*"\n"+self.transcript_creation_date)
+        self.document_info_label.grid(row=0, column=1, sticky="nsew")
+
+        # Create student photo label.
+        # If online login approved, than add the user photo to available photos. To show it on the label.
+        self.available_photos = ASSETS_DC.GENDERS_PHOTO_PATH
+        if os.path.exists(SELENIUM_DC.USER_PHOTO_OUTPUT_PATH) :
+            self.available_photos["user_photo"] = SELENIUM_DC.USER_PHOTO_OUTPUT_PATH
+            self.current_user_photo_path = SELENIUM_DC.USER_PHOTO_OUTPUT_PATH
+        else :
+            self.current_user_photo_path = ASSETS_DC.GENDERS_PHOTO_PATH[self.student_gender]
+        self.student_photo = ctk.CTkImage(light_image=Image.open(self.current_user_photo_path), dark_image=Image.open(self.current_user_photo_path), size=GUI_DC.STUDENT_PHOTO_SIZE)
+        self.student_photo_label = ctk.CTkLabel(self.assets_container, image=self.student_photo, text=None)
+        self.student_photo_label.grid(row=0, column=2, sticky="nsew")
+        self.student_photo_label.bind("<Button-1>", ___change_user_photo)
+
+        # Configure labels.
+        for acurrent_asset_label in self.assets_container.winfo_children() :
+            acurrent_asset_label.configure(
+                fg_color=GUI_DC.LIGHT_BACKGROUND,
+                bg_color=GUI_DC.LIGHT_BACKGROUND,
+                text_color=GUI_DC.DARK_TEXT_COLOR,
+                font=("Arial", 17, "bold"),
+                anchor="center",
+            )
+
+        # Configure texts container.
+        self.texts_container.grid_rowconfigure((0,1,2,3), weight=1)
+        self.texts_container.grid_columnconfigure((0,1,2,3), weight=1)
+        # Create student id, national id, name, surname, faculty, department, program, language of instruction, and status labels.
+        student_id_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Student ID"))
+        student_id_label.grid(row=0, column=0)
+        student_id_label_value = ctk.CTkLabel(self.texts_container, text=self.student_school_id)
+        student_id_label_value.grid(row=0, column=1)
+
+        national_id_label = ctk.CTkLabel(self.texts_container, text=self._get_text("National ID"))
+        national_id_label.grid(row=0, column=2)
+        national_id_label_value = ctk.CTkLabel(self.texts_container, text=self.student_national_id)
+        national_id_label_value.grid(row=0, column=3)
+
+        student_name_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Name"))
+        student_name_label.grid(row=1, column=0)
+        student_name_label_value = ctk.CTkLabel(self.texts_container, text=self.student_name)
+        student_name_label_value.grid(row=1, column=1)
+
+        student_surname_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Surname"))
+        student_surname_label.grid(row=1, column=2)
+        student_surname_label_value = ctk.CTkLabel(self.texts_container, text=self.student_surname)
+        student_surname_label_value.grid(row=1, column=3)
+
+        faculty_department_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Faculty / Department"))
+        faculty_department_label.grid(row=2, column=0)
+        faculty_department_label_value = ctk.CTkLabel(self.texts_container, text=self.student_faculty.split(" / ")[-1])
+        faculty_department_label_value.grid(row=2, column=1)
+
+        program_name_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Program Name"))
+        program_name_label.grid(row=2, column=2)
+        program_name_label_value = ctk.CTkLabel(self.texts_container, text=self.student_department)
+        program_name_label_value.grid(row=2, column=3)
+
+        language_of_instruction_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Language of Instruction"))
+        language_of_instruction_label.grid(row=3, column=0)
+        language_of_instruction_label_value = ctk.CTkLabel(self.texts_container, text=self.language_of_instruction)
+        language_of_instruction_label_value.grid(row=3, column=1)
+
+        student_status_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Student Status"))
+        student_status_label.grid(row=3, column=2)
+        student_status_label_value = ctk.CTkLabel(self.texts_container, text=self.student_status)
+        student_status_label_value.grid(row=3, column=3)
+
+        # Configure labels.
+        for acurrent_text_label in self.texts_container.winfo_children() :
+            acurrent_text_label.configure(
+                fg_color=GUI_DC.DARK_BACKGROUND,
+                bg_color=GUI_DC.LIGHT_BACKGROUND,
+                text_color=GUI_DC.LIGHT_TEXT_COLOR,
+                font=("Arial", 12, "italic"),
+                anchor="center",
+                corner_radius=25
+            )
+            acurrent_text_label.grid_configure(padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING, sticky="nsew")
+    
+    def __load_controller(self) -> None:
+        """
+        This method creates the controller container and its widgets.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
+        # Configure controller container.
+        self.controllers_container.grid_rowconfigure((0,1,2), weight=1)
+        self.controllers_container.grid_columnconfigure((0,1,2,3,4,5), weight=1)
+
+        # Create controller buttons.
+        self.load_db_data_button = ctk.CTkButton(self.controllers_container, text=self._get_text("Load Data"), command=self.__load_db_data)
+        self.load_db_data_button.grid(row=0, column=0)
+
+        self.save_db_data_button = ctk.CTkButton(self.controllers_container, text=self._get_text("Save Data"), command=self.__save_db_data)
+        self.save_db_data_button.grid(row=0, column=1)
+
+        self.exit_button = ctk.CTkButton(self.controllers_container, text=self._get_text("Exit"), command=self.root.terminate)
+        self.exit_button.grid(row=0, column=2)
+
+        self.reset_button = ctk.CTkButton(self.controllers_container, text=self._get_text("Refresh"), command=self.__reset)
+        self.reset_button.grid(row=0, column=3)
+
+        self.restart_button = ctk.CTkButton(self.controllers_container, text=self._get_text("Restart"), command=self.root._switch_to_login)
+        self.restart_button.grid(row=0, column=4)
+
+        self.export_button = ctk.CTkButton(self.controllers_container, text=self._get_text("Export Data"), command=self.__export)
+        self.export_button.grid(row=0, column=5)
+    
+        for current_button in self.controllers_container.winfo_children() :
+            current_button.configure(
+                fg_color=GUI_DC.BUTTON_LIGHT_PURPLE,
+                bg_color=GUI_DC.LIGHT_BACKGROUND,
+                hover_color=GUI_DC.BUTTON_LIGHT_PURPLE_HOVER,
+                corner_radius=25,
+                text_color=GUI_DC.LIGHT_TEXT_COLOR,
+                text_color_disabled=GUI_DC.MEDIUM_TEXT_COLOR,
+                font=("Arial", 13, "bold"),
+            )
+            current_button.grid_configure(padx=GUI_DC.GENERAL_PADDING, pady=GUI_DC.GENERAL_PADDING, sticky="nsew")
+
+    def __load_program_selection(self) -> None:
+        """
+        This method creates the program selection container and its widgets.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
+        # Configure program selection container.
+        self.program_selection_container.grid_rowconfigure((0), weight=1)
+        self.program_selection_container.grid_columnconfigure((0,1,2,3,4), weight=1)
+
+        # Initialize program selection variables.
+        if self.parsing_language == "en" :
+            self.available_program_modes = ["Stat Analyzer", "Grade Updater", "Achievement Analyzer"]
+            self.left_program_mode = ctk.StringVar(value="Stat Analyzer")
+            self.current_program_mode = ctk.StringVar(value="Grade Updater")
+            self.right_program_mode = ctk.StringVar(value="Achievement Analyzer")
+        else :
+            self.available_program_modes = ["Istatistik Analizcisi", "Not Güncelleyici", "Başari Analizcisi"]
+            self.left_program_mode = ctk.StringVar(value="Istatistik Analizcisi")
+            self.current_program_mode = ctk.StringVar(value="Not Güncelleyici")
+            self.right_program_mode = ctk.StringVar(value="Başari Analizcisi")
+
+        # Setup program selection widgets and logic.
+        self.left_arrow_photo_path = ASSETS_DC.LEFT_ARROW_PATH
+        self.left_arrow_image = ctk.CTkImage(light_image=Image.open(self.left_arrow_photo_path), dark_image=Image.open(self.left_arrow_photo_path), size=GUI_DC.APP_SLIDER_ARROW_SIZE)
+        self.left_arrow_button = ctk.CTkButton(self.program_selection_container, image=self.left_arrow_image, command=lambda : self.__change_mode_index("decrease"), text=None,
+            fg_color=GUI_DC.LIGHT_BACKGROUND,
+            bg_color=GUI_DC.LIGHT_BACKGROUND,
+            hover_color=GUI_DC.LIGHT_BACKGROUND,
+            width=0,
+            height=0,
+        )
+        self.left_arrow_button.grid(row=0, column=0, sticky="nsw")
+
+        self.left_program_info_label = ctk.CTkLabel(self.program_selection_container, textvariable=self.left_program_mode, state="disabled",
+            fg_color=GUI_DC.LIGHT_BACKGROUND,
+            bg_color=GUI_DC.LIGHT_BACKGROUND,
+            text_color=GUI_DC.MEDIUM_TEXT_COLOR,
+            font=("Arial", 13, "italic"),
+            anchor="center",
+            corner_radius=25
+        )
+        self.left_program_info_label.grid(row=0, column=1, sticky="nse")
+
+        self.current_program_info_label = ctk.CTkLabel(self.program_selection_container, textvariable=self.current_program_mode,
+            fg_color=GUI_DC.LIGHT_BACKGROUND,
+            bg_color=GUI_DC.LIGHT_BACKGROUND,
+            text_color=GUI_DC.DARK_TEXT_COLOR,
+            font=("Arial", 14, "bold"),
+            anchor="center",
+            corner_radius=25
+        )
+        self.current_program_info_label.grid(row=0, column=2, sticky="nsew")
+
+        self.right_program_info_label = ctk.CTkLabel(self.program_selection_container, textvariable=self.right_program_mode, state="disabled",
+            fg_color=GUI_DC.LIGHT_BACKGROUND,
+            bg_color=GUI_DC.LIGHT_BACKGROUND,
+            text_color=GUI_DC.MEDIUM_TEXT_COLOR,
+            font=("Arial", 13, "italic"),
+            anchor="center",
+            corner_radius=25
+        )
+        self.right_program_info_label.grid(row=0, column=3, sticky="nsw")
+
+        self.right_arrow_photo_path = ASSETS_DC.RIGHT_ARROW_PATH
+        self.right_arrow_image = ctk.CTkImage(light_image=Image.open(self.right_arrow_photo_path), dark_image=Image.open(self.right_arrow_photo_path), size=GUI_DC.APP_SLIDER_ARROW_SIZE)
+        self.right_arrow_button = ctk.CTkButton(self.program_selection_container, image=self.right_arrow_image, command=lambda : self.__change_mode_index("increase"), text=None,
+            fg_color=GUI_DC.LIGHT_BACKGROUND,
+            bg_color=GUI_DC.LIGHT_BACKGROUND,
+            hover_color=GUI_DC.LIGHT_BACKGROUND,
+            width=0,
+            height=0,
+        )
+        self.right_arrow_button.grid(row=0, column=4, sticky="nse")
+
+        for current_Widget in self.program_selection_container.winfo_children() :
+            current_Widget.grid_configure(padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
+
 
     def __update_user_authitication(self) -> None:
         """
@@ -233,213 +521,6 @@ class ApplicationFrame(ttk.Frame) :
         # Wrap to root's get_text method. Then return the result.
         return self.root.get_text(text, parsing_language or self.parsing_language)
 
-    def __load_containers(self) -> None:
-        """
-        Loads containers into class fields.
-        @Parameters:
-            None
-        @Returns:
-            None
-        """
-        # If already exists, forget the container.
-        try :
-            self.container.grid_forget()
-        except :
-            pass
-
-        # Create main container for ApplicationFrame.
-        self.container = ttk.Frame(self)
-        self.container.grid(row=0, column=0)
-        # Configure main container.
-        self.container.grid_rowconfigure((0,1,2,3), weight=1)
-        self.container.grid_columnconfigure(0, weight=1)
-
-        # Create containers for ApplicationFrame widgets
-        self.user_info_label_container = ttk.Frame(self.container)
-        self.user_info_label_container.grid(row=0, column=0)
-
-        self.controllers_container = ttk.Frame(self.container)
-        self.controllers_container.grid(row=1, column=0)
-
-        self.program_selection_container = ttk.Frame(self.container)
-        self.program_selection_container.grid(row=2, column=0)
-
-        self.program_container = ttk.Frame(self.container)
-        self.program_container.grid(row=3, column=0)
-
-    def __load_user_info_label(self) -> None:
-        """
-        Loads user info label on application frame.
-        @Parameters:
-            None
-        @Returns:
-            None
-        """
-        def ___change_user_photo(*args, **kwargs) -> None:
-            """
-            Changes user photo. In every click.
-            @Parameters:
-                None
-            @Returns:
-                None
-            """
-            # Get photo list from available photos. Normally data is dict [key : photo_name, value : photo_path]
-            available_photo_list = list(self.available_photos.values())
-            # Get index of current and next photo.
-            index_of_current_photo = available_photo_list.index(self.current_user_photo_path)
-            index_of_next_photo = (index_of_current_photo + 1) % len(available_photo_list)
-            # Change current user photo
-            self.current_user_photo_path = available_photo_list[index_of_next_photo]
-            self.student_photo = ImageTk.PhotoImage(Image.open(self.current_user_photo_path).resize(self.student_photo_size, Image.ANTIALIAS))
-            self.student_photo_label.configure(image=self.student_photo)
-            self.student_photo_label.image = self.student_photo
-
-        # Configure user info label container.
-        self.user_info_label_container.grid_rowconfigure((0,1,2,3,4,5), weight=1)
-        self.user_info_label_container.grid_columnconfigure((0,1,2,3,4,5,6,7,8,9,10,11), weight=1)
-
-        # Create mef uni logo label.
-        self.logo_image = ImageTk.PhotoImage(Image.open(ASSETS_DC.LOGO_PATH).resize(self.mef_uni_logo_size, Image.ANTIALIAS))
-        mef_logo_label = ttk.Label(self.user_info_label_container, image=self.logo_image)
-        mef_logo_label.grid(row=0, column=0, columnspan=4, rowspan=2)
-
-        # Create document name label.
-        self.document_name_label = ttk.Label(self.user_info_label_container, text=self.document_name)
-        self.document_name_label.grid(row=0, column=4, columnspan=4)
-
-        # Create document date label.
-        self.document_date_label = ttk.Label(self.user_info_label_container, text=self.transcript_creation_date)
-        self.document_date_label.grid(row=1, column=4, columnspan=4)
-
-        # Create student photo label.
-        # If online login approved, than add the user photo to available photos. To show it on the label.
-        self.available_photos = ASSETS_DC.GENDERS_PHOTO_PATH
-        if os.path.exists(SELENIUM_DC.USER_PHOTO_OUTPUT_PATH) :
-            self.available_photos["user_photo"] = SELENIUM_DC.USER_PHOTO_OUTPUT_PATH
-            self.current_user_photo_path = SELENIUM_DC.USER_PHOTO_OUTPUT_PATH
-        else :
-            self.current_user_photo_path = ASSETS_DC.GENDERS_PHOTO_PATH[self.student_gender]
-        self.student_photo = ImageTk.PhotoImage(Image.open(self.current_user_photo_path).resize(self.student_photo_size, Image.ANTIALIAS))
-        self.student_photo_label = ttk.Label(self.user_info_label_container, image=self.student_photo)
-        self.student_photo_label.grid(row=0, column=8, columnspan=4, rowspan=2)
-        self.student_photo_label.bind("<Button-1>", ___change_user_photo)
-
-        # Create student id, national id, name, surname, faculty, department, program, language of instruction, and status labels.
-        student_id_label = ttk.Label(self.user_info_label_container, text=self._get_text("Student ID"))
-        student_id_label.grid(row=2, column=0, columnspan=3)
-        student_id_label_value = ttk.Label(self.user_info_label_container, text=self.student_school_id)
-        student_id_label_value.grid(row=2, column=3, columnspan=3)
-
-        national_id_label = ttk.Label(self.user_info_label_container, text=self._get_text("National ID"))
-        national_id_label.grid(row=2, column=6, columnspan=3)
-        national_id_label_value = ttk.Label(self.user_info_label_container, text=self.student_national_id)
-        national_id_label_value.grid(row=2, column=9, columnspan=3)
-
-        student_name_label = ttk.Label(self.user_info_label_container, text=self._get_text("Name"))
-        student_name_label.grid(row=3, column=0, columnspan=3)
-        student_name_label_value = ttk.Label(self.user_info_label_container, text=self.student_name)
-        student_name_label_value.grid(row=3, column=3, columnspan=3)
-
-        student_surname_label = ttk.Label(self.user_info_label_container, text=self._get_text("Surname"))
-        student_surname_label.grid(row=3, column=6, columnspan=3)
-        student_surname_label_value = ttk.Label(self.user_info_label_container, text=self.student_surname)
-        student_surname_label_value.grid(row=3, column=9, columnspan=3)
-
-        faculty_department_label = ttk.Label(self.user_info_label_container, text=self._get_text("Faculty / Department"))
-        faculty_department_label.grid(row=4, column=0, columnspan=3)
-        faculty_department_label_value = ttk.Label(self.user_info_label_container, text=self.student_faculty)
-        faculty_department_label_value.grid(row=4, column=3, columnspan=3)
-
-        program_name_label = ttk.Label(self.user_info_label_container, text=self._get_text("Program Name"))
-        program_name_label.grid(row=4, column=6, columnspan=3)
-        program_name_label_value = ttk.Label(self.user_info_label_container, text=self.student_department)
-        program_name_label_value.grid(row=4, column=9, columnspan=3)
-
-        language_of_instruction_label = ttk.Label(self.user_info_label_container, text=self._get_text("Language of Instruction"))
-        language_of_instruction_label.grid(row=5, column=0, columnspan=3)
-        language_of_instruction_label_value = ttk.Label(self.user_info_label_container, text=self.language_of_instruction)
-        language_of_instruction_label_value.grid(row=5, column=3, columnspan=3)
-
-        student_status_label = ttk.Label(self.user_info_label_container, text=self._get_text("Student Status"))
-        student_status_label.grid(row=5, column=6, columnspan=3)
-        student_status_label_value = ttk.Label(self.user_info_label_container, text=self.student_status)
-        student_status_label_value.grid(row=5, column=9, columnspan=3)
-
-    def __load_controller(self) -> None:
-        """
-        This method creates the controller container and its widgets.
-        @Parameters:
-            None
-        @Returns:
-            None
-        """
-        # Configure controller container.
-        self.controllers_container.grid_rowconfigure((0), weight=1)
-        self.controllers_container.grid_columnconfigure((0,1,2,3,4,5), weight=1)
-
-        # Create controller buttons.
-        self.load_db_data_button = ttk.Button(self.controllers_container, text=self._get_text("Load Data"), command=self.__load_db_data)
-        self.load_db_data_button.grid(row=0, column=0)
-
-        self.save_db_data_button = ttk.Button(self.controllers_container, text=self._get_text("Save Data"), command=self.__save_db_data)
-        self.save_db_data_button.grid(row=0, column=1)
-
-        self.exit_button = ttk.Button(self.controllers_container, text=self._get_text("Exit"), command=self.root.terminate)
-        self.exit_button.grid(row=0, column=2)
-
-        self.reset_button = ttk.Button(self.controllers_container, text=self._get_text("Refresh"), command=self.__reset)
-        self.reset_button.grid(row=0, column=3)
-
-        self.restart_button = ttk.Button(self.controllers_container, text=self._get_text("Restart"), command=self.root._switch_to_login)
-        self.restart_button.grid(row=0, column=4)
-
-        self.export_button = ttk.Button(self.controllers_container, text=self._get_text("Export Data"), command=self.__export)
-        self.export_button.grid(row=0, column=5)
-
-    def __load_program_selection(self) -> None:
-        """
-        This method creates the program selection container and its widgets.
-        @Parameters:
-            None
-        @Returns:
-            None
-        """
-        # Configure program selection container.
-        self.program_selection_container.grid_rowconfigure((0), weight=1)
-        self.program_selection_container.grid_columnconfigure((0,1,2,3,4), weight=1)
-
-        # Initialize program selection variables.
-        if self.parsing_language == "en" :
-            self.available_program_modes = ["Stat Analyzer", "Grade Updater", "Achievement Analyzer"]
-            self.left_program_mode = tk.StringVar(value="Stat Analyzer")
-            self.current_program_mode = tk.StringVar(value="Grade Updater")
-            self.right_program_mode = tk.StringVar(value="Achievement Analyzer")
-        else :
-            self.available_program_modes = ["Istatistik Analizcisi", "Not Güncelleyici", "Başari Analizcisi"]
-            self.left_program_mode = tk.StringVar(value="Istatistik Analizcisi")
-            self.current_program_mode = tk.StringVar(value="Not Güncelleyici")
-            self.right_program_mode = tk.StringVar(value="Başari Analizcisi")
-
-        # Setup program selection widgets and logic.
-        self.left_arrow_photo_path = ASSETS_DC.LEFT_ARROW_PATH
-        self.left_arrow_image = ImageTk.PhotoImage(Image.open(self.left_arrow_photo_path).resize(self.slider_arrow_size, Image.ANTIALIAS))
-        self.left_arrow_button = ttk.Button(self.program_selection_container, image=self.left_arrow_image, command=lambda : self.__change_mode_index("decrease"))
-        self.left_arrow_button.grid(row=0, column=0)
-
-        self.left_program_info_label = ttk.Label(self.program_selection_container, textvariable=self.left_program_mode, state="disabled")
-        self.left_program_info_label.grid(row=0, column=1)
-
-        self.current_program_info_label = ttk.Label(self.program_selection_container, textvariable=self.current_program_mode)
-        self.current_program_info_label.grid(row=0, column=2)
-
-        self.right_program_info_label = ttk.Label(self.program_selection_container, textvariable=self.right_program_mode, state="disabled")
-        self.right_program_info_label.grid(row=0, column=3)
-
-        self.right_arrow_photo_path = ASSETS_DC.RIGHT_ARROW_PATH
-        self.right_arrow_image = ImageTk.PhotoImage(Image.open(self.right_arrow_photo_path).resize(self.slider_arrow_size, Image.ANTIALIAS))
-        self.right_arrow_button = ttk.Button(self.program_selection_container, image=self.right_arrow_image, command=lambda : self.__change_mode_index("increase"))
-        self.right_arrow_button.grid(row=0, column=4)
-
     def __load_program(self) -> None:
         """
         This method loads the program container and its widgets.
@@ -471,15 +552,20 @@ class ApplicationFrame(ttk.Frame) :
         @Returns:
             None
         """
+        """
+        self.export_button.configure(text=self._get_text("Not Exported"), fg_color=GUI_DC.BUTTON_LIGHT_RED)
+        self.after(750, lambda : self.export_button.configure(text=self._get_text("Export Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
+        """
         # Disable the button to prevent multiple clicks.
-        self.load_db_data_button.config(text=self._get_text("Loading Data"), state="disabled")
+        self.load_db_data_button.configure(text=self._get_text("Loading Data"), state="disabled")
 
         # Check if the user is authenticated.
         self.__check_authentication()
 
         # If not authenticated, fix the button and cancel operation.
         if not self.is_user_authenticated :
-            self.load_db_data_button.config(text=self._get_text("Load Data"), state="enabled")
+            self.load_db_data_button.configure(text=self._get_text("Auth Eror"), fg_color=GUI_DC.BUTTON_LIGHT_RED)
+            self.after(750, lambda : self.load_db_data_button.configure(text=self._get_text("Load Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
             return
 
         # Initialize the match data.
@@ -489,7 +575,8 @@ class ApplicationFrame(ttk.Frame) :
         # If no data found, fix the button and cancel operation.
         if document_list == [] :
             messagebox.showerror(self._get_text("Error"), self._get_text("No data found for this user"))
-            self.load_db_data_button.config(text=self._get_text("Load Data"), state="normal")
+            self.load_db_data_button.configure(text=self._get_text("No Data"), fg_color=GUI_DC.BUTTON_LIGHT_RED)
+            self.after(750, lambda : self.load_db_data_button.configure(text=self._get_text("Load Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
             return
 
         # If data found, load the available data.
@@ -504,7 +591,8 @@ class ApplicationFrame(ttk.Frame) :
 
         # If no data selected, fix the button and cancel operation.
         if selected_option == "" :
-            self.load_db_data_button.config(text=self._get_text("Load Data"), state="normal")
+            self.load_db_data_button.configure(text=self._get_text("No Selection"), fg_color=GUI_DC.BUTTON_LIGHT_RED)
+            self.after(750, lambda : self.load_db_data_button.configure(text=self._get_text("Load Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
             return
         
         # If data selected, load the data.
@@ -512,8 +600,10 @@ class ApplicationFrame(ttk.Frame) :
         self.root.set_current_data(user_data_document=selected_user_data_document)
         self.__load_user_data(selected_user_data_document)
 
-        # Reset the ApplicationFrame to take effect.
-        self.__reset()
+        # Reset the ApplicationFrame to take effect. Also fix the button.
+        self.load_db_data_button.configure(text=self._get_text("Loaded"), fg_color=GUI_DC.BUTTON_LIGHT_GREEN)
+        self.after(750, lambda : self.load_db_data_button.configure(text=self._get_text("Load Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
+        self.after(1000, self.__reset)
 
     def __save_db_data(self, *args, **kwargs) -> None:
         """
@@ -524,14 +614,15 @@ class ApplicationFrame(ttk.Frame) :
             None
         """
         # Disable the button to prevent multiple clicks.
-        self.save_db_data_button.config(text=self._get_text("Saving Data"), state="disabled")
+        self.save_db_data_button.configure(text=self._get_text("Saving Data"), state="disabled")
 
         # Check if the user is authenticated.
         self.__check_authentication()
 
         # If not authenticated, fix the button and cancel operation.
         if not self.is_user_authenticated :
-            self.save_db_data_button.config(text=self._get_text("Save Data"), state="enabled")
+            self.save_db_data_button.configure(text=self._get_text("Auth Eror"), fg_color=GUI_DC.BUTTON_LIGHT_RED)
+            self.after(750, lambda : self.save_db_data_button.configure(text=self._get_text("Save Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
             return
 
         # Initialize the match data.
@@ -549,7 +640,8 @@ class ApplicationFrame(ttk.Frame) :
 
         # If no document name selected, fix the button and cancel operation.
         if new_document_name == "" :
-            self.save_db_data_button.config(text=self._get_text("Save Data"), state="normal")
+            self.save_db_data_button.configure(text=self._get_text("No Input"), fg_color=GUI_DC.BUTTON_LIGHT_RED)
+            self.after(750, lambda : self.save_db_data_button.configure(text=self._get_text("Save Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
             return
         
         # If document name selected, save the data.
@@ -570,8 +662,9 @@ class ApplicationFrame(ttk.Frame) :
         self.root.set_current_data(user_info_document, new_user_data_document)
 
         # Fix the button and reset the ApplicationFrame to take effect.
-        self.save_db_data_button.config(text=self._get_text("Save Data"), state="normal")
-        self.__reset()
+        self.save_db_data_button.configure(text=self._get_text("Saved"), fg_color=GUI_DC.BUTTON_LIGHT_GREEN)
+        self.after(750, lambda : self.save_db_data_button.configure(text=self._get_text("Save Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
+        self.after(1000, self.__reset)
 
     def __reset(self, *args, **kwargs) -> None:
         """
@@ -582,7 +675,7 @@ class ApplicationFrame(ttk.Frame) :
             None
         """
         # Disable the button to prevent multiple clicks.
-        self.reset_button.config(text=self._get_text("Refreshing"), state="disabled")
+        self.reset_button.configure(text=self._get_text("Refreshing"), state="disabled")
         # Reset the ApplicationFrame. By restarting the application.
         self.root.restart_application()
     
@@ -595,13 +688,15 @@ class ApplicationFrame(ttk.Frame) :
             None
         """
         # Disable the button to prevent multiple clicks.
-        self.export_button.config(text=self._get_text("Exporting Data"), state="disabled")
+        self.export_button.configure(text=self._get_text("Exporting Data"), state="disabled")
 
         # DEBUG MODE NO COMMENT
         if not self.DEBUG :
-            output_file_folder = filedialog.asksaveasfilename(initialdir=self.work_dir, initialfile=self.document_name, defaultextension=".pdf", filetypes=[("PDF File", "*.pdf")])
+            output_file_folder = ctk.filedialog.asksaveasfilename(initialdir=self.work_dir, initialfile=self.document_name, defaultextension=".pdf", filetypes=[("PDF File", "*.pdf")])
         else :
-            output_file_folder = filedialog.asksaveasfilename(initialdir=self.desktop_path, initialfile=self.document_name, defaultextension=".pdf", filetypes=[("PDF File", "*.pdf")])
+            output_file_folder = ctk.filedialog.asksaveasfilename(initialdir=self.desktop_path, initialfile=self.document_name, defaultextension=".pdf", filetypes=[("PDF File", "*.pdf")])
+
+        is_exported = False
 
         # Check if the user selected a folder.
         if output_file_folder is not None and output_file_folder != "" and output_file_folder != " " :
@@ -620,9 +715,16 @@ class ApplicationFrame(ttk.Frame) :
                 output_file_path = output_file_path
             )
 
+            is_exported = True
+
         # Fix the button and reset the ApplicationFrame to take effect. If not selected or selected, it does not matter.
-        self.export_button.config(text=self._get_text("Export Data"), state="normal")
-            
+        if is_exported :
+            self.export_button.configure(text=self._get_text("Exported"), fg_color=GUI_DC.BUTTON_LIGHT_GREEN)
+            self.after(750, lambda : self.export_button.configure(text=self._get_text("Export Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
+        else :
+            self.export_button.configure(text=self._get_text("Not Exported"), fg_color=GUI_DC.BUTTON_LIGHT_RED)
+            self.after(750, lambda : self.export_button.configure(text=self._get_text("Export Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
+
     def __change_mode_index(self, operation : str, *args, **kwargs) -> None:
         """
         This method changes the current program mode index by the given operation. It shortly applies a shift affect on the program selection list.
@@ -674,11 +776,3 @@ class ApplicationFrame(ttk.Frame) :
         # Set the authentication status.
         self.is_user_authenticated = result
         self.root.set_authication_status(result)
-
-        # Return the result. According to it, show an information or error message.
-        if result == True :
-            messagebox.showinfo(self._get_text("Success"), self._get_text("User is verified, access provided"))
-            return True
-        else :
-            messagebox.showerror(self._get_text("Error"), self._get_text("User is not verified, no access provided"))
-            return False
