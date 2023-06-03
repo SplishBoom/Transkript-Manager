@@ -124,8 +124,8 @@ class LoginFrame(ctk.CTkFrame) :
         self.tab_view.grid(row=1, column=0, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
         ctk.CTkFrame(self.input_field_container, width=0, height=0, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.LIGHT_BACKGROUND).grid(row=2, column=0, pady=GUI_DC.INNER_PADDING//2, padx=GUI_DC.INNER_PADDING)
         # Add the tabs
-        self.tab_view.add("Online Login")
-        self.tab_view.add("Offline Login")
+        self.online_tab = self.tab_view.add("Online Login")
+        self.offline_tab = self.tab_view.add("Offline Login")
 
         # Set the current tab to online login.
         self.tab_view.set("Online Login")
@@ -144,18 +144,18 @@ class LoginFrame(ctk.CTkFrame) :
             None
         """
         # Configure the online login container.
-        self.tab_view.tab("Online Login").grid_rowconfigure((0,1,3,4,5,6), weight=1)
-        self.tab_view.tab("Online Login").grid_columnconfigure((0), weight=1)
+        self.online_tab.grid_rowconfigure((0,1,3,4,5,6), weight=1)
+        self.online_tab.grid_columnconfigure((0), weight=1)
 
         # Create the online login widgets.
-        self.offline_status_label = ctk.CTkLabel(self.tab_view.tab("Online Login"), text="Username",
+        self.offline_status_label = ctk.CTkLabel(self.online_tab, text="Username",
                                                         fg_color=GUI_DC.DARK_BACKGROUND,
                                                         bg_color=GUI_DC.DARK_BACKGROUND,
                                                         text_color=GUI_DC.LIGHT_BACKGROUND,
                                                         font=("Arial", 12, "bold")
         )
         self.offline_status_label.grid(row=0, column=0, sticky="w", padx=15)
-        self.online_login_username_entry = ctk.CTkEntry(self.tab_view.tab("Online Login"), textvariable=self.username,
+        self.online_login_username_entry = ctk.CTkEntry(self.online_tab, textvariable=self.username,
                                                         fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
                                                         bg_color=GUI_DC.DARK_BACKGROUND,
                                                         border_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
@@ -167,16 +167,16 @@ class LoginFrame(ctk.CTkFrame) :
         self.online_login_username_entry.grid(row=1, column=0, sticky="we", padx=15)
         
         # Dummy label for spacing. *** The pady is not working propely on customtkinter, so this is a workaround. ***
-        ctk.CTkLabel(self.tab_view.tab("Online Login"), height=0, text=None).grid(row=2, column=0)
+        ctk.CTkLabel(self.online_tab, height=0, text=None).grid(row=2, column=0)
 
-        self.online_login_password_label = ctk.CTkLabel(self.tab_view.tab("Online Login"), text="Password",
+        self.online_login_password_label = ctk.CTkLabel(self.online_tab, text="Password",
                                                         fg_color=GUI_DC.DARK_BACKGROUND,
                                                         bg_color=GUI_DC.DARK_BACKGROUND,
                                                         text_color=GUI_DC.LIGHT_BACKGROUND,
                                                         font=("Arial", 12, "bold")
         )
         self.online_login_password_label.grid(row=3, column=0, sticky="w", padx=15)
-        self.online_login_password_entry = ctk.CTkEntry(self.tab_view.tab("Online Login"), textvariable=self.password, show="*",
+        self.online_login_password_entry = ctk.CTkEntry(self.online_tab, textvariable=self.password, show="*",
                                                         fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
                                                         bg_color=GUI_DC.DARK_BACKGROUND,
                                                         border_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
@@ -187,9 +187,9 @@ class LoginFrame(ctk.CTkFrame) :
         )
         self.online_login_password_entry.grid(row=4, column=0, sticky="we", padx=15)
 
-        ctk.CTkLabel(self.tab_view.tab("Online Login"), height=0, text=None).grid(row=5, column=0)
+        ctk.CTkLabel(self.online_tab, height=0, text=None).grid(row=5, column=0)
 
-        self.online_login_button = ctk.CTkButton(self.tab_view.tab("Online Login"), text="Login", command=self.__handle_login, 
+        self.online_login_button = ctk.CTkButton(self.online_tab, text="Login", command=self.__handle_login, 
                                                  fg_color=GUI_DC.BUTTON_LIGHT_GREEN, 
                                                  hover_color=GUI_DC.BUTTON_LIGHT_GREEN_HOVER, 
                                                  border_color=GUI_DC.LIGHT_BACKGROUND, 
@@ -210,11 +210,11 @@ class LoginFrame(ctk.CTkFrame) :
             None
         """
         # Configure the offline login container.
-        self.tab_view.tab("Offline Login").grid_rowconfigure((0,1,2), weight=1)
-        self.tab_view.tab("Offline Login").grid_columnconfigure(0, weight=1)
+        self.offline_tab.grid_rowconfigure((0,1,2), weight=1)
+        self.offline_tab.grid_columnconfigure(0, weight=1)
 
         # Create the offline login widgets.
-        self.offline_open_file_button = ctk.CTkButton(self.tab_view.tab("Offline Login"), text=self.name_of_transcript.get() or "Select Transcript", command=self.__handle_ask_file_dialog,
+        self.offline_open_file_button = ctk.CTkButton(self.offline_tab, text=self.name_of_transcript.get() or "Select Transcript", command=self.__handle_ask_file_dialog,
                                                       fg_color=GUI_DC.BUTTON_LIGHT_BLUE,
                                                       hover_color=GUI_DC.BUTTON_LIGHT_BLUE_HOVER,
                                                       border_color=GUI_DC.LIGHT_BACKGROUND,
@@ -226,7 +226,7 @@ class LoginFrame(ctk.CTkFrame) :
         )
         self.offline_open_file_button.grid(row=0, column=0, pady=12)
 
-        self.offline_status_label = ctk.CTkLabel(self.tab_view.tab("Offline Login"), text="Offline Mode Available",
+        self.offline_status_label = ctk.CTkLabel(self.offline_tab, text="Offline Mode Available",
                                                         fg_color=GUI_DC.DARK_BACKGROUND,
                                                         bg_color=GUI_DC.DARK_BACKGROUND,
                                                         text_color=GUI_DC.BUTTON_LIGHT_GREEN,
@@ -234,7 +234,7 @@ class LoginFrame(ctk.CTkFrame) :
         )
         self.offline_status_label.grid(row=1, column=0, sticky="we", padx=15)
 
-        self.offline_login_button = ctk.CTkButton(self.tab_view.tab("Offline Login"), text="Login", command=self.__handle_login, 
+        self.offline_login_button = ctk.CTkButton(self.offline_tab, text="Login", command=self.__handle_login, 
                                                   fg_color=GUI_DC.BUTTON_LIGHT_GREEN, 
                                                   hover_color=GUI_DC.BUTTON_LIGHT_GREEN_HOVER, 
                                                   border_color=GUI_DC.LIGHT_BACKGROUND, 
