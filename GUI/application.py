@@ -43,8 +43,7 @@ class ApplicationFrame(ctk.CTkFrame) :
         # Load widgets.
         self.__load_user_info_label()
         self.__load_controller()
-        self.__load_program_selection()
-        self.__load_program()
+        self.__load_programs()
 
     def __load_containers(self) -> None:
         """
@@ -67,7 +66,7 @@ class ApplicationFrame(ctk.CTkFrame) :
         self.container = ctk.CTkFrame(self, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND, corner_radius=25)
         self.container.grid(row=0, column=0, sticky="nsew")
         # Configure main container.
-        self.container.grid_rowconfigure((0,1,2,3,4,5,6,7,8), weight=1)
+        self.container.grid_rowconfigure((0,1,2,3,4,5,6), weight=1)
         self.container.grid_columnconfigure(0, weight=1)
 
         # Create containers for ApplicationFrame widgets
@@ -78,12 +77,9 @@ class ApplicationFrame(ctk.CTkFrame) :
         self.controllers_container = ctk.CTkFrame(self.container, fg_color=GUI_DC.LIGHT_BACKGROUND, border_color=GUI_DC.BORDER_COLOR, border_width=2, corner_radius=25)
         self.controllers_container.grid(row=3, column=0, sticky="nsew", padx=GUI_DC.GENERAL_PADDING)
         ctk.CTkFrame(self.container, width=0, height=0, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.LIGHT_BACKGROUND).grid(row=4, column=0, pady=GUI_DC.INNER_PADDING, padx=GUI_DC.GENERAL_PADDING)
-        self.program_selection_container = ctk.CTkFrame(self.container, fg_color=GUI_DC.LIGHT_BACKGROUND, border_color=GUI_DC.BORDER_COLOR, border_width=2, corner_radius=25)
-        self.program_selection_container.grid(row=5, column=0, sticky="nsew", padx=GUI_DC.GENERAL_PADDING)
-        ctk.CTkFrame(self.container, width=0, height=0, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.LIGHT_BACKGROUND).grid(row=6, column=0, pady=GUI_DC.INNER_PADDING, padx=GUI_DC.GENERAL_PADDING)
         self.program_container = ctk.CTkFrame(self.container, fg_color=GUI_DC.LIGHT_BACKGROUND, border_color=GUI_DC.BORDER_COLOR, border_width=2, corner_radius=25)
-        self.program_container.grid(row=7, column=0, sticky="nsew", padx=GUI_DC.GENERAL_PADDING)
-        ctk.CTkFrame(self.container, width=0, height=0, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.LIGHT_BACKGROUND).grid(row=8, column=0, pady=GUI_DC.GENERAL_PADDING//2, padx=GUI_DC.GENERAL_PADDING)
+        self.program_container.grid(row=5, column=0, sticky="nsew", padx=GUI_DC.GENERAL_PADDING)
+        ctk.CTkFrame(self.container, width=0, height=0, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.LIGHT_BACKGROUND).grid(row=6, column=0, pady=GUI_DC.GENERAL_PADDING//2, padx=GUI_DC.GENERAL_PADDING)
 
 
     def __load_user_info_label(self) -> None:
@@ -157,7 +153,7 @@ class ApplicationFrame(ctk.CTkFrame) :
                 fg_color=GUI_DC.LIGHT_BACKGROUND,
                 bg_color=GUI_DC.LIGHT_BACKGROUND,
                 text_color=GUI_DC.DARK_TEXT_COLOR,
-                font=("Arial", 17, "bold"),
+                font=("Arial", 15, "bold"),
                 anchor="center",
             )
 
@@ -208,14 +204,14 @@ class ApplicationFrame(ctk.CTkFrame) :
         # Configure labels.
         for acurrent_text_label in self.texts_container.winfo_children() :
             acurrent_text_label.configure(
-                fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
+                fg_color=GUI_DC.LIGHT_BACKGROUND,
                 bg_color=GUI_DC.LIGHT_BACKGROUND,
-                text_color=GUI_DC.LIGHT_TEXT_COLOR,
-                font=("Arial", 12, "italic"),
+                text_color=GUI_DC.DARK_TEXT_COLOR,
+                font=("Arial", 11, "italic"),
                 anchor="center",
-                corner_radius=25
+                corner_radius=25,
             )
-            acurrent_text_label.grid_configure(padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING, sticky="nsew")
+            acurrent_text_label.grid_configure(sticky="nsew")
     
     def __load_controller(self) -> None:
         """
@@ -230,29 +226,27 @@ class ApplicationFrame(ctk.CTkFrame) :
         self.controllers_container.grid_columnconfigure((0,1,2,3,4,5), weight=1)
 
         # Create controller buttons.
-        self.load_db_data_button = ctk.CTkButton(self.controllers_container, text=self._get_text("Load Data"), command=self.__load_db_data)
+        self.load_db_data_button = ctk.CTkButton(self.controllers_container, text=self._get_text("Load Data"), command=self.__load_db_data, fg_color = GUI_DC.BUTTON_LIGHT_PURPLE, hover_color = GUI_DC.BUTTON_LIGHT_PURPLE_HOVER)
         self.load_db_data_button.grid(row=0, column=0)
 
-        self.save_db_data_button = ctk.CTkButton(self.controllers_container, text=self._get_text("Save Data"), command=self.__save_db_data)
+        self.save_db_data_button = ctk.CTkButton(self.controllers_container, text=self._get_text("Save Data"), command=self.__save_db_data, fg_color = GUI_DC.BUTTON_LIGHT_YELLOW, hover_color = GUI_DC.BUTTON_LIGHT_YELLOW_HOVER)
         self.save_db_data_button.grid(row=0, column=1)
 
-        self.exit_button = ctk.CTkButton(self.controllers_container, text=self._get_text("Exit"), command=self.root.terminate)
+        self.exit_button = ctk.CTkButton(self.controllers_container, text=self._get_text("Exit"), command=self.root.terminate, fg_color = GUI_DC.BUTTON_LIGHT_ORANGE, hover_color = GUI_DC.BUTTON_LIGHT_ORANGE_HOVER)
         self.exit_button.grid(row=0, column=2)
 
-        self.reset_button = ctk.CTkButton(self.controllers_container, text=self._get_text("Refresh"), command=self.__reset)
-        self.reset_button.grid(row=0, column=3)
+        self.restart_button = ctk.CTkButton(self.controllers_container, text=self._get_text("Restart"), command=self.root._switch_to_login, fg_color = GUI_DC.BUTTON_LIGHT_PINK, hover_color = GUI_DC.BUTTON_LIGHT_PINK_HOVER)
+        self.restart_button.grid(row=0, column=3)
 
-        self.restart_button = ctk.CTkButton(self.controllers_container, text=self._get_text("Restart"), command=self.root._switch_to_login)
-        self.restart_button.grid(row=0, column=4)
+        self.reset_button = ctk.CTkButton(self.controllers_container, text=self._get_text("Refresh"), command=self.__reset, fg_color = GUI_DC.BUTTON_LIGHT_DBLUE, hover_color = GUI_DC.BUTTON_LIGHT_DBLUE_HOVER)
+        self.reset_button.grid(row=0, column=4)
 
-        self.export_button = ctk.CTkButton(self.controllers_container, text=self._get_text("Export Data"), command=self.__export)
+        self.export_button = ctk.CTkButton(self.controllers_container, text=self._get_text("Export Data"), command=self.__export, fg_color = GUI_DC.BUTTON_LIGHT_DGREEN, hover_color = GUI_DC.BUTTON_LIGHT_DGREEN_HOVER)
         self.export_button.grid(row=0, column=5)
     
         for current_button in self.controllers_container.winfo_children() :
             current_button.configure(
-                fg_color=GUI_DC.BUTTON_LIGHT_PURPLE,
                 bg_color=GUI_DC.LIGHT_BACKGROUND,
-                hover_color=GUI_DC.BUTTON_LIGHT_PURPLE_HOVER,
                 corner_radius=25,
                 text_color=GUI_DC.LIGHT_TEXT_COLOR,
                 text_color_disabled=GUI_DC.MEDIUM_TEXT_COLOR,
@@ -260,7 +254,7 @@ class ApplicationFrame(ctk.CTkFrame) :
             )
             current_button.grid_configure(padx=GUI_DC.GENERAL_PADDING, pady=GUI_DC.GENERAL_PADDING, sticky="nsew")
 
-    def __load_program_selection(self) -> None:
+    def __load_programs(self) -> None:
         """
         This method creates the program selection container and its widgets.
         @Parameters:
@@ -269,76 +263,60 @@ class ApplicationFrame(ctk.CTkFrame) :
             None
         """
         # Configure program selection container.
-        self.program_selection_container.grid_rowconfigure((0), weight=1)
-        self.program_selection_container.grid_columnconfigure((0,1,2,3,4), weight=1)
+        self.program_container.grid_rowconfigure((0,1,2), weight=1)
+        self.program_container.grid_columnconfigure((0), weight=1)
 
-        # Initialize program selection variables.
-        if self.parsing_language == "en" :
-            self.available_program_modes = ["Stat Analyzer", "Grade Updater", "Achievement Analyzer"]
-            self.left_program_mode = ctk.StringVar(value="Stat Analyzer")
-            self.current_program_mode = ctk.StringVar(value="Grade Updater")
-            self.right_program_mode = ctk.StringVar(value="Achievement Analyzer")
-        else :
-            self.available_program_modes = ["Istatistik Analizcisi", "Not Güncelleyici", "Başari Analizcisi"]
-            self.left_program_mode = ctk.StringVar(value="Istatistik Analizcisi")
-            self.current_program_mode = ctk.StringVar(value="Not Güncelleyici")
-            self.right_program_mode = ctk.StringVar(value="Başari Analizcisi")
-
-        # Setup program selection widgets and logic.
-        self.left_arrow_photo_path = ASSETS_DC.LEFT_ARROW_PATH
-        self.left_arrow_image = ctk.CTkImage(light_image=Image.open(self.left_arrow_photo_path), dark_image=Image.open(self.left_arrow_photo_path), size=GUI_DC.APP_SLIDER_ARROW_SIZE)
-        self.left_arrow_button = ctk.CTkButton(self.program_selection_container, image=self.left_arrow_image, command=lambda : self.__change_mode_index("decrease"), text=None,
-            fg_color=GUI_DC.LIGHT_BACKGROUND,
-            bg_color=GUI_DC.LIGHT_BACKGROUND,
-            hover_color=GUI_DC.LIGHT_BACKGROUND,
-            width=0,
-            height=0,
+        # Create the tabview widget for the input field.
+        ctk.CTkFrame(self.program_container, width=0, height=0, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.LIGHT_BACKGROUND).grid(row=0, column=0, pady=GUI_DC.INNER_PADDING//2, padx=GUI_DC.INNER_PADDING)
+        ctk.CTkTabview._segmented_button_border_width = 4
+        ctk.CTkTabview._button_height = 30
+        ctk.CTkTabview._top_button_overhang = 9
+        self.tab_view = ctk.CTkTabview(self.program_container, 
+                                       fg_color=GUI_DC.DARK_BACKGROUND, 
+                                       bg_color=GUI_DC.LIGHT_BACKGROUND,
+                                       text_color=GUI_DC.LIGHT_TEXT_COLOR,
+                                       text_color_disabled=GUI_DC.MEDIUM_TEXT_COLOR,
+                                       segmented_button_fg_color=GUI_DC.DARK_BACKGROUND,
+                                       segmented_button_selected_color=GUI_DC.BUTTON_LIGHT_BLUE,
+                                       segmented_button_selected_hover_color=GUI_DC.BUTTON_LIGHT_BLUE_HOVER,
+                                       segmented_button_unselected_color=GUI_DC.DARK_BACKGROUND,
+                                       segmented_button_unselected_hover_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
+                                       corner_radius=25,
+                                       width=0,
+                                       height=0,
+                                       border_width=0
         )
-        self.left_arrow_button.grid(row=0, column=0, sticky="nsw")
+        self.tab_view.grid(row=1, column=0, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
+        ctk.CTkFrame(self.program_container, width=0, height=0, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.LIGHT_BACKGROUND).grid(row=2, column=0, pady=GUI_DC.INNER_PADDING//2, padx=GUI_DC.INNER_PADDING)
 
-        self.left_program_info_label = ctk.CTkLabel(self.program_selection_container, textvariable=self.left_program_mode, state="disabled",
-            fg_color=GUI_DC.LIGHT_BACKGROUND,
-            bg_color=GUI_DC.LIGHT_BACKGROUND,
-            text_color=GUI_DC.MEDIUM_TEXT_COLOR,
-            font=("Arial", 13, "italic"),
-            anchor="center",
-            corner_radius=25
-        )
-        self.left_program_info_label.grid(row=0, column=1, sticky="nse")
+        # Set tab names.
+        self.stat_analyzer_tab_name = "Stat Analyzer" if self.parsing_language == "en" else "Istatistik Analizcisi"
+        self.grade_updater_tab_name = "Grade Updater" if self.parsing_language == "en" else "Not Guncelleyici"
+        self.achievement_analyzer_tab_name = "Achievement Analyzer" if self.parsing_language == "en" else "Basari Analizcisi"
 
-        self.current_program_info_label = ctk.CTkLabel(self.program_selection_container, textvariable=self.current_program_mode,
-            fg_color=GUI_DC.LIGHT_BACKGROUND,
-            bg_color=GUI_DC.LIGHT_BACKGROUND,
-            text_color=GUI_DC.DARK_TEXT_COLOR,
-            font=("Arial", 14, "bold"),
-            anchor="center",
-            corner_radius=25
-        )
-        self.current_program_info_label.grid(row=0, column=2, sticky="nsew")
+        # Add tabs.
+        self.stat_analyzer_tab = self.tab_view.add(self.stat_analyzer_tab_name)
+        self.grade_updater_tab = self.tab_view.add(self.grade_updater_tab_name)
+        self.achievement_analyzer_tab = self.tab_view.add(self.achievement_analyzer_tab_name)
 
-        self.right_program_info_label = ctk.CTkLabel(self.program_selection_container, textvariable=self.right_program_mode, state="disabled",
-            fg_color=GUI_DC.LIGHT_BACKGROUND,
-            bg_color=GUI_DC.LIGHT_BACKGROUND,
-            text_color=GUI_DC.MEDIUM_TEXT_COLOR,
-            font=("Arial", 13, "italic"),
-            anchor="center",
-            corner_radius=25
-        )
-        self.right_program_info_label.grid(row=0, column=3, sticky="nsw")
+        # Configure tabs.
+        self.stat_analyzer_tab.grid_rowconfigure(0, weight=1)
+        self.stat_analyzer_tab.grid_columnconfigure(0, weight=1)
+        self.grade_updater_tab.grid_rowconfigure(0, weight=1)
+        self.grade_updater_tab.grid_columnconfigure(0, weight=1)
+        self.achievement_analyzer_tab.grid_rowconfigure(0, weight=1)
+        self.achievement_analyzer_tab.grid_columnconfigure(0, weight=1)
 
-        self.right_arrow_photo_path = ASSETS_DC.RIGHT_ARROW_PATH
-        self.right_arrow_image = ctk.CTkImage(light_image=Image.open(self.right_arrow_photo_path), dark_image=Image.open(self.right_arrow_photo_path), size=GUI_DC.APP_SLIDER_ARROW_SIZE)
-        self.right_arrow_button = ctk.CTkButton(self.program_selection_container, image=self.right_arrow_image, command=lambda : self.__change_mode_index("increase"), text=None,
-            fg_color=GUI_DC.LIGHT_BACKGROUND,
-            bg_color=GUI_DC.LIGHT_BACKGROUND,
-            hover_color=GUI_DC.LIGHT_BACKGROUND,
-            width=0,
-            height=0,
-        )
-        self.right_arrow_button.grid(row=0, column=4, sticky="nse")
+        # Set the current tab to initial program.
+        self.tab_view.set(self.grade_updater_tab_name)
 
-        for current_Widget in self.program_selection_container.winfo_children() :
-            current_Widget.grid_configure(padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
+        # Configure binding.
+        self.tab_view.configure(command=self.___switch_program_mode)
+
+        # Load the program.
+        current_user_data = self.__create_user_data() # Get latest current user data.
+        self.current_program_frame = GradeUpdater(self.grade_updater_tab, self, self.root, current_user_data, DEBUG=self.DEBUG)
+        self.current_program_frame.grid(row=0, column=0, sticky="nsew")
 
 
     def __update_user_authitication(self) -> None:
@@ -351,45 +329,6 @@ class ApplicationFrame(ctk.CTkFrame) :
         """
         # Load user authentication status into class field.
         self.is_user_authenticated = self.root.get_authication_status()
-
-    def _switch_program_mode(self, new_program_mode : str) -> None:
-        """
-        Switches program mode. (Stat Analyzer, Grade Updater, Achievement Analyzer)
-        @Parameters:
-            new_program_mode - Required : New program mode. (str) -> Which is used to determine which program mode will be used. (Stat Analyzer, Grade Updater, Achievement Analyzer, Istatistik Analizcisi, Not Güncelleyici, Başari Analizcisi)
-        @Returns:
-            None
-        """
-        # Get current program mode.
-        current_mode = self.current_program_mode.get()
-
-        # Load latest user data. (Which is used to create new program frame.) It must be updated.
-        current_user_data = self.__create_user_data()
-
-        # Remove current program frame.
-        if current_mode == "Stat Analyzer" or current_mode == "Istatistik Analizcisi" :
-            self.stat_analyzer_frame.grid_forget()
-            self.stat_analyzer_frame = None
-        elif current_mode == "Grade Updater" or current_mode == "Not Güncelleyici" :
-            self.grade_updater_frame.grid_forget()
-        elif current_mode == "Achievement Analyzer" or current_mode == "Başari Analizcisi" :
-            self.achievement_analyzer_frame.grid_forget()
-            self.achievement_analyzer_frame = None
-
-        # Set new program frame. Initialize if needed.
-        if new_program_mode == "Stat Analyzer" or new_program_mode == "Istatistik Analizcisi" :
-            self.stat_analyzer_frame = StatAnalyzer(self.program_container, self, self.root, current_user_data, DEBUG=self.DEBUG)
-            self.stat_analyzer_frame.grid(row=0, column=0)
-        elif new_program_mode == "Grade Updater" or new_program_mode == "Not Güncelleyici" :
-            self.grade_updater_frame.grid(row=0, column=0)
-        elif new_program_mode == "Achievement Analyzer" or new_program_mode == "Başari Analizcisi" :
-            self.achievement_analyzer_frame = AchievementAnalyzer(self.program_container, self, self.root, current_user_data, DEBUG=self.DEBUG)
-            self.achievement_analyzer_frame.grid(row=0, column=0)
-
-        # Update program mode.
-        self.current_program_mode.set(new_program_mode)
-        self.left_program_mode.set(self.available_program_modes[(self.available_program_modes.index(new_program_mode) - 1) % len(self.available_program_modes)])
-        self.right_program_mode.set(self.available_program_modes[(self.available_program_modes.index(new_program_mode) + 1) % len(self.available_program_modes)])
 
     def update_user_data(self, new_user_data : dict) -> None:
         """
@@ -509,6 +448,7 @@ class ApplicationFrame(ctk.CTkFrame) :
         # Return new user info.
         return new_user_info
 
+
     def _get_text(self, text : str, parsing_language : str = None) -> str:
         """
         Gets the text from the given text.
@@ -521,28 +461,55 @@ class ApplicationFrame(ctk.CTkFrame) :
         # Wrap to root's get_text method. Then return the result.
         return self.root.get_text(text, parsing_language or self.parsing_language)
 
-    def __load_program(self) -> None:
+    def __check_authentication(self) -> bool:
         """
-        This method loads the program container and its widgets.
+        This method checks the user authentication status. If the user is not authenticated, it asks the user to authenticate. If the user is authenticated, it returns True.
+        @Parameters:
+            None
+        @Returns:
+            result - Required : Authentication result. (bool) -> True if the user is authenticated, False if not.
+        """
+        # If the user is already authenticated, return True.
+        if self.is_user_authenticated == True :
+            return True
+
+        # Ask the user to authenticate.
+        obj = UserAuthenticator(self, self.student_school_id, self.parsing_language)
+        result = obj.get_result()
+
+        # Set the authentication status.
+        self.is_user_authenticated = result
+        self.root.set_authication_status(result)
+
+    def ___switch_program_mode(self, *args, **kwargs) -> None:
+        """
+        This method binds the program selection tabs. And initializes outer program on switch.
         @Parameters:
             None
         @Returns:
             None
         """
-        # Configure program container.
-        self.program_container.grid_rowconfigure(0, weight=1)
-        self.program_container.grid_columnconfigure(0, weight=1)
+        # Get the name of the name mode.
+        new_mode_name = self.tab_view.get()
 
-        # Get current user data. (This is used to pass the data to the program frames.)
+        # Get the latest user data.
         current_user_data = self.__create_user_data()
 
-        # Initialize starter program frame.
-        self.grade_updater_frame = GradeUpdater(self.program_container, self, self.root, current_user_data, DEBUG=self.DEBUG)
-        self.grade_updater_frame.grid(row=0, column=0)
+        # hash the parameters.
+        program_init_map = {
+            self.stat_analyzer_tab_name : (StatAnalyzer, self.stat_analyzer_tab, self, self.root, current_user_data, self.DEBUG),
+            self.grade_updater_tab_name : (GradeUpdater, self.grade_updater_tab, self, self.root, current_user_data, self.DEBUG),
+            self.achievement_analyzer_tab_name : (AchievementAnalyzer, self.achievement_analyzer_tab, self, self.root, current_user_data, self.DEBUG)
+        }
 
-        # Setup for other frames
-        self.achievement_analyzer_frame = None
-        self.stat_analyzer_frame = None
+        # remove the old program.
+        self.current_program_frame.grid_forget()
+        self.current_program_frame = None
+
+        # Load new program.
+        self.current_program_frame = program_init_map[new_mode_name][0](*program_init_map[new_mode_name][1:])
+        self.current_program_frame.grid(row=0, column=0, sticky="nsew")
+
 
     def __load_db_data(self, *args, **kwargs) -> None:
         """
@@ -718,55 +685,3 @@ class ApplicationFrame(ctk.CTkFrame) :
         else :
             self.export_button.configure(text=self._get_text("Not Exported"), fg_color=GUI_DC.BUTTON_LIGHT_RED)
             self.after(500, lambda : self.export_button.configure(text=self._get_text("Export Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
-
-    def __change_mode_index(self, operation : str, *args, **kwargs) -> None:
-        """
-        This method changes the current program mode index by the given operation. It shortly applies a shift affect on the program selection list.
-        @Parameters:
-            operation - Required : Shift operation. (str) -> Used to determine the direction of the shift.
-        @Returns:
-            None
-        """
-        # Initialize operation variables
-        current_mode = self.current_program_mode.get()
-        current_modes_index = self.available_program_modes.index(current_mode)
-
-        # Determine the new mode index.
-        if operation == "increase" :
-            if current_modes_index == len(self.available_program_modes) - 1 :
-                new_mode_index = 0
-            else :
-                new_mode_index = current_modes_index + 1
-        elif operation == "decrease" :
-            if current_modes_index == 0 :
-                new_mode_index = len(self.available_program_modes) - 1
-            else :
-                new_mode_index = current_modes_index - 1
-        else :
-            raise Exception("Invalid Operation")
-        
-        # Apply shift affect.
-        new_mode = self.available_program_modes[new_mode_index]
-        
-        # Change the program mode.
-        self._switch_program_mode(new_mode)
-
-    def __check_authentication(self) -> bool:
-        """
-        This method checks the user authentication status. If the user is not authenticated, it asks the user to authenticate. If the user is authenticated, it returns True.
-        @Parameters:
-            None
-        @Returns:
-            result - Required : Authentication result. (bool) -> True if the user is authenticated, False if not.
-        """
-        # If the user is already authenticated, return True.
-        if self.is_user_authenticated == True :
-            return True
-
-        # Ask the user to authenticate.
-        obj = UserAuthenticator(self, self.student_school_id, self.parsing_language)
-        result = obj.get_result()
-
-        # Set the authentication status.
-        self.is_user_authenticated = result
-        self.root.set_authication_status(result)
