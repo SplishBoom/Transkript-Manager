@@ -1,5 +1,6 @@
 # Set up the turkish response for the given english input
 to_turkish = {
+    "Congrats! You don't have any course to take again." : "Tebrikler! Tekrar almanız gereken hiçbir dersiniz yok.",
     "The entered user does not have the required permissions" : "Girilen kullanıcının gerekli izinleri yok",
     "This name is reserved, please enter another name" : "Bu isim rezervedir, lütfen başka bir isim girin",
     "You haven't completed enough credits for scholarship" : "Burs için yeterli kredi tamamlamadınız",
@@ -21,7 +22,6 @@ to_turkish = {
     "You are eligible for a %50 scholarship" : "Bir %50 burs için uygunsunuz",
     "You have a low GPA for scholarship" : "Burs için düşük bir GPA'nız var",
     "You have a good GPA for scholarship" : "Burs için iyi bir GPA'nız var",
-    "No Course Must Taken Again" : "Tekrar Alınmak Zorunda Olan Ders Yok",
     "Please select at least one filter" : "Lütfen en az bir filtre seçin",
     "No Course Should Taken Again" : "Tekrar Alınması Gereken Ders Yok",
     "Courses Must Taken Again" : "Tekrar Alınması Zorunlu Olan Dersler",

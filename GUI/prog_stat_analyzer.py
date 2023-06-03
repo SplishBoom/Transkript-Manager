@@ -1,10 +1,11 @@
-from    Utilities   import  calculate_performance, filter_by # -> Utilitiy functions.
-from    tkinter     import  ttk # -> GUI
-import  tkinter     as      tk # -> GUI
+from    Utilities       import  calculate_performance, filter_by # -> Utilitiy functions.
+from    GUI             import  CustomizedCTkTable # -> Table display.
+from    Environment     import  GUI_DC # -> Environment variables
+import  customtkinter   as      ctk # -> GUI.
 
-class StatAnalyzer(ttk.Frame) :
+class StatAnalyzer(ctk.CTkFrame) :
 
-    def __init__(self, application_container : ttk.Frame, parent : ttk.Frame, root : tk.Tk, current_user_data : dict, DEBUG : bool = False, *args, **kwargs) -> None:
+    def __init__(self, application_container : ctk.CTkFrame, parent : ctk.CTkFrame, root : ctk.CTk, current_user_data : dict, DEBUG : bool = False, *args, **kwargs) -> None:
         """
         Constructor method for StatAnalyzer class. Used to initialize main window of the program.
         @Parameters:
@@ -35,6 +36,253 @@ class StatAnalyzer(ttk.Frame) :
         self.__load_scholarship_status()
         self.__load_course_info_status()
 
+    def __load_containers(self) -> None:
+        """
+        Loads containers of the main window.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
+        # Set the initial configuration, to make expandable affect on window.
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
+        # Create the main container.
+        self.container = ctk.CTkFrame(self, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND, corner_radius=25)
+        self.container.grid(row=0, column=0, sticky="nsew")
+        # Configure the main container.
+        self.container.grid_rowconfigure((0,1), weight=1)
+        self.container.grid_columnconfigure((0), weight=1)
+
+        # Create the program containers.
+        self.scholarship_container = ctk.CTkFrame(self.container, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND, corner_radius=25)
+        self.scholarship_container.grid(row=0, column=0, sticky="nsew")
+
+        self.course_info_container = ctk.CTkFrame(self.container, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND, corner_radius=25)
+        self.course_info_container.grid(row=1, column=0, sticky="nsew")
+
+    def __load_scholarship_status(self) -> None:
+        """
+        Loads scholarship status.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
+        # Load scholarship status to class fields.
+        self.___create_scholarship_status_data()
+
+        # Configure scholarship status container.
+        self.scholarship_container.grid_rowconfigure((0,1), weight=1)
+        self.scholarship_container.grid_columnconfigure((0,1,2), weight=1)
+
+        # Load scholarship status info label.
+        self.info_label = ctk.CTkLabel(self.scholarship_container, text=self._get_text("Scholarship Status"),
+            fg_color = GUI_DC.DARK_BACKGROUND,
+            bg_color = GUI_DC.DARK_BACKGROUND,
+            text_color = GUI_DC.LIGHT_TEXT_COLOR,
+            font = ("Arial", 20, "bold"),
+            anchor = "center",
+            corner_radius =  25
+        )
+        self.info_label.grid(row=0, column=0, columnspan=3, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING//2)
+    
+        self.percentage_label = ctk.CTkLabel(self.scholarship_container, text=self.scholarship_status["percentage"],
+            fg_color = GUI_DC.SECONDARY_DARK_BACKGROUND,
+            bg_color = GUI_DC.DARK_BACKGROUND,
+            text_color = GUI_DC.LIGHT_TEXT_COLOR,
+            font = ("Arial", 13, "bold"),
+            anchor = "center",
+            corner_radius =  50
+        )
+        self.percentage_label.grid(row=1, column=0, sticky="nsew", padx=GUI_DC.INNER_PADDING)
+
+        self.message_label = ctk.CTkLabel(self.scholarship_container, text=self._get_text(self.scholarship_status["message"]),
+            fg_color = GUI_DC.SECONDARY_DARK_BACKGROUND,
+            bg_color = GUI_DC.DARK_BACKGROUND,
+            text_color = GUI_DC.LIGHT_TEXT_COLOR,
+            font = ("Arial", 13, "bold"),
+            anchor = "center",
+            corner_radius =  50
+        )
+        self.message_label.grid(row=1, column=1, sticky="nsew", padx=GUI_DC.INNER_PADDING)
+
+        self.note_label = ctk.CTkLabel(self.scholarship_container, text=self._get_text(self.scholarship_status["note"]),
+            fg_color = GUI_DC.SECONDARY_DARK_BACKGROUND,
+            bg_color = GUI_DC.DARK_BACKGROUND,
+            text_color = GUI_DC.LIGHT_TEXT_COLOR,
+            font = ("Arial", 13, "bold"),
+            anchor = "center",
+            corner_radius =  50
+        )
+        self.note_label.grid(row=1, column=2, sticky="nsew", padx=GUI_DC.INNER_PADDING)
+
+    def __load_course_info_status(self) -> None:
+        """
+        Loads course info status.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
+        # Load course info status to class fields.
+        self.___create_course_info_status_data()
+
+        # Create course info status container.
+        self.course_info_container.grid_rowconfigure((0), weight=1)
+        self.course_info_container.grid_columnconfigure((0), weight=1)
+
+        ctk.CTkTabview._segmented_button_border_width = 4
+        ctk.CTkTabview._button_height = 30
+        ctk.CTkTabview._top_button_overhang = 9
+        self.tab_view = ctk.CTkTabview(self.course_info_container, 
+                                       fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND, 
+                                       bg_color=GUI_DC.DARK_BACKGROUND,
+                                       text_color=GUI_DC.LIGHT_TEXT_COLOR,
+                                       text_color_disabled=GUI_DC.MEDIUM_TEXT_COLOR,
+                                       segmented_button_fg_color=GUI_DC.DARK_BACKGROUND,
+                                       segmented_button_selected_color=GUI_DC.BUTTON_LIGHT_DBLUE_HOVER,
+                                       segmented_button_selected_hover_color=GUI_DC.BUTTON_LIGHT_DBLUE_HOVER,
+                                       segmented_button_unselected_color=GUI_DC.DARK_BACKGROUND,
+                                       segmented_button_unselected_hover_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
+                                       corner_radius=25,
+                                       width=300,
+                                       height=250,
+                                       border_width=0
+        )
+        self.tab_view.grid(row=0, column=0, sticky="nsew")
+
+        # Set tab names.
+        self.must_taken_courses_tab_name = "Critical Courses" if self.parsing_language == "en" else "Kritik Kurslar"
+        self.should_taken_courses_tab_name = "Complimentary Courses" if self.parsing_language == "en" else "Tamamlayici Kurslar"
+
+        # Add tabs.
+        self.must_taken_courses_tab = self.tab_view.add(self.must_taken_courses_tab_name)
+        self.should_taken_courses_tab = self.tab_view.add(self.should_taken_courses_tab_name)
+
+        # Configure tabs.
+        self.must_taken_courses_tab.grid_rowconfigure((0), weight=1)
+        self.must_taken_courses_tab.grid_columnconfigure((0), weight=1)
+        self.should_taken_courses_tab.grid_rowconfigure((0), weight=1)
+        self.should_taken_courses_tab.grid_columnconfigure((0), weight=1)
+
+        # Set the current tab to initial course info.
+        self.tab_view.set(self.must_taken_courses_tab_name)
+
+        # Load course info status info label.
+        self._load_must_taken_courses()
+        self._load_should_taken_courses()
+
+
+    def _load_must_taken_courses(self) -> None:
+        """
+        Loads course info status treeview for courses must taken again.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
+
+        self.must_taken_container = ctk.CTkFrame(self.must_taken_courses_tab, fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND, bg_color=GUI_DC.SECONDARY_DARK_BACKGROUND, corner_radius=25)
+        self.must_taken_container.grid(row=0, column=0, sticky="nsew")
+        
+        courses_in_a_column = 6
+        number_of_must_courses = len(self.grades_must_taken)
+        row_count = (number_of_must_courses - 1) // courses_in_a_column + 1
+        row_count = max(row_count, 1)
+        
+        self.must_taken_container.grid_rowconfigure(tuple(range(row_count)), weight=1)
+        self.must_taken_container.grid_columnconfigure((0), weight=1)
+        
+        if len(self.grades_must_taken) == 0 :
+            self.congrats_label = ctk.CTkLabel(self.must_taken_container, text=self._get_text("Congrats! You don't have any course to take again."),
+                fg_color = GUI_DC.BUTTON_LIGHT_GREEN,
+                bg_color = GUI_DC.SECONDARY_DARK_BACKGROUND,
+                text_color = GUI_DC.DARK_TEXT_COLOR,
+                font = ("Arial", 18, "italic"),
+                anchor = "center",
+                corner_radius =  25
+            )
+            self.congrats_label.grid(row=0, column=0, sticky="nsew")
+        else :
+            data_row_frames = []
+            for i in range(row_count) :
+                new_frame = ctk.CTkFrame(self.must_taken_container, fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND, bg_color=GUI_DC.SECONDARY_DARK_BACKGROUND, corner_radius=25)
+                new_frame.grid(row=i, column=0, sticky="nsew")
+                data_row_frames.append(new_frame)
+
+            for i in range(number_of_must_courses) :
+                course_code = self.grades_must_taken[i]["course_code"]
+                course_grade = self.grades_must_taken[i]["course_grade"]
+
+                course_info = f"{course_code}\n\n{course_grade}"
+
+                row_index = i // courses_in_a_column
+
+                course_info_label = ctk.CTkLabel(data_row_frames[row_index], text=course_info,
+                    fg_color = GUI_DC.BUTTON_LIGHT_RED,
+                    bg_color = GUI_DC.SECONDARY_DARK_BACKGROUND,
+                    text_color = GUI_DC.DARK_TEXT_COLOR,
+                    font = ("Arial", 13, "bold"),
+                    anchor = "center",
+                    corner_radius =  50,
+                    width=50,
+                    height=50
+                )
+                course_info_label.pack(side="left", expand=True, fill="y", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
+   
+    def _load_should_taken_courses(self) -> None:
+        
+        self.should_taken_container = ctk.CTkFrame(self.should_taken_courses_tab, fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND, bg_color=GUI_DC.SECONDARY_DARK_BACKGROUND, corner_radius=25)
+        self.should_taken_container.grid(row=0, column=0, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
+        
+        courses_in_a_column = 6
+        number_of_must_courses = len(self.grades_should_taken)
+        row_count = (number_of_must_courses - 1) // courses_in_a_column + 1
+        row_count = max(row_count, 1)
+        
+        self.should_taken_container.grid_rowconfigure(tuple(range(row_count)), weight=1)
+        self.should_taken_container.grid_columnconfigure((0), weight=1)
+        
+        if len(self.grades_should_taken) == 0 :
+            self.congrats_label = ctk.CTkLabel(self.should_taken_container, text=self._get_text("Congrats! You don't have any course to take again."),
+                fg_color = GUI_DC.BUTTON_LIGHT_GREEN,
+                bg_color = GUI_DC.SECONDARY_DARK_BACKGROUND,
+                text_color = GUI_DC.DARK_TEXT_COLOR,
+                font = ("Arial", 18, "italic"),
+                anchor = "center",
+                corner_radius =  25
+            )
+            self.congrats_label.grid(row=0, column=0, sticky="nsew")
+        else :
+            data_row_frames = []
+            for i in range(row_count) :
+                new_frame = ctk.CTkFrame(self.should_taken_container, fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND, bg_color=GUI_DC.SECONDARY_DARK_BACKGROUND, corner_radius=25)
+                new_frame.grid(row=i, column=0, sticky="nsew")
+                data_row_frames.append(new_frame)
+
+            for i in range(number_of_must_courses) :
+                course_code = self.grades_should_taken[i]["course_code"]
+                course_grade = self.grades_should_taken[i]["course_grade"]
+
+                course_info = f"{course_code}\n\n{course_grade}"
+
+                row_index = i // courses_in_a_column
+
+                course_info_label = ctk.CTkLabel(data_row_frames[row_index], text=course_info,
+                    fg_color = GUI_DC.BUTTON_LIGHT_BLUE,
+                    bg_color = GUI_DC.SECONDARY_DARK_BACKGROUND,
+                    text_color = GUI_DC.DARK_TEXT_COLOR,
+                    font = ("Arial", 13, "bold"),
+                    anchor = "center",
+                    corner_radius =  50,
+                    width=50,
+                    height=50
+                )
+                course_info_label.pack(side="left", expand=True, fill="y", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
+
+
     def _get_text(self, text : str) -> str:
         """
         Gets the text from the language dictionary.
@@ -45,28 +293,6 @@ class StatAnalyzer(ttk.Frame) :
         """
         # Direct wrapper to parent's _get_text method.
         return self.parent._get_text(text, self.parsing_language)
-
-    def __load_containers(self) -> None:
-        """
-        Loads containers of the main window.
-        @Parameters:
-            None
-        @Returns:
-            None
-        """
-        # Create the main container.
-        self.container = ttk.Frame(self)
-        self.container.grid(row=0, column=0)
-        # Configure the main container.
-        self.container.grid_rowconfigure((0,1), weight=1)
-        self.container.grid_columnconfigure((0), weight=1)
-
-        # Create the program containers.
-        self.program_scholarship_status_container = ttk.Frame(self.container)
-        self.program_scholarship_status_container.grid(row=0, column=0)
-
-        self.program_course_info_status_container = ttk.Frame(self.container)
-        self.program_course_info_status_container.grid(row=1, column=0)
 
     def __load_user_data(self, given_user_data : dict) -> None:
         """
@@ -220,177 +446,3 @@ class StatAnalyzer(ttk.Frame) :
                 self.grades_must_taken.append(course)
             elif course_grade in grades_should_taken_list :
                 self.grades_should_taken.append(course)
-
-    def __load_scholarship_status(self) -> None:
-        """
-        Loads scholarship status.
-        @Parameters:
-            None
-        @Returns:
-            None
-        """
-        # Load scholarship status to class fields.
-        self.___create_scholarship_status_data()
-
-        # Configure scholarship status container.
-        self.program_scholarship_status_container.grid_rowconfigure((0,1), weight=1)
-        self.program_scholarship_status_container.grid_columnconfigure(0, weight=1)
-        
-        # Load scholarship status info label.
-        self.scholarship_status_label = ttk.Label(self.program_scholarship_status_container, text=self._get_text("Scholarship Status"))
-        self.scholarship_status_label.grid(row=0, column=0)
-
-        # Openup scholarship status treeview.
-        self.scholarship_status_treeview = ttk.Treeview(self.program_scholarship_status_container, height=1, show="headings", selectmode="none")
-        self.scholarship_status_treeview.grid(row=1, column=0)
-
-        # Configure scholarship status treeview.
-        self.scholarship_status_treeview["columns"] = ("_percentage", "_message", "_note")
-
-        self.scholarship_status_treeview.heading("_percentage", text=self._get_text("Percentage"))
-        self.scholarship_status_treeview.heading("_message", text=self._get_text("Message"))
-        self.scholarship_status_treeview.heading("_note", text=self._get_text("Footnote"))
-
-        self.scholarship_status_treeview.column("_percentage", anchor="center", width=90)
-        self.scholarship_status_treeview.column("_message", anchor="center", width=250)
-        self.scholarship_status_treeview.column("_note", anchor="center", width=250)
-
-        # Insert scholarship status data to treeview.
-        self.scholarship_status_treeview.insert("", "end", values=(self.scholarship_status["percentage"], self._get_text(self.scholarship_status["message"]), self._get_text(self.scholarship_status["note"])))
-
-    def __load_course_info_status(self) -> None:
-        """
-        Loads course info status.
-        @Parameters:
-            None
-        @Returns:
-            None
-        """
-        # Load course info status to class fields.
-        self.___create_course_info_status_data()
-
-        # Create course info status container.
-        self.program_course_info_status_container.grid_rowconfigure((0,1,2,3), weight=1)
-        self.program_course_info_status_container.grid_columnconfigure((0,1), weight=1)
-
-        # Load treeview for courses must taken and again.
-        self.course_info_status_treeview_MUST_TAKEN()
-        self.course_info_status_treeview_SHOULD_TAKEN()
-
-    def course_info_status_treeview_MUST_TAKEN(self) -> None:
-        """
-        Loads course info status treeview for courses must taken again.
-        @Parameters:
-            None
-        @Returns:
-            None
-        """
-        # Create course info status treeview for courses must taken again.
-        self.course_info_status_treeview_MUST_TAKEN_info_label = tk.Label(self.program_course_info_status_container, text=self._get_text("Courses Must Taken Again"))
-        self.course_info_status_treeview_MUST_TAKEN_info_label.grid(row=0, column=0, columnspan=2)
-
-        # Set a scrollbar for treeview.
-        self.course_info_status_treeview_MUST_TAKEN_scrollbar = ttk.Scrollbar(self.program_course_info_status_container, orient="vertical")
-        self.course_info_status_treeview_MUST_TAKEN_scrollbar.grid(row=1, column=1, sticky="ns")
-
-        # Openup course info status treeview for courses must taken again.
-        maximum_height = 5
-        self.course_info_status_treeview_MUST_TAKEN = ttk.Treeview(self.program_course_info_status_container, height=min(len(self.grades_must_taken), maximum_height), show="headings", selectmode="none", yscrollcommand=self.course_info_status_treeview_MUST_TAKEN_scrollbar.set)
-        self.course_info_status_treeview_MUST_TAKEN.grid(row=1, column=0)
-        # Configure scrollbar.
-        self.course_info_status_treeview_MUST_TAKEN_scrollbar.config(command=self.course_info_status_treeview_MUST_TAKEN.yview)
-
-        # Secure scrollbar.
-        if len(self.grades_must_taken) <= maximum_height :
-            self.course_info_status_treeview_MUST_TAKEN_scrollbar.grid_remove()
-
-        # Configure course info status treeview for courses must taken again.
-        if self.grades_must_taken == [] :
-            # If no data found, merge columns.
-            self.course_info_status_treeview_MUST_TAKEN["columns"] = ("_column")
-
-            self.course_info_status_treeview_MUST_TAKEN.heading("_column", text=self._get_text("No Course Must Taken Again"))
-            self.course_info_status_treeview_MUST_TAKEN.column("_column", anchor="center", width=720)
-        else :
-            # If data found, configure columns.
-            self.course_info_status_treeview_MUST_TAKEN["columns"] = ("_code", "_name", "_canguage", "_credit", "_crade", "_crade_point")
-
-            # Set headings.
-            self.course_info_status_treeview_MUST_TAKEN.heading("_code", text=self._get_text("Course Code"))
-            self.course_info_status_treeview_MUST_TAKEN.heading("_name", text=self._get_text("Course Name"))
-            self.course_info_status_treeview_MUST_TAKEN.heading("_canguage", text=self._get_text("Course Language"))
-            self.course_info_status_treeview_MUST_TAKEN.heading("_credit", text=self._get_text("Course Credit"))
-            self.course_info_status_treeview_MUST_TAKEN.heading("_crade", text=self._get_text("Course Grade"))
-            self.course_info_status_treeview_MUST_TAKEN.heading("_crade_point", text=self._get_text("Course Grade Point"))
-
-            # Set columns.
-            self.course_info_status_treeview_MUST_TAKEN.column("_code", anchor="center", width=120)
-            self.course_info_status_treeview_MUST_TAKEN.column("_name", anchor="center", width=120)
-            self.course_info_status_treeview_MUST_TAKEN.column("_canguage", anchor="center", width=120)
-            self.course_info_status_treeview_MUST_TAKEN.column("_credit", anchor="center", width=120)
-            self.course_info_status_treeview_MUST_TAKEN.column("_crade", anchor="center", width=120)
-            self.course_info_status_treeview_MUST_TAKEN.column("_crade_point", anchor="center", width=120)
-
-        # Insert course info status data to treeview.
-        if not self.grades_must_taken == [] :
-            for course in self.grades_must_taken :
-                self.course_info_status_treeview_MUST_TAKEN.insert("", "end", values=(course["course_code"], course["course_name"], course["course_lang"], course["course_credit"], course["course_grade"], course["course_grade_point"]))
-
-    def course_info_status_treeview_SHOULD_TAKEN(self) -> None:
-        """
-        Loads course info status treeview for courses should taken again.
-        @Parameters:
-            None
-        @Returns:
-            None
-        """
-        # Create course info status treeview for courses should taken again.
-        self.course_info_status_treeview_SHOULD_TAKEN_info_label = tk.Label(self.program_course_info_status_container, text=self._get_text("Courses Should Taken Again"))
-        self.course_info_status_treeview_SHOULD_TAKEN_info_label.grid(row=2, column=0, columnspan=2)
-
-        # Set a scrollbar for treeview.
-        self.course_info_status_treeview_SHOULD_TAKEN_scrollbar = ttk.Scrollbar(self.program_course_info_status_container, orient="vertical")
-        self.course_info_status_treeview_SHOULD_TAKEN_scrollbar.grid(row=3, column=1, sticky="ns")
-
-        # Openup course info status treeview for courses should taken again.
-        maximum_height = 5
-        self.course_info_status_treeview_SHOULD_TAKEN = ttk.Treeview(self.program_course_info_status_container, height=min(len(self.grades_should_taken), maximum_height), show="headings", selectmode="none", yscrollcommand=self.course_info_status_treeview_SHOULD_TAKEN_scrollbar.set)
-        self.course_info_status_treeview_SHOULD_TAKEN.grid(row=3, column=0)
-        # Configure scrollbar.
-        self.course_info_status_treeview_SHOULD_TAKEN_scrollbar.config(command=self.course_info_status_treeview_SHOULD_TAKEN.yview)
-
-        # Secure scrollbar.
-        if len(self.grades_should_taken) <= maximum_height :
-            self.course_info_status_treeview_SHOULD_TAKEN_scrollbar.grid_remove()
-
-        # Configure course info status treeview for courses should taken again.
-        if self.grades_should_taken == [] :
-            # If no data found, merge columns.
-            self.course_info_status_treeview_SHOULD_TAKEN["columns"] = ("_column")
-
-            self.course_info_status_treeview_SHOULD_TAKEN.heading("_column", text=self._get_text("No Course Should Taken Again"))
-            self.course_info_status_treeview_SHOULD_TAKEN.column("_column", anchor="center", width=720)
-        else :
-            # If data found, configure columns.
-            self.course_info_status_treeview_SHOULD_TAKEN["columns"] = ("_code", "_name", "_canguage", "_credit", "_crade", "_crade_point")
-
-            # Set headings.
-            self.course_info_status_treeview_SHOULD_TAKEN.heading("_code", text=self._get_text("Course Code"))
-            self.course_info_status_treeview_SHOULD_TAKEN.heading("_name", text=self._get_text("Course Name"))
-            self.course_info_status_treeview_SHOULD_TAKEN.heading("_canguage", text=self._get_text("Course Language"))
-            self.course_info_status_treeview_SHOULD_TAKEN.heading("_credit", text=self._get_text("Course Credit"))
-            self.course_info_status_treeview_SHOULD_TAKEN.heading("_crade", text=self._get_text("Course Grade"))
-            self.course_info_status_treeview_SHOULD_TAKEN.heading("_crade_point", text=self._get_text("Course Grade Point"))
-
-            # Set columns.
-            self.course_info_status_treeview_SHOULD_TAKEN.column("_code", anchor="center", width=120)
-            self.course_info_status_treeview_SHOULD_TAKEN.column("_name", anchor="center", width=120)
-            self.course_info_status_treeview_SHOULD_TAKEN.column("_canguage", anchor="center", width=120)
-            self.course_info_status_treeview_SHOULD_TAKEN.column("_credit", anchor="center", width=120)
-            self.course_info_status_treeview_SHOULD_TAKEN.column("_crade", anchor="center", width=120)
-            self.course_info_status_treeview_SHOULD_TAKEN.column("_crade_point", anchor="center", width=120)
-
-        # Insert course info status data to treeview.
-        if not self.grades_should_taken == [] :
-            for course in self.grades_should_taken :
-                self.course_info_status_treeview_SHOULD_TAKEN.insert("", "end", values=(course["course_code"], course["course_name"], course["course_lang"], course["course_credit"], course["course_grade"], course["course_grade_point"]))
