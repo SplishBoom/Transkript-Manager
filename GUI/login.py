@@ -116,7 +116,7 @@ class LoginFrame(ctk.CTkFrame) :
                                        segmented_button_selected_color=GUI_DC.BUTTON_LIGHT_BLUE,
                                        segmented_button_selected_hover_color=GUI_DC.BUTTON_LIGHT_BLUE_HOVER,
                                        segmented_button_unselected_color=GUI_DC.DARK_BACKGROUND,
-                                       segmented_button_unselected_hover_color=GUI_DC.DARK_BACKGROUND,
+                                       segmented_button_unselected_hover_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
                                        corner_radius=25,
                                        width=0,
                                        height=317
