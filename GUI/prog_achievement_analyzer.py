@@ -1,12 +1,13 @@
 from    Utilities                           import  calculate_performance, generate_gradient_colors, filter_by # -> Utility functions
+from    tkinter                             import  Label as TkinterLabel, Frame as TkinterFrame # -> Manipulate matplotlib widgets.
 from    matplotlib.backends.backend_tkagg   import  FigureCanvasTkAgg, NavigationToolbar2Tk # -> Packing plot and setting toolbar
+from    Environment                         import  GUI_DC # -> Environment variables
 from    matplotlib.figure                   import  Figure # -> Plotting and creating figure
-from    tkinter                             import  ttk # -> GUI
-import  tkinter                             as      tk # -> GUI
+import  customtkinter                       as      ctk # -> Custom tkinter library
 
-class AchievementAnalyzer(ttk.Frame) :
+class AchievementAnalyzer(ctk.CTkFrame) :
 
-    def __init__(self, application_container : ttk.Frame, parent : ttk.Frame, root : tk.Tk, current_user_data : dict, DEBUG : bool = False, *args, **kwargs) -> None:
+    def __init__(self, application_container : ctk.CTkFrame, parent : ctk.CTkFrame, root : ctk.CTk, current_user_data : dict, DEBUG : bool = False, *args, **kwargs) -> None:
         """
         Constructor method for AchievementAnalyzer class. Used to initialize main window of the program.
         @Parameters:
@@ -55,16 +56,20 @@ class AchievementAnalyzer(ttk.Frame) :
         @Returns:
             None
         """
+        # Set the initial configuration, to make expandable affect on window.
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
         # Create main container
-        self.container = ttk.Frame(self)
-        self.container.grid(row=0, column=0)
+        self.container = ctk.CTkFrame(self, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.container.grid(row=0, column=0, sticky="nsew")
         # Configure main container
         self.container.grid_rowconfigure((0), weight=1)
         self.container.grid_columnconfigure((0), weight=1)
 
         # Create program container
-        self.program_plot_container = ttk.Frame(self.container)
-        self.program_plot_container.grid(row=0, column=0)
+        self.program_plot_container = ctk.CTkFrame(self.container, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.program_plot_container.grid(row=0, column=0, sticky="nsew")
 
     def __load_user_data(self, given_user_data : dict) -> None:
         """
@@ -227,11 +232,16 @@ class AchievementAnalyzer(ttk.Frame) :
         """
         # Configure program plot container
         self.program_plot_container.grid_rowconfigure((0), weight=1)
-        self.program_plot_container.grid_columnconfigure((0,1), weight=1)
+        self.program_plot_container.grid_columnconfigure((0,2), weight=1)
+        self.program_plot_container.grid_columnconfigure((1), weight=0)
 
         # Create program based plot data & load program based plot
         self.___create_semester_based_plot_data()
         self.___load_semester_based_plot()
+
+        # Put a seperator between program based plot and course based plot
+        seperator = ctk.CTkFrame(self.program_plot_container, width=20, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        seperator.grid(row=0, column=1, sticky="nsew")
 
         # Create course based plot data & load course based plot
         self.___create_course_based_plot_data()
@@ -246,15 +256,15 @@ class AchievementAnalyzer(ttk.Frame) :
             None
         """
         # Set up main container and packable frame for navigation toolbar packing
-        self.semester_based_plot_container = ttk.Frame(self.program_plot_container)
+        self.semester_based_plot_container = ctk.CTkFrame(self.program_plot_container)
         self.semester_based_plot_container.grid(row=0, column=0, sticky="nsew")
-        self.sbp_packable_frame = ttk.Frame(self.semester_based_plot_container)
+        self.sbp_packable_frame = ctk.CTkFrame(self.semester_based_plot_container)
         self.sbp_packable_frame.pack(fill="both", expand=True)
 
         # Create semester based plot figure and configure it
-        self.semester_based_plot_figure = Figure(figsize=(5, 5), dpi=100)
+        self.semester_based_plot_figure = Figure(figsize=(5, 5), dpi=100, tight_layout=True)
         self.semester_based_plot_figure.subplots_adjust(left=0.12, right=0.97, bottom=0.135, top=0.93)
-        self.semester_based_plot_figure.patch.set_facecolor("#F0F0F0")
+        self.semester_based_plot_figure.patch.set_facecolor(GUI_DC.LIGHT_BACKGROUND)
         self.semester_based_plot_figure.patch.set_alpha(0.5)
 
         # Create semester based plot
@@ -288,9 +298,22 @@ class AchievementAnalyzer(ttk.Frame) :
         self.semester_based_plot_canvas = FigureCanvasTkAgg(self.semester_based_plot_figure, self.sbp_packable_frame)
         self.semester_based_plot_canvas.draw()
         self.semester_based_plot_canvas.get_tk_widget().pack(fill="both", expand=True)
-
+    
         # Setup the toolbar and pack it.
         self.semester_based_plot_toolbar = NavigationToolbar2Tk(self.semester_based_plot_canvas, self.sbp_packable_frame)
+        # Set the coloring
+        self.semester_based_plot_toolbar.configure(background=GUI_DC.DARK_BACKGROUND)
+        # Find the wanted widgets and pack them. Remove the rest.
+        desired_widgets = []
+        for child in self.semester_based_plot_toolbar.winfo_children():
+            if not (isinstance(child, TkinterLabel) or isinstance(child, TkinterFrame)):
+                desired_widgets.append(child)
+            child.pack_forget()
+        # RePack the desired widgets.
+        for widget in desired_widgets:
+            widget.configure(bg=GUI_DC.LIGHT_BACKGROUND, cursor="hand2")
+            widget.pack(fill="both", expand=True, side="left", padx=1, pady=1)
+
         self.semester_based_plot_toolbar.update()
         self.semester_based_plot_canvas.get_tk_widget().pack(fill="both", expand=True)
      
@@ -303,15 +326,15 @@ class AchievementAnalyzer(ttk.Frame) :
             None
         """
         # Set up main container and packable frame for navigation toolbar packing
-        self.course_based_plot_container = ttk.Frame(self.program_plot_container)
-        self.course_based_plot_container.grid(row=0, column=1, sticky="nsew")
-        self.cbp_packable_frame = ttk.Frame(self.course_based_plot_container)
+        self.course_based_plot_container = ctk.CTkFrame(self.program_plot_container)
+        self.course_based_plot_container.grid(row=0, column=2, sticky="nsew")
+        self.cbp_packable_frame = ctk.CTkFrame(self.course_based_plot_container)
         self.cbp_packable_frame.pack(fill="both", expand=True)
 
         # Create course based plot figure and configure it
-        self.course_based_plot_figure = Figure(figsize=(5, 5), dpi=100)
+        self.course_based_plot_figure = Figure(figsize=(5, 5), dpi=100, tight_layout=True)
         self.course_based_plot_figure.subplots_adjust(left=0.12, right=0.97, bottom=0.135, top=0.93)
-        self.course_based_plot_figure.patch.set_facecolor("#F0F0F0")
+        self.course_based_plot_figure.patch.set_facecolor(GUI_DC.LIGHT_BACKGROUND)
         self.course_based_plot_figure.patch.set_alpha(0.5)
 
         # Create course based plot
@@ -351,5 +374,18 @@ class AchievementAnalyzer(ttk.Frame) :
 
         # Setup the toolbar and pack it.
         self.course_based_plot_toolbar = NavigationToolbar2Tk(self.course_based_plot_canvas, self.cbp_packable_frame)
+        # Set the coloring
+        self.course_based_plot_toolbar.configure(background=GUI_DC.DARK_BACKGROUND)
+        # Find the wanted widgets and pack them. Remove the rest.
+        desired_widgets = []
+        for child in self.course_based_plot_toolbar.winfo_children():
+            if not (isinstance(child, TkinterLabel) or isinstance(child, TkinterFrame)):
+                desired_widgets.append(child)
+            child.pack_forget()
+        # RePack the desired widgets.
+        for widget in desired_widgets:
+            widget.configure(bg=GUI_DC.LIGHT_BACKGROUND, cursor="hand2")
+            widget.pack(fill="both", expand=True, side="left", padx=1, pady=1)
+
         self.course_based_plot_toolbar.update()
         self.course_based_plot_canvas.get_tk_widget().pack(fill="both", expand=True)
