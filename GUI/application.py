@@ -282,8 +282,8 @@ class ApplicationFrame(ctk.CTkFrame) :
                                        segmented_button_unselected_color=GUI_DC.DARK_BACKGROUND,
                                        segmented_button_unselected_hover_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
                                        corner_radius=25,
-                                       width=0,
-                                       height=0,
+                                       width=850,
+                                       height=490,
                                        border_width=0
         )
         self.tab_view.grid(row=1, column=0, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
