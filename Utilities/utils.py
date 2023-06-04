@@ -570,9 +570,15 @@ def generate_gradient_colors(num_colors : int, start_color : tuple = (0, 0, 1), 
 	# Iterate over the number of colors.
 	for i in range(num_colors):
 		# Calculate the gradient color. R = R1 + (i / (n - 1)) * (R2 - R1), G = G1 + (i / (n - 1)) * (G2 - G1), B = B1 + (i / (n - 1)) * (B2 - B1)
-		r = start_color[0] + (i / (num_colors - 1)) * (end_color[0] - start_color[0])
-		g = start_color[1] + (i / (num_colors - 1)) * (end_color[1] - start_color[1])
-		b = start_color[2] + (i / (num_colors - 1)) * (end_color[2] - start_color[2])
+		try : 
+			r = start_color[0] + (i / (num_colors - 1)) * (end_color[0] - start_color[0])
+			g = start_color[1] + (i / (num_colors - 1)) * (end_color[1] - start_color[1])
+			b = start_color[2] + (i / (num_colors - 1)) * (end_color[2] - start_color[2])
+		except ZeroDivisionError:
+			r = start_color[0] + (i / (num_colors)) * (end_color[0] - start_color[0])
+			g = start_color[1] + (i / (num_colors)) * (end_color[1] - start_color[1])
+			b = start_color[2] + (i / (num_colors)) * (end_color[2] - start_color[2])
+			
 		# Append the gradient color.
 		gradient_colors.append((r, g, b))
 
