@@ -88,7 +88,7 @@ class StatAnalyzer(ctk.CTkFrame) :
         self.info_label.grid(row=0, column=0, columnspan=3, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING//2)
     
         # Load info widgets
-        self.percentage_label = ctk.CTkLabel(self.scholarship_container, text=self.scholarship_status["percentage"],
+        self.percentage_label = ctk.CTkLabel(self.scholarship_container, text="%"+str(self.scholarship_status["percentage"]),
             fg_color = GUI_DC.SECONDARY_DARK_BACKGROUND,
             bg_color = GUI_DC.DARK_BACKGROUND,
             text_color = GUI_DC.LIGHT_TEXT_COLOR,
