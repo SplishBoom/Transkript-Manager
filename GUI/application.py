@@ -153,53 +153,53 @@ class ApplicationFrame(ctk.CTkFrame) :
                 fg_color=GUI_DC.LIGHT_BACKGROUND,
                 bg_color=GUI_DC.LIGHT_BACKGROUND,
                 text_color=GUI_DC.DARK_TEXT_COLOR,
-                font=("Arial", 15, "bold"),
+                font=("Arial", 17, "bold"),
                 anchor="center",
             )
 
         # Configure texts container.
-        self.texts_container.grid_rowconfigure((0,1,2,3), weight=1)
+        self.texts_container.grid_rowconfigure((0,1), weight=1)
         self.texts_container.grid_columnconfigure((0,1,2,3), weight=1)
         # Create student id, national id, name, surname, faculty, department, program, language of instruction, and status labels.
-        student_id_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Student ID"))
-        student_id_label.grid(row=0, column=0)
+        #student_id_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Student ID"))
+        #student_id_label.grid(row=0, column=0)
         student_id_label_value = ctk.CTkLabel(self.texts_container, text=self.student_school_id)
-        student_id_label_value.grid(row=0, column=1)
+        student_id_label_value.grid(row=0, column=0)
 
-        national_id_label = ctk.CTkLabel(self.texts_container, text=self._get_text("National ID"))
-        national_id_label.grid(row=0, column=2)
+        #national_id_label = ctk.CTkLabel(self.texts_container, text=self._get_text("National ID"))
+        #national_id_label.grid(row=0, column=2)
         national_id_label_value = ctk.CTkLabel(self.texts_container, text=self.student_national_id)
-        national_id_label_value.grid(row=0, column=3)
+        national_id_label_value.grid(row=0, column=1)
 
-        student_name_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Name"))
-        student_name_label.grid(row=1, column=0)
+        #student_name_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Name"))
+        #student_name_label.grid(row=0, column=4)
         student_name_label_value = ctk.CTkLabel(self.texts_container, text=self.student_name)
-        student_name_label_value.grid(row=1, column=1)
+        student_name_label_value.grid(row=0, column=2)
 
-        student_surname_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Surname"))
-        student_surname_label.grid(row=1, column=2)
+        #student_surname_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Surname"))
+        #student_surname_label.grid(row=0, column=6)
         student_surname_label_value = ctk.CTkLabel(self.texts_container, text=self.student_surname)
-        student_surname_label_value.grid(row=1, column=3)
+        student_surname_label_value.grid(row=0, column=3)
 
-        faculty_department_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Faculty / Department"))
-        faculty_department_label.grid(row=2, column=0)
-        faculty_department_label_value = ctk.CTkLabel(self.texts_container, text=self.student_faculty.split(" / ")[-1])
-        faculty_department_label_value.grid(row=2, column=1)
+        #faculty_department_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Faculty / Department"))
+        #faculty_department_label.grid(row=1, column=0)
+        faculty_department_label_value = ctk.CTkLabel(self.texts_container, text=self.student_faculty.split(" / ")[0])
+        faculty_department_label_value.grid(row=1, column=0)
 
-        program_name_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Program Name"))
-        program_name_label.grid(row=2, column=2)
+        #program_name_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Program Name"))
+        #program_name_label.grid(row=1, column=2)
         program_name_label_value = ctk.CTkLabel(self.texts_container, text=self.student_department)
-        program_name_label_value.grid(row=2, column=3)
+        program_name_label_value.grid(row=1, column=1)
 
-        language_of_instruction_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Language of Instruction"))
-        language_of_instruction_label.grid(row=3, column=0)
+        #language_of_instruction_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Language of Instruction"))
+        #language_of_instruction_label.grid(row=1, column=4)
         language_of_instruction_label_value = ctk.CTkLabel(self.texts_container, text=self.language_of_instruction)
-        language_of_instruction_label_value.grid(row=3, column=1)
+        language_of_instruction_label_value.grid(row=1, column=2)
 
-        student_status_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Student Status"))
-        student_status_label.grid(row=3, column=2)
+        #student_status_label = ctk.CTkLabel(self.texts_container, text=self._get_text("Student Status"))
+        #student_status_label.grid(row=1, column=6)
         student_status_label_value = ctk.CTkLabel(self.texts_container, text=self.student_status)
-        student_status_label_value.grid(row=3, column=3)
+        student_status_label_value.grid(row=1, column=3)
 
         # Configure labels.
         for acurrent_text_label in self.texts_container.winfo_children() :
@@ -207,7 +207,7 @@ class ApplicationFrame(ctk.CTkFrame) :
                 fg_color=GUI_DC.LIGHT_BACKGROUND,
                 bg_color=GUI_DC.LIGHT_BACKGROUND,
                 text_color=GUI_DC.DARK_TEXT_COLOR,
-                font=("Arial", 11, "italic"),
+                font=("Arial", 13, "bold"),
                 anchor="center",
                 corner_radius=25,
             )
@@ -282,7 +282,7 @@ class ApplicationFrame(ctk.CTkFrame) :
                                        segmented_button_unselected_color=GUI_DC.DARK_BACKGROUND,
                                        segmented_button_unselected_hover_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
                                        corner_radius=25,
-                                       width=850,
+                                       width=1100,
                                        height=490,
                                        border_width=0
         )
@@ -535,7 +535,7 @@ class ApplicationFrame(ctk.CTkFrame) :
             None
         """
         # Disable the button to prevent multiple clicks.
-        self.load_db_data_button.configure(text=self._get_text("Processing"), state="disabled")
+        self.load_db_data_button.configure(text=self._get_text("Loading"), state="disabled")
 
         # Check if the user is authenticated.
         self.__check_authentication()
@@ -591,7 +591,7 @@ class ApplicationFrame(ctk.CTkFrame) :
             None
         """
         # Disable the button to prevent multiple clicks.
-        self.save_db_data_button.configure(text=self._get_text("Processing"), state="disabled")
+        self.save_db_data_button.configure(text=self._get_text("Saving"), state="disabled")
 
         # Check if the user is authenticated.
         self.__check_authentication()
@@ -651,7 +651,7 @@ class ApplicationFrame(ctk.CTkFrame) :
             None
         """
         # Disable the button to prevent multiple clicks.
-        self.reset_button.configure(text=self._get_text("Processing"), state="disabled")
+        self.reset_button.configure(text=self._get_text("Refreshing"), state="disabled")
         # Reset the ApplicationFrame. By restarting the application.
         self.root.restart_application()
     
@@ -664,7 +664,7 @@ class ApplicationFrame(ctk.CTkFrame) :
             None
         """
         # Disable the button to prevent multiple clicks.
-        self.export_button.configure(text=self._get_text("Processing"), state="disabled")
+        self.export_button.configure(text=self._get_text("Exporting"), state="disabled")
 
         # DEBUG MODE NO COMMENT
         if not self.DEBUG :
@@ -696,7 +696,7 @@ class ApplicationFrame(ctk.CTkFrame) :
         # Fix the button and reset the ApplicationFrame to take effect. If not selected or selected, it does not matter.
         if is_exported :
             self.export_button.configure(text=self._get_text("Exported"), fg_color=GUI_DC.BUTTON_LIGHT_GREEN)
-            self.after(500, lambda : self.export_button.configure(text=self._get_text("Export Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
+            self.after(500, lambda : self.export_button.configure(text=self._get_text("Export Data"), fg_color=GUI_DC.BUTTON_LIGHT_DGREEN, state="normal"))
         else :
             self.export_button.configure(text=self._get_text("Not Exported"), fg_color=GUI_DC.BUTTON_LIGHT_RED)
-            self.after(500, lambda : self.export_button.configure(text=self._get_text("Export Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
+            self.after(500, lambda : self.export_button.configure(text=self._get_text("Export Data"), fg_color=GUI_DC.BUTTON_LIGHT_DGREEN, state="normal"))
