@@ -49,9 +49,6 @@ class TranscriptManager(ctk.CTk) :
             self.login_frame = LoginFrame(self.main_container, self, self.DEBUG)
             # Grid the initial frame.
             self.login_frame.grid(row=0, column=0, stick="nsew")
-
-            # Push up the DPI for the application.
-            #push_dpi()
         else :
             # DEBUG MODE NO COMMENT
             parser = OfflineParser(path_to_file=r"C:\GithubProjects\transkript-manager\Data\emir.pdf")
