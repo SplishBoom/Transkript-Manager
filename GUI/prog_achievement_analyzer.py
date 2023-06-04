@@ -61,14 +61,14 @@ class AchievementAnalyzer(ctk.CTkFrame) :
         self.grid_columnconfigure(0, weight=1)
 
         # Create main container
-        self.container = ctk.CTkFrame(self, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.container = ctk.CTkFrame(self, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND, corner_radius=25)
         self.container.grid(row=0, column=0, sticky="nsew")
         # Configure main container
         self.container.grid_rowconfigure((0), weight=1)
         self.container.grid_columnconfigure((0), weight=1)
 
         # Create program container
-        self.program_plot_container = ctk.CTkFrame(self.container, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.program_plot_container = ctk.CTkFrame(self.container, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND, corner_radius=25)
         self.program_plot_container.grid(row=0, column=0, sticky="nsew")
 
     def __load_user_data(self, given_user_data : dict) -> None:
