@@ -1,5 +1,4 @@
 from    Utilities       import  calculate_performance, filter_by # -> Utilitiy functions.
-from    GUI             import  CustomizedCTkTable # -> Table display.
 from    Environment     import  GUI_DC # -> Environment variables
 import  customtkinter   as      ctk # -> GUI.
 
@@ -88,6 +87,7 @@ class StatAnalyzer(ctk.CTkFrame) :
         )
         self.info_label.grid(row=0, column=0, columnspan=3, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING//2)
     
+        # Load info widgets
         self.percentage_label = ctk.CTkLabel(self.scholarship_container, text=self.scholarship_status["percentage"],
             fg_color = GUI_DC.SECONDARY_DARK_BACKGROUND,
             bg_color = GUI_DC.DARK_BACKGROUND,
@@ -133,6 +133,7 @@ class StatAnalyzer(ctk.CTkFrame) :
         self.course_info_container.grid_rowconfigure((0), weight=1)
         self.course_info_container.grid_columnconfigure((0), weight=1)
 
+        # Set a tabview for switching between course info status.
         ctk.CTkTabview._segmented_button_border_width = 4
         ctk.CTkTabview._button_height = 30
         ctk.CTkTabview._top_button_overhang = 9
@@ -177,25 +178,29 @@ class StatAnalyzer(ctk.CTkFrame) :
 
     def _load_must_taken_courses(self) -> None:
         """
-        Loads course info status treeview for courses must taken again.
+        Loads course must_taken courses with bubble image.
         @Parameters:
             None
         @Returns:
             None
         """
-
+        # Create a hold container.
         self.must_taken_container = ctk.CTkFrame(self.must_taken_courses_tab, fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND, bg_color=GUI_DC.SECONDARY_DARK_BACKGROUND, corner_radius=25)
         self.must_taken_container.grid(row=0, column=0, sticky="nsew")
         
+        # Set the inital values and calculate the row and column count.
         courses_in_a_column = 6
         number_of_must_courses = len(self.grades_must_taken)
         row_count = (number_of_must_courses - 1) // courses_in_a_column + 1
         row_count = max(row_count, 1)
         
+        # Used inital values to configure the grid.
         self.must_taken_container.grid_rowconfigure(tuple(range(row_count)), weight=1)
         self.must_taken_container.grid_columnconfigure((0), weight=1)
         
+        # Check if there is a no course situation.
         if len(self.grades_must_taken) == 0 :
+            # If yes, show a congrat message and leave.
             self.congrats_label = ctk.CTkLabel(self.must_taken_container, text=self._get_text("Congrats! You don't have any course to take again."),
                 fg_color = GUI_DC.BUTTON_LIGHT_GREEN,
                 bg_color = GUI_DC.SECONDARY_DARK_BACKGROUND,
@@ -206,20 +211,27 @@ class StatAnalyzer(ctk.CTkFrame) :
             )
             self.congrats_label.grid(row=0, column=0, sticky="nsew")
         else :
+            # Otherwise, put the available courses on the grid. Start by creating a row for each 5 elements.
             data_row_frames = []
             for i in range(row_count) :
                 new_frame = ctk.CTkFrame(self.must_taken_container, fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND, bg_color=GUI_DC.SECONDARY_DARK_BACKGROUND, corner_radius=25)
                 new_frame.grid(row=i, column=0, sticky="nsew")
+                # Store the rows (frames) for later use.
                 data_row_frames.append(new_frame)
 
+            # Iterate over all courses, than apply //5 operation and put 5 element maximum in a row at each.
             for i in range(number_of_must_courses) :
+                # Get course name and grade.
                 course_code = self.grades_must_taken[i]["course_code"]
                 course_grade = self.grades_must_taken[i]["course_grade"]
-
+                
+                # Set a show message.
                 course_info = f"{course_code}\n\n{course_grade}"
-
+                
+                # Find the index of the current row.
                 row_index = i // courses_in_a_column
 
+                # Create a label with optimized parameters. (Bubble Effect !)
                 course_info_label = ctk.CTkLabel(data_row_frames[row_index], text=course_info,
                     fg_color = GUI_DC.BUTTON_LIGHT_RED,
                     bg_color = GUI_DC.SECONDARY_DARK_BACKGROUND,
@@ -230,22 +242,34 @@ class StatAnalyzer(ctk.CTkFrame) :
                     width=50,
                     height=50
                 )
+                # Pack the label. | Grid is not used, it is not easy to automatically center widgets with setted column. Ex columspan=3 this should be an argument but there are 4 courses, and etc.
                 course_info_label.pack(side="left", expand=True, fill="y", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
    
     def _load_should_taken_courses(self) -> None:
-        
+        """
+        Loads course should_tak courses with bubble image.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
+        # Create a hold container.
         self.should_taken_container = ctk.CTkFrame(self.should_taken_courses_tab, fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND, bg_color=GUI_DC.SECONDARY_DARK_BACKGROUND, corner_radius=25)
         self.should_taken_container.grid(row=0, column=0, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
         
+        # Set the inital values and calculate 
         courses_in_a_column = 6
         number_of_must_courses = len(self.grades_should_taken)
         row_count = (number_of_must_courses - 1) // courses_in_a_column + 1
         row_count = max(row_count, 1)
         
+        # Used inital values to configure the grid.
         self.should_taken_container.grid_rowconfigure(tuple(range(row_count)), weight=1)
         self.should_taken_container.grid_columnconfigure((0), weight=1)
         
+        # Check if there is a no course situation.
         if len(self.grades_should_taken) == 0 :
+            # If yes, show a congrat message and leave.
             self.congrats_label = ctk.CTkLabel(self.should_taken_container, text=self._get_text("Congrats! You don't have any course to take again."),
                 fg_color = GUI_DC.BUTTON_LIGHT_GREEN,
                 bg_color = GUI_DC.SECONDARY_DARK_BACKGROUND,
@@ -256,20 +280,27 @@ class StatAnalyzer(ctk.CTkFrame) :
             )
             self.congrats_label.grid(row=0, column=0, sticky="nsew")
         else :
+            # Otherwise, put the available courses on the  Start by creating a row for each 5 elements.
             data_row_frames = []
             for i in range(row_count) :
                 new_frame = ctk.CTkFrame(self.should_taken_container, fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND, bg_color=GUI_DC.SECONDARY_DARK_BACKGROUND, corner_radius=25)
                 new_frame.grid(row=i, column=0, sticky="nsew")
+                # Store the rows (frames) for
                 data_row_frames.append(new_frame)
 
+            # Iterate over all courses, than apply //5 operation and put 5 element maximum in a row at each.
             for i in range(number_of_must_courses) :
+                # Get course name and grade.
                 course_code = self.grades_should_taken[i]["course_code"]
                 course_grade = self.grades_should_taken[i]["course_grade"]
-
+                
+                # Set a show message.
                 course_info = f"{course_code}\n\n{course_grade}"
-
+                
+                # Find the index of the current row.
                 row_index = i // courses_in_a_column
 
+                # Create a label with optimized parameters. (Bubble Effect !)
                 course_info_label = ctk.CTkLabel(data_row_frames[row_index], text=course_info,
                     fg_color = GUI_DC.BUTTON_LIGHT_BLUE,
                     bg_color = GUI_DC.SECONDARY_DARK_BACKGROUND,
@@ -280,6 +311,7 @@ class StatAnalyzer(ctk.CTkFrame) :
                     width=50,
                     height=50
                 )
+                # Pack the label. | Grid is not used, it is not easy to automatically center widgets with setted column. Ex columspan=3 this should be an argument but there are 4 courses, and etc.
                 course_info_label.pack(side="left", expand=True, fill="y", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
 
