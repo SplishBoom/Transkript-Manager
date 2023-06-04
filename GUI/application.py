@@ -315,8 +315,12 @@ class ApplicationFrame(ctk.CTkFrame) :
 
         # Load the program.
         current_user_data = self.__create_user_data() # Get latest current user data.
-        self.current_program_frame = GradeUpdater(self.grade_updater_tab, self, self.root, current_user_data, DEBUG=self.DEBUG)
-        self.current_program_frame.grid(row=0, column=0, sticky="nsew")
+        self.current_program_frame_name = self.grade_updater_tab_name
+        self.grade_updater_frame = GradeUpdater(self.grade_updater_tab, self, self.root, current_user_data, DEBUG=self.DEBUG)
+        self.grade_updater_frame.grid(row=0, column=0, sticky="nsew")
+
+        self.stat_analyzer_frame = None
+        self.achievement_analyzer_frame = None
 
 
     def __update_user_authitication(self) -> None:
@@ -495,21 +499,32 @@ class ApplicationFrame(ctk.CTkFrame) :
         # Get the latest user data.
         current_user_data = self.__create_user_data()
 
-        # hash the parameters.
-        program_init_map = {
-            self.stat_analyzer_tab_name : (StatAnalyzer, self.stat_analyzer_tab, self, self.root, current_user_data, self.DEBUG),
-            self.grade_updater_tab_name : (GradeUpdater, self.grade_updater_tab, self, self.root, current_user_data, self.DEBUG),
-            self.achievement_analyzer_tab_name : (AchievementAnalyzer, self.achievement_analyzer_tab, self, self.root, current_user_data, self.DEBUG)
-        }
-
-        # remove the old program.
-        self.current_program_frame.grid_forget()
-        self.current_program_frame = None
-
-        # Load new program.
-        self.current_program_frame = program_init_map[new_mode_name][0](*program_init_map[new_mode_name][1:])
-        self.current_program_frame.grid(row=0, column=0, sticky="nsew")
-
+        # Firstly remove the current program frame.
+        if self.current_program_frame_name == self.stat_analyzer_tab_name :
+            self.stat_analyzer_frame.grid_remove()
+            self.stat_analyzer_frame.destroy()
+        elif self.current_program_frame_name == self.grade_updater_tab_name :
+            self.grade_updater_frame.grid_remove()
+        elif self.current_program_frame_name == self.achievement_analyzer_tab_name :
+            self.achievement_analyzer_frame.grid_remove()
+            self.achievement_analyzer_frame.destroy()
+        else :
+            raise Exception("Unknown program frame name.")
+        
+        # Then grid the new program frame.
+        if new_mode_name == self.stat_analyzer_tab_name :
+            self.stat_analyzer_frame = StatAnalyzer(self.stat_analyzer_tab, self, self.root, current_user_data, DEBUG=self.DEBUG)
+            self.stat_analyzer_frame.grid(row=0, column=0, sticky="nsew")
+            self.current_program_frame_name = self.stat_analyzer_tab_name
+        elif new_mode_name == self.grade_updater_tab_name :
+            self.grade_updater_frame.grid(row=0, column=0, sticky="nsew")
+            self.current_program_frame_name = self.grade_updater_tab_name
+        elif new_mode_name == self.achievement_analyzer_tab_name :
+            self.achievement_analyzer_frame = AchievementAnalyzer(self.achievement_analyzer_tab, self, self.root, current_user_data, DEBUG=self.DEBUG)
+            self.achievement_analyzer_frame.grid(row=0, column=0, sticky="nsew")
+            self.current_program_frame_name = self.achievement_analyzer_tab_name
+        else :
+            raise Exception("Unknown program frame name.")
 
     def __load_db_data(self, *args, **kwargs) -> None:
         """
