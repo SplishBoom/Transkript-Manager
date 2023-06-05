@@ -85,38 +85,49 @@ class StatAnalyzer(ctk.CTkFrame) :
             anchor = "center",
             corner_radius =  25
         )
-        self.info_label.grid(row=0, column=0, columnspan=3, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING//2)
+        self.info_label.grid(row=0, column=0, columnspan=3, sticky="nsew", padx=GUI_DC.INNER_PADDING)
     
+        if self.scholarship_status["percentage"] == 0 :
+            text_color = GUI_DC.BUTTON_LIGHT_RED_HOVER
+        elif self.scholarship_status["percentage"] == 25 :
+            text_color = GUI_DC.BUTTON_LIGHT_ORANGE_HOVER
+        elif self.scholarship_status["percentage"] == 40 :
+            text_color = GUI_DC.BUTTON_LIGHT_YELLOW_HOVER
+        elif self.scholarship_status["percentage"] == 50 :
+            text_color = GUI_DC.BUTTON_LIGHT_GREEN_HOVER
+        else :
+            text_color = GUI_DC.DARK_TEXT_COLOR
+
         # Load info widgets
         self.percentage_label = ctk.CTkLabel(self.scholarship_container, text="%"+str(self.scholarship_status["percentage"]),
             fg_color = GUI_DC.SECONDARY_DARK_BACKGROUND,
             bg_color = GUI_DC.DARK_BACKGROUND,
-            text_color = GUI_DC.LIGHT_TEXT_COLOR,
+            text_color = text_color,
             font = ("Arial", 13, "bold"),
             anchor = "center",
             corner_radius =  50
         )
-        self.percentage_label.grid(row=1, column=0, sticky="nsew", padx=GUI_DC.INNER_PADDING)
+        self.percentage_label.grid(row=1, column=0, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.GENERAL_PADDING)
 
         self.message_label = ctk.CTkLabel(self.scholarship_container, text=self._get_text(self.scholarship_status["message"]),
             fg_color = GUI_DC.SECONDARY_DARK_BACKGROUND,
             bg_color = GUI_DC.DARK_BACKGROUND,
-            text_color = GUI_DC.LIGHT_TEXT_COLOR,
+            text_color = text_color,
             font = ("Arial", 13, "bold"),
             anchor = "center",
             corner_radius =  50
         )
-        self.message_label.grid(row=1, column=1, sticky="nsew", padx=GUI_DC.INNER_PADDING)
+        self.message_label.grid(row=1, column=1, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.GENERAL_PADDING)
 
         self.note_label = ctk.CTkLabel(self.scholarship_container, text=self._get_text(self.scholarship_status["note"]),
             fg_color = GUI_DC.SECONDARY_DARK_BACKGROUND,
             bg_color = GUI_DC.DARK_BACKGROUND,
-            text_color = GUI_DC.LIGHT_TEXT_COLOR,
+            text_color = text_color,
             font = ("Arial", 13, "bold"),
             anchor = "center",
             corner_radius =  50
         )
-        self.note_label.grid(row=1, column=2, sticky="nsew", padx=GUI_DC.INNER_PADDING)
+        self.note_label.grid(row=1, column=2, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.GENERAL_PADDING)
 
     def __load_course_info_status(self) -> None:
         """

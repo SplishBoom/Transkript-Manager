@@ -1,12 +1,10 @@
-from    Environment import  ASSETS_DC, to_turkish # -> Environment variables
-from    tkinter     import  messagebox # -> Interract with user
-from    tkinter     import  Toplevel # -> Create new window
-from    tkinter     import  ttk # -> GUI
-import  tkinter     as      tk # -> GUI
+from    Environment     import  ASSETS_DC, GUI_DC, to_turkish # -> Environment variables
+from    tkinter         import  messagebox # -> Interract with user
+import  customtkinter   as      ctk # -> GUI
 
-class FilterSelecter(Toplevel) :
+class FilterSelecter(ctk.CTkToplevel) :
 
-    def __init__(self, master : ttk.Frame, filtering : list, available_filterings : list, available_filterings_text_display : str, parsing_language : str) -> None:
+    def __init__(self, master : ctk.CTkFrame, filtering : list, available_filterings : list, available_filterings_text_display : str, parsing_language : str) -> None:
         """
         Constructor method for FilterSelecter class. This class is used to select filters.
         @Parameters:
@@ -20,6 +18,8 @@ class FilterSelecter(Toplevel) :
         """
         # Initialize the Toplevel class.
         super().__init__(master)
+        self.grid_rowconfigure((0), weight=1)
+        self.grid_columnconfigure((0), weight=1)
 
         # Set program language
         self.parsing_language = parsing_language
@@ -30,13 +30,14 @@ class FilterSelecter(Toplevel) :
         
         # Set class variables
         self.available_filterings_text_display = available_filterings_text_display
+        self.available_filterings_show_display = {value: key for key, value in available_filterings_text_display.items()}
         self.available_filterings = available_filterings
         self.current_filtering = filtering.copy()
         self.result = filtering.copy()
 
         # Create the main container
-        self.container = ttk.Frame(self)
-        self.container.grid(row=0, column=0)
+        self.container = ctk.CTkFrame(self, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.container.grid(row=0, column=0, sticky="nsew")
         # Configure the main container
         self.container.grid_rowconfigure((0), weight=1)
         self.container.grid_columnconfigure((0), weight=1)
@@ -75,25 +76,47 @@ class FilterSelecter(Toplevel) :
             None
         """
         # Set the main container.
-        self.widgets_container = ttk.Frame(self.container)
-        self.widgets_container.grid(row=0, column=0)
+        self.widgets_container = ctk.CTkFrame(self.container, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.widgets_container.grid(row=0, column=0, sticky="nsew")
         # Configure the main container.
         self.widgets_container.grid_rowconfigure((0,1,2), weight=1)
         self.widgets_container.grid_columnconfigure((0,1), weight=1)
 
         # Create the widgets.
-        self.info_label = ttk.Label(self.widgets_container, text=self._get_text("Select and Remove filters"))
+        self.info_label = ctk.CTkLabel(self.widgets_container, text=self._get_text("Select and Remove filters"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 15, "bold"),
+            anchor="center",
+        )
         self.info_label.grid(row=0, column=0, columnspan=2)
 
-        self.filter_change_container = ttk.Frame(self.widgets_container)
-        self.filter_change_container.grid(row=1, column=0, columnspan=2)
+        self.filter_change_container = ctk.CTkFrame(self.widgets_container, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.filter_change_container.grid(row=1, column=0, columnspan=2, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
         self._init_filters()
 
-        self.save_button = ttk.Button(self.widgets_container, text=self._get_text("Apply"), command=self.__save)
-        self.save_button.grid(row=2, column=0)
+        self.save_button = ctk.CTkButton(self.widgets_container, text=self._get_text("Apply"), command=self.__save,
+            fg_color=GUI_DC.LIGHT_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            hover_color=GUI_DC.SECONDARY_LIGHT_BACKGROUND,
+            text_color=GUI_DC.DARK_TEXT_COLOR,
+            text_color_disabled=GUI_DC.MEDIUM_TEXT_COLOR,
+            anchor="center",
+            font=("Arial", 12, "bold")
+        )
+        self.save_button.grid(row=2, column=0, pady=GUI_DC.INNER_PADDING, padx=GUI_DC.INNER_PADDING)
 
-        self.cancel_button = ttk.Button(self.widgets_container, text=self._get_text("Cancel"), command=self.__clean_exit)
-        self.cancel_button.grid(row=2, column=1)
+        self.cancel_button = ctk.CTkButton(self.widgets_container, text=self._get_text("Cancel"), command=self.__clean_exit,
+            fg_color=GUI_DC.LIGHT_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            hover_color=GUI_DC.SECONDARY_LIGHT_BACKGROUND,
+            text_color=GUI_DC.DARK_TEXT_COLOR,
+            text_color_disabled=GUI_DC.MEDIUM_TEXT_COLOR,
+            anchor="center",
+            font=("Arial", 12, "bold")
+        )
+        self.cancel_button.grid(row=2, column=1, pady=GUI_DC.INNER_PADDING, padx=GUI_DC.INNER_PADDING)
 
     def _init_filters(self) -> None:
         """
@@ -110,18 +133,36 @@ class FilterSelecter(Toplevel) :
         self.filter_change_container.grid_columnconfigure((0, 1, 2), weight=1)
 
         # Load info labels for operations.
-        self.filter_by_label = ttk.Label(self.filter_change_container, text=self._get_text("Filter By"))
-        self.filter_with_label = ttk.Label(self.filter_change_container, text=self._get_text("Filter With"))
-        self.operation_label = ttk.Label(self.filter_change_container, text=self._get_text("Operation"))
+        self.filter_by_label = ctk.CTkLabel(self.filter_change_container, text=self._get_text("Filter By"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 14, "bold"),
+            anchor="center",
+        )
+        self.filter_with_label = ctk.CTkLabel(self.filter_change_container, text=self._get_text("Filter With"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 14, "bold"),
+            anchor="center",
+        )
+        self.operation_label = ctk.CTkLabel(self.filter_change_container, text=self._get_text("Operation"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 14, "bold"),
+            anchor="center",
+        )
 
         # Check when no filter is selected. Just show the filter by label.
         if self.current_filtering == [] :
-            self.filter_by_label.grid(row=0, column=0, columnspan=3)
+            self.filter_by_label.grid(row=0, column=0, columnspan=3, padx=GUI_DC.INNER_PADDING)
         else :
             # Check if filter exists. Than, show all info labels.
-            self.filter_by_label.grid(row=0, column=0)
-            self.filter_with_label.grid(row=0, column=1)
-            self.operation_label.grid(row=0, column=2)
+            self.filter_by_label.grid(row=0, column=0, padx=GUI_DC.INNER_PADDING)
+            self.filter_with_label.grid(row=0, column=1, padx=GUI_DC.INNER_PADDING)
+            self.operation_label.grid(row=0, column=2, padx=GUI_DC.INNER_PADDING)
 
         # Iterate over the current filterings.
         for grid_row_index, current_filter in enumerate(self.current_filtering) :
@@ -130,7 +171,7 @@ class FilterSelecter(Toplevel) :
             grid_row_index += 1
 
             # Get the current filter key and value.
-            current_filter_key = current_filter["filter_key"]
+            current_filter_key = self.available_filterings_show_display[current_filter["filter_key"]]
             current_filter_value = current_filter["filter_value"]
             
             def ___WRAPS_remove_filter(filter : dict = current_filter) -> None:
@@ -145,23 +186,47 @@ class FilterSelecter(Toplevel) :
                 self.__remove_filter(filter)
 
             # Create the widgets.
-            current_filter_key_label = ttk.Label(self.filter_change_container, text=current_filter_key)
+            current_filter_key_label = ctk.CTkLabel(self.filter_change_container, text=current_filter_key,
+                fg_color=GUI_DC.DARK_BACKGROUND,
+                bg_color=GUI_DC.DARK_BACKGROUND,
+                text_color=GUI_DC.LIGHT_TEXT_COLOR,
+                font=("Arial", 13, "bold"),
+                anchor="center",
+            )
             current_filter_key_label.grid(row=grid_row_index, column=0)
 
-            current_filter_value_label = ttk.Label(self.filter_change_container, text=current_filter_value)
+            current_filter_value_label = ctk.CTkLabel(self.filter_change_container, text=current_filter_value,
+                fg_color=GUI_DC.DARK_BACKGROUND,
+                bg_color=GUI_DC.DARK_BACKGROUND,
+                text_color=GUI_DC.LIGHT_TEXT_COLOR,
+                font=("Arial", 13, "bold"),
+                anchor="center",
+            )
             current_filter_value_label.grid(row=grid_row_index, column=1)
 
-            remove_filter_button = ttk.Button(self.filter_change_container, text=self._get_text("Remove"), command=___WRAPS_remove_filter)
-            remove_filter_button.grid(row=grid_row_index, column=2)
+            remove_filter_button = ctk.CTkButton(self.filter_change_container, text=self._get_text("Remove"), command=___WRAPS_remove_filter,
+                fg_color=GUI_DC.LIGHT_BACKGROUND,
+                bg_color=GUI_DC.DARK_BACKGROUND,
+                hover_color=GUI_DC.SECONDARY_LIGHT_BACKGROUND,
+                text_color=GUI_DC.DARK_TEXT_COLOR,
+                text_color_disabled=GUI_DC.MEDIUM_TEXT_COLOR,
+                anchor="center",
+                font=("Arial", 12, "bold")
+            )
+            remove_filter_button.grid(row=grid_row_index, column=2, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
         # Create the filter key combobox.
-        self.filter_key_combobox = ttk.Combobox(self.filter_change_container, values=list(self.available_filterings_text_display.keys()), state="readonly")
-        self.filter_key_combobox.grid(row=self.row_count-1, column=0)
+        self.binder_variable = ctk.StringVar()
+        self.filter_key_combobox = ctk.CTkComboBox(self.filter_change_container, values=list(self.available_filterings_text_display.keys()), variable=self.binder_variable,
+            justify="center",
+            state="readonly",
+        )
+        self.filter_key_combobox.grid(row=self.row_count-1, column=0, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
         # Bind the combobox to move to the next step. When key selected.
-        self.filter_key_combobox.bind("<<ComboboxSelected>>", self.__load_filter_value_combobox)
+        self.binder_variable.trace_add("write", self.__load_filter_value_combobox)
 
-    def __load_filter_value_combobox(self, event : tk.Event) -> None:
+    def __load_filter_value_combobox(self, *args, **kwargs) -> None:
         """
         Loads the filter value combobox with the values of the selected filter key.
         @Parameters:
@@ -173,17 +238,34 @@ class FilterSelecter(Toplevel) :
         self.filter_by_label.grid_forget()
 
         # Init the operation info labels.
-        self.filter_by_label.grid(row=0, column=0)
-        self.filter_with_label.grid(row=0, column=1)
-        self.operation_label.grid(row=0, column=2)
+        self.filter_by_label.grid(row=0, column=0, padx=GUI_DC.INNER_PADDING)
+        self.filter_with_label.grid(row=0, column=1, padx=GUI_DC.INNER_PADDING)
+        self.operation_label.grid(row=0, column=2, padx=GUI_DC.INNER_PADDING)
+
+        # Try to get values
+        try :
+            values = self.available_filterings[self.available_filterings_text_display[self.filter_key_combobox.get()]]
+        except KeyError :
+            values = []
 
         # Set the new filter value combobox.
-        self.filter_value_combobox = ttk.Combobox(self.filter_change_container, values=self.available_filterings[self.available_filterings_text_display[self.filter_key_combobox.get()]], state="readonly")
-        self.filter_value_combobox.grid(row=self.row_count-1, column=1)
+        self.filter_value_combobox = ctk.CTkComboBox(self.filter_change_container, values=values,
+            justify="center",
+            state="readonly",
+        )
+        self.filter_value_combobox.grid(row=self.row_count-1, column=1, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
         # Set the new add filter button.
-        self.add_filter_button = ttk.Button(self.filter_change_container, text=self._get_text("Add"), command=self.__add_filter)
-        self.add_filter_button.grid(row=self.row_count-1, column=2)
+        self.add_filter_button = ctk.CTkButton(self.filter_change_container, text=self._get_text("Add"), command=self.__add_filter,
+            fg_color=GUI_DC.LIGHT_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            hover_color=GUI_DC.SECONDARY_LIGHT_BACKGROUND,
+            text_color=GUI_DC.DARK_TEXT_COLOR,
+            text_color_disabled=GUI_DC.MEDIUM_TEXT_COLOR,
+            anchor="center",
+            font=("Arial", 12, "bold")
+        )
+        self.add_filter_button.grid(row=self.row_count-1, column=2, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
     def __add_filter(self) -> None:
         """
@@ -232,8 +314,8 @@ class FilterSelecter(Toplevel) :
 
         # Clear and re-init the filter_change_container.
         self.filter_change_container.destroy()
-        self.filter_change_container = ttk.Frame(self.widgets_container)
-        self.filter_change_container.grid(row=1, column=0, columnspan=2)
+        self.filter_change_container = ctk.CTkFrame(self.widgets_container, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.filter_change_container.grid(row=1, column=0, columnspan=2, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
         
         # Init all filters back on display.
         self._init_filters()

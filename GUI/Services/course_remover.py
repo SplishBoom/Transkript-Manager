@@ -1,12 +1,10 @@
-from    Environment import  ASSETS_DC, to_turkish # -> Environment variables
-from    tkinter     import  messagebox # -> Interract with user
-from    tkinter     import  Toplevel # -> Create new window
-from    tkinter     import  ttk # -> GUI
-import  tkinter     as      tk # -> GUI
+from    Environment     import  ASSETS_DC, GUI_DC, to_turkish # -> Environment variables
+from    tkinter         import  messagebox # -> Interract with user
+import  customtkinter   as      ctk # -> GUI
 
-class CourseRemover(Toplevel) :
+class CourseRemover(ctk.CTkToplevel) :
 
-    def __init__(self, master : ttk.Frame, modified_course_list : list, existing_course_codes : list, parsing_language : str, selected_course_code : str) -> None:
+    def __init__(self, master : ctk.CTkFrame, modified_course_list : list, existing_course_codes : list, parsing_language : str, selected_course_code : str) -> None:
         """
         Initialize the CourseRemover class. This class is used to remove a course from the course list.
         @Parameters:
@@ -20,6 +18,8 @@ class CourseRemover(Toplevel) :
         """
         # Initialize the Toplevel.
         super().__init__(master)
+        self.grid_rowconfigure((0), weight=1)
+        self.grid_columnconfigure((0), weight=1)
 
         # Set the parsing language.
         self.parsing_language = parsing_language
@@ -35,8 +35,8 @@ class CourseRemover(Toplevel) :
         self.result = None
 
         # Setup the main container.
-        self.container = ttk.Frame(self)
-        self.container.grid(row=0, column=0)
+        self.container = ctk.CTkFrame(self, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.container.grid(row=0, column=0, sticky="nsew")
         # Configure the main container.
         self.container.grid_rowconfigure((0), weight=1)
         self.container.grid_columnconfigure((0), weight=1)
@@ -75,25 +75,47 @@ class CourseRemover(Toplevel) :
             None
         """
         # Create the main container.
-        self.remove_course_container = ttk.Frame(self.container)
-        self.remove_course_container.grid(row=0, column=0)
+        self.widgets_container = ctk.CTkFrame(self.container, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.widgets_container.grid(row=0, column=0, sticky="nsew")
         # Configure the main container.
-        self.remove_course_container.grid_rowconfigure((0, 1, 2), weight=1)
-        self.remove_course_container.grid_columnconfigure((0, 1), weight=1)
+        self.widgets_container.grid_rowconfigure((0, 1, 2), weight=1)
+        self.widgets_container.grid_columnconfigure((0, 1), weight=1)
 
         # Create the widgets.
-        self.remove_course_course_code_label = ttk.Label(self.remove_course_container, text=self._get_text("Select and Remove Course"))
-        self.remove_course_course_code_label.grid(row=0, column=0, columnspan=2)
+        self.info_label = ctk.CTkLabel(self.widgets_container, text=self._get_text("Select and Remove Course"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 15, "bold"),
+            anchor="center",
+        )
+        self.info_label.grid(row=0, column=0, columnspan=2)
 
-        self.remover_container = ttk.Frame(self.remove_course_container)
-        self.remover_container.grid(row=1, column=0, columnspan=2)
+        self.remover_container = ctk.CTkFrame(self.widgets_container, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.remover_container.grid(row=1, column=0, columnspan=2, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
         self.show_current_addons()
 
-        self.save_button = ttk.Button(self.remove_course_container, text=self._get_text("Apply"), command=self.__save)
-        self.save_button.grid(row=2, column=0)
+        self.save_button = ctk.CTkButton(self.widgets_container, text=self._get_text("Apply"), command=self.__save,
+            fg_color=GUI_DC.LIGHT_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            hover_color=GUI_DC.SECONDARY_LIGHT_BACKGROUND,
+            text_color=GUI_DC.DARK_TEXT_COLOR,
+            text_color_disabled=GUI_DC.MEDIUM_TEXT_COLOR,
+            anchor="center",
+            font=("Arial", 12, "bold")
+        )
+        self.save_button.grid(row=2, column=0, pady=GUI_DC.INNER_PADDING, padx=GUI_DC.INNER_PADDING)
 
-        self.cancel_button = ttk.Button(self.remove_course_container, text=self._get_text("Cancel"), command=self.__clean_exit)
-        self.cancel_button.grid(row=2, column=1)
+        self.cancel_button = ctk.CTkButton(self.widgets_container, text=self._get_text("Cancel"), command=self.__clean_exit,
+            fg_color=GUI_DC.LIGHT_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            hover_color=GUI_DC.SECONDARY_LIGHT_BACKGROUND,
+            text_color=GUI_DC.DARK_TEXT_COLOR,
+            text_color_disabled=GUI_DC.MEDIUM_TEXT_COLOR,
+            anchor="center",
+            font=("Arial", 12, "bold")
+        )
+        self.cancel_button.grid(row=2, column=1, pady=GUI_DC.INNER_PADDING, padx=GUI_DC.INNER_PADDING)
 
     def show_current_addons(self) -> None:
         """
@@ -108,21 +130,31 @@ class CourseRemover(Toplevel) :
         self.remover_container.grid_columnconfigure((0, 1, 2, 3, 4, 5), weight=1)
 
         # Create the widgets.
-        self.table_course_code_label = ttk.Label(self.remover_container, text=self._get_text("Existing Course Code"))
-        self.table_course_code_label.grid(row=0, column=0, columnspan=5)
+        self.table_course_code_label = ctk.CTkLabel(self.remover_container, text=self._get_text("Existing Course Code"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 13, "bold"),
+            anchor="center",
+        )
+        self.table_course_code_label.grid(row=0, column=0, columnspan=5, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
-        self.select_course_course_code_combobox = ttk.Combobox(self.remover_container, values=self.existing_course_codes, state="readonly")
-        self.select_course_course_code_combobox.grid(row=1, column=0, columnspan=5)
+        self.binder_variable = ctk.StringVar()
+        self.select_course_course_code_combobox = ctk.CTkComboBox(self.remover_container, values=self.existing_course_codes, variable=self.binder_variable,
+            justify="center",
+            state="readonly",
+        ) 
+        self.select_course_course_code_combobox.grid(row=1, column=0, columnspan=5, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
         # Add an handler for the combobox. To move on.
-        self.select_course_course_code_combobox.bind("<<ComboboxSelected>>", self.show_course_items)
+        self.binder_variable.trace_add("write", self.show_course_items)
 
         # If there is a selected course code, set it. And initialize the combobox bind.
         if self.selected_course_code is not None :
             self.select_course_course_code_combobox.set(self.selected_course_code)
             self.show_course_items(None)
         
-    def show_course_items(self, event : tk.Event) -> None:
+    def show_course_items(self, *args, **kwargs) -> None:
         """
         Shows the course items.
         @Parameters:
@@ -135,20 +167,50 @@ class CourseRemover(Toplevel) :
         self.select_course_course_code_combobox.grid_configure(columnspan=1)
 
         # Create the widgets.
-        table_course_name_label = ttk.Label(self.remover_container, text=self._get_text("Existing Course Name"))
-        table_course_name_label.grid(row=0, column=1)
+        table_course_name_label = ctk.CTkLabel(self.remover_container, text=self._get_text("Existing Course Name"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 13, "bold"),
+            anchor="center",
+        )
+        table_course_name_label.grid(row=0, column=1, padx=GUI_DC.INNER_PADDING*1.5)
 
-        table_course_lang_label = ttk.Label(self.remover_container, text=self._get_text("Existing Course Language"))
-        table_course_lang_label.grid(row=0, column=2)
+        table_course_lang_label = ctk.CTkLabel(self.remover_container, text=self._get_text("Existing Course Language"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 13, "bold"),
+            anchor="center",
+        )
+        table_course_lang_label.grid(row=0, column=2, padx=GUI_DC.INNER_PADDING*1.5)
 
-        table_course_credit_label = ttk.Label(self.remover_container, text=self._get_text("Existing Course Credit"))
-        table_course_credit_label.grid(row=0, column=3)
+        table_course_credit_label = ctk.CTkLabel(self.remover_container, text=self._get_text("Existing Course Credit"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 13, "bold"),
+            anchor="center",
+        )
+        table_course_credit_label.grid(row=0, column=3, padx=GUI_DC.INNER_PADDING*1.5)
 
-        table_course_grade_label = ttk.Label(self.remover_container, text=self._get_text("Existing Course Grade"))
-        table_course_grade_label.grid(row=0, column=4)
+        table_course_grade_label = ctk.CTkLabel(self.remover_container, text=self._get_text("Existing Course Grade"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 13, "bold"),
+            anchor="center",
+        )
+        table_course_grade_label.grid(row=0, column=4, padx=GUI_DC.INNER_PADDING*1.5)
 
-        table_course_grade_point_label = ttk.Label(self.remover_container, text=self._get_text("Existing Course Grade Point"))
-        table_course_grade_point_label.grid(row=0, column=5)
+        table_course_grade_point_label = ctk.CTkLabel(self.remover_container, text=self._get_text("Existing Course Grade Point"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 13, "bold"),
+            anchor="center",
+        )
+        table_course_grade_point_label.grid(row=0, column=5, padx=GUI_DC.INNER_PADDING*1.5)
 
         # Get the selected course code.
         use_code = self.select_course_course_code_combobox.get()
@@ -156,28 +218,28 @@ class CourseRemover(Toplevel) :
         # Get the course items.
         for course in self.modified_course_list :
             if course["course_code"] == use_code :
-                self.course_name = tk.StringVar(value=course["course_name"])
-                self.course_lang = tk.StringVar(value=course["course_lang"])
-                self.course_credit = tk.StringVar(value=course["course_credit"])
-                self.course_grade = tk.StringVar(value=course["course_grade"])
-                self.course_grade_point = tk.StringVar(value=course["course_grade_point"])
+                self.course_name = ctk.StringVar(value=course["course_name"])
+                self.course_lang = ctk.StringVar(value=course["course_lang"])
+                self.course_credit = ctk.StringVar(value=course["course_credit"])
+                self.course_grade = ctk.StringVar(value=course["course_grade"])
+                self.course_grade_point = ctk.StringVar(value=course["course_grade_point"])
                 break
         
         # Load the course items. & Configure the widgets.
-        self.course_name_entry = ttk.Entry(self.remover_container, textvariable=self.course_name, state="disabled")
-        self.course_name_entry.grid(row=1, column=1)
+        self.course_name_entry = ctk.CTkEntry(self.remover_container, textvariable=self.course_name, state="disabled", fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND)
+        self.course_name_entry.grid(row=1, column=1, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
-        self.course_lang_entry = ttk.Entry(self.remover_container, textvariable=self.course_lang, state="disabled")
-        self.course_lang_entry.grid(row=1, column=2)
+        self.course_lang_entry = ctk.CTkEntry(self.remover_container, textvariable=self.course_lang, state="disabled", fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND)
+        self.course_lang_entry.grid(row=1, column=2, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
-        self.course_credit_entry = ttk.Entry(self.remover_container, textvariable=self.course_credit, state="disabled")
-        self.course_credit_entry.grid(row=1, column=3)
+        self.course_credit_entry = ctk.CTkEntry(self.remover_container, textvariable=self.course_credit, state="disabled", fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND)
+        self.course_credit_entry.grid(row=1, column=3, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
-        self.course_grade_entry = ttk.Entry(self.remover_container, textvariable=self.course_grade, state="disabled")
-        self.course_grade_entry.grid(row=1, column=4)
+        self.course_grade_entry = ctk.CTkEntry(self.remover_container, textvariable=self.course_grade, state="disabled", fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND)
+        self.course_grade_entry.grid(row=1, column=4, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
-        self.course_grade_point_entry = ttk.Entry(self.remover_container, textvariable=self.course_grade_point, state="disabled")
-        self.course_grade_point_entry.grid(row=1, column=5)
+        self.course_grade_point_entry = ctk.CTkEntry(self.remover_container, textvariable=self.course_grade_point, state="disabled", fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND)
+        self.course_grade_point_entry.grid(row=1, column=5, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
     def get_result(self) -> dict:
         """
@@ -186,6 +248,8 @@ class CourseRemover(Toplevel) :
             None
         @Returns:
             result - Required : The result. (dict)
+        @Ultra-Mega-Important-Note:
+            song - Must : The stuff (love) -> Uzunlar yanıyor aramızda, bu ışık ikimize fazla ~ Sevgi şelalesinden bir yudum. ~
         """
         # Return the result.
         return self.result

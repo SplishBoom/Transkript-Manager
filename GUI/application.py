@@ -599,7 +599,7 @@ class ApplicationFrame(ctk.CTkFrame) :
         # If not authenticated, fix the button and cancel operation.
         if not self.is_user_authenticated :
             self.save_db_data_button.configure(text=self._get_text("Auth Eror"), fg_color=GUI_DC.BUTTON_LIGHT_RED)
-            self.after(500, lambda : self.save_db_data_button.configure(text=self._get_text("Save Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
+            self.after(500, lambda : self.save_db_data_button.configure(text=self._get_text("Save Data"), fg_color=GUI_DC.BUTTON_LIGHT_YELLOW, state="normal"))
             return
 
         # Initialize the match data.
@@ -618,7 +618,7 @@ class ApplicationFrame(ctk.CTkFrame) :
         # If no document name selected, fix the button and cancel operation.
         if new_document_name == "" :
             self.save_db_data_button.configure(text=self._get_text("No Input"), fg_color=GUI_DC.BUTTON_LIGHT_RED)
-            self.after(500, lambda : self.save_db_data_button.configure(text=self._get_text("Save Data"), fg_color=GUI_DC.BUTTON_LIGHT_PURPLE, state="normal"))
+            self.after(500, lambda : self.save_db_data_button.configure(text=self._get_text("Save Data"), fg_color=GUI_DC.BUTTON_LIGHT_YELLOW, state="normal"))
             return
         
         # If document name selected, save the data.
@@ -666,11 +666,8 @@ class ApplicationFrame(ctk.CTkFrame) :
         # Disable the button to prevent multiple clicks.
         self.export_button.configure(text=self._get_text("Exporting"), state="disabled")
 
-        # DEBUG MODE NO COMMENT
-        if not self.DEBUG :
-            output_file_folder = ctk.filedialog.asksaveasfilename(initialdir=self.work_dir, initialfile=self.document_name, defaultextension=".pdf", filetypes=[("PDF File", "*.pdf")])
-        else :
-            output_file_folder = ctk.filedialog.asksaveasfilename(initialdir=self.desktop_path, initialfile=self.document_name, defaultextension=".pdf", filetypes=[("PDF File", "*.pdf")])
+        # Get the output file path.
+        output_file_folder = ctk.filedialog.asksaveasfilename(initialdir=self.desktop_path, initialfile=self.document_name, defaultextension=".pdf", filetypes=[("PDF File", "*.pdf")])
 
         is_exported = False
 

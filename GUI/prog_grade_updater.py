@@ -1,4 +1,6 @@
-from    Utilities   import ( # -> Utility functions
+from tkinter.ttk import Treeview, Style # -> GUI
+from Environment import GUI_DC # -> Environment Variables
+from Utilities import ( # -> Utility functions
     calculate_performance, # -> Calculate performance of a course list
     subtract_course, # -> Subtract a course from a course list
     update_course, # -> Update a course in a course list
@@ -6,18 +8,17 @@ from    Utilities   import ( # -> Utility functions
     filter_by, # -> Filter a course list by a key
     sort_by, # -> Sort a course list by a key
 )
-from    GUI         import ( # -> Service frames
+from GUI import ( # -> Service frames
     FilterSelecter, # -> Filter selecter service
     CourseRemover, # -> Course remover service
     CourseUpdater, # -> Course updater service
     CourseAdder, # -> Course adder service
 )
-from    tkinter     import  ttk # -> GUI
-import  tkinter     as      tk # -> GUI
+import customtkinter as ctk # -> GUI
 
-class GradeUpdater(ttk.Frame) :
+class GradeUpdater(ctk.CTkFrame) :
 
-    def __init__(self, application_container : ttk.Frame, parent : ttk.Frame, root : tk.Tk, current_user_data : dict, DEBUG : bool = False, *args, **kwargs) -> None:
+    def __init__(self, application_container : ctk.CTkFrame, parent : ctk.CTkFrame, root : ctk.CTk, current_user_data : dict, DEBUG : bool = False, *args, **kwargs) -> None:
         """
         Constructor method for GradeUpdater class. Used to initialize main window of the program.
         @Parameters:
@@ -55,6 +56,260 @@ class GradeUpdater(ttk.Frame) :
         self.__load_program_buttons()
         self.__load_program_display()
         self.__load_program_output()
+
+    def __load_containers(self) -> None:
+        """
+        Loads main containers into class fields.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
+        # Set the initial configuration, to make expandable affect on window.
+        self.grid_rowconfigure(0, weight=1)
+        self.grid_columnconfigure(0, weight=1)
+
+        # Set main container.
+        self.container = ctk.CTkFrame(self, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND, corner_radius=25)
+        self.container.grid(row=0, column=0, sticky="nsew")
+        # Configure main container.
+        self.container.grid_rowconfigure((0,1,2), weight=1)
+        self.container.grid_columnconfigure(0, weight=1)
+
+        # Set sub containers.
+        self.program_buttons_container = ctk.CTkFrame(self.container, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND, corner_radius=25)
+        self.program_buttons_container.grid(row=0, column=0, sticky="nsew")
+
+        self.program_display_container = ctk.CTkFrame(self.container, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND, corner_radius=25)
+        self.program_display_container.grid(row=1, column=0, sticky="nsew", pady=GUI_DC.GENERAL_PADDING*1.5)
+
+        self.program_output_container  = ctk.CTkFrame(self.container, fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND, corner_radius=25)
+        self.program_output_container.grid(row=2, column=0, sticky="nsew")
+
+
+    def __load_program_buttons(self) -> None:
+        """
+        Loads program buttons to container.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
+        # Configure program buttons container.
+        self.program_buttons_container.grid_rowconfigure((0), weight=1)
+        self.program_buttons_container.grid_columnconfigure((0,1,2,3), weight=1)
+
+        # Create program buttons. & Configure them. & Place them.
+        self.filter_button = ctk.CTkButton(self.program_buttons_container, text=self._get_text("Filter Courses"), command=self.__filter,
+            fg_color = GUI_DC.BUTTON_LIGHT_PINK,
+            hover_color = GUI_DC.BUTTON_LIGHT_PINK_HOVER,
+        )
+        self.filter_button.grid(row=0, column=0)
+
+        self.update_course_button = ctk.CTkButton(self.program_buttons_container, text=self._get_text("Update Course"), command=self.__update_course,
+            fg_color = GUI_DC.BUTTON_LIGHT_BLUE,
+            hover_color = GUI_DC.BUTTON_LIGHT_BLUE_HOVER,
+        )
+        self.update_course_button.grid(row=0, column=1)
+
+        self.add_course_button = ctk.CTkButton(self.program_buttons_container, text=self._get_text("Add Course"), command=self.__add_course,
+            fg_color = GUI_DC.BUTTON_LIGHT_ORANGE,
+            hover_color = GUI_DC.BUTTON_LIGHT_ORANGE_HOVER,
+        )
+        self.add_course_button.grid(row=0, column=2)
+
+        self.remove_course_button = ctk.CTkButton(self.program_buttons_container, text=self._get_text("Remove Course"), command=self.__remove_course,
+            fg_color = GUI_DC.BUTTON_LIGHT_PURPLE,
+            hover_color = GUI_DC.BUTTON_LIGHT_PURPLE_HOVER,
+        )
+        self.remove_course_button.grid(row=0, column=3)
+
+        for current_button in self.program_buttons_container.winfo_children() :
+            current_button.configure(
+                bg_color=GUI_DC.DARK_BACKGROUND,
+                corner_radius=25,
+                text_color=GUI_DC.LIGHT_TEXT_COLOR,
+                text_color_disabled=GUI_DC.MEDIUM_TEXT_COLOR,
+                font=("Arial", 12, "bold"),
+                height=0,
+            )
+            current_button.grid_configure(padx=GUI_DC.GENERAL_PADDING, sticky="nsew")
+
+    def __load_program_display(self) -> None:
+        """
+        Loads program display to container.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
+        # Configure program display container.
+        #self.program_display_container.grid_columnconfigure((0,1), weight=1)
+        #self.program_display_container.grid_rowconfigure((0), weight=1)
+
+        # Set a scrollbar for treeview.
+        self.treeview_scrollbar1 = ctk.CTkScrollbar(self.program_display_container, orientation="vertical", 
+            bg_color=GUI_DC.DARK_BACKGROUND, 
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            button_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
+            button_hover_color=GUI_DC.MEDIUM_TEXT_COLOR,
+        )
+        #self.treeview_scrollbar.grid(row=0, column=1, sticky="nse", padx=10, pady=10)
+        self.treeview_scrollbar1.pack(side="right", fill="y", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.GENERAL_PADDING)
+
+        # Set a style for tkinter treeview.
+        self.treeview_scrollbar2 = ctk.CTkScrollbar(self.program_display_container, orientation="vertical",
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            button_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
+            button_hover_color=GUI_DC.MEDIUM_TEXT_COLOR,
+        )
+        self.treeview_scrollbar2.pack(side="left", fill="y", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.GENERAL_PADDING)
+
+        # Set up a specific theme for the table. Currenty CTK Doesn't have Treeview widget.
+        self.style_for_treeview = Style()
+        self.style_for_treeview.theme_use("default")
+        self.style_for_treeview.configure("Treeview", 
+            background=GUI_DC.SECONDARY_DARK_BACKGROUND,
+            fieldbackground=GUI_DC.SECONDARY_DARK_BACKGROUND, # When there are less rows than the height of the treeview, this color will be used to fill the rest of the space.
+            foreground=GUI_DC.LIGHT_TEXT_COLOR,
+            rowheight = 43,
+            font=("Arial", 14, "italic"),
+            borderwidth=2,
+            bordercolor="red",
+        )
+        self.style_for_treeview.map("Treeview",
+            background=[("selected", GUI_DC.DARK_BACKGROUND)],
+            foreground=[("selected", GUI_DC.LIGHT_TEXT_COLOR)],
+        )
+        self.style_for_treeview.configure("Treeview.Heading", 
+            background=GUI_DC.DARK_BACKGROUND,
+            fieldbackground=GUI_DC.DARK_BACKGROUND, # When there are less rows than the height of the treeview, this color will be used to fill the rest of the space.
+            foreground=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 16, "bold"),
+        )
+        self.style_for_treeview.map("Treeview.Heading",
+            background=[("active", GUI_DC.SECONDARY_DARK_BACKGROUND), ("!disabled", GUI_DC.DARK_BACKGROUND), ("pressed", "red")],
+        )
+
+        # Openup main treeview table.
+        self.display_treeview = Treeview(self.program_display_container, show="headings", selectmode="browse", yscrollcommand=self.treeview_scrollbar1.set, cursor="hand2")
+        #self.display_treeview.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+        self.display_treeview.pack(side="left", fill="both", expand=True, pady=GUI_DC.GENERAL_PADDING)
+        # Configure scrollbar.
+        self.treeview_scrollbar1.configure(command=self.display_treeview.yview)
+        self.treeview_scrollbar2.configure(command=self.display_treeview.yview)
+
+        # Set columns
+        self.display_treeview["columns"] = ("_code", "_name", "_language", "_credit", "_grade", "_grade_point")
+
+        # This map is used to store the sorting history of the columns. EXMP: Double click on a sort button will reverse the sorting order.
+        self.sorting_reverse_history = {
+            "course_code" : False,
+            "course_name" : False,
+            "course_lang" : False,
+            "course_credit" : False,
+            "course_grade" : False,
+            "course_grade_point" : False
+        }
+        # Configure headings.
+        self.display_treeview.heading("_code", text=self._get_text("Course Code"), command=lambda : self.__sort("course_code"))
+        self.display_treeview.heading("_name", text=self._get_text("Course Name"), command=lambda : self.__sort("course_name"))
+        self.display_treeview.heading("_language", text=self._get_text("Course Language"), command=lambda : self.__sort("course_lang"))
+        self.display_treeview.heading("_credit", text=self._get_text("Course Credit"), command=lambda : self.__sort("course_credit"))
+        self.display_treeview.heading("_grade", text=self._get_text("Course Grade"), command=lambda : self.__sort("course_grade"))
+        self.display_treeview.heading("_grade_point", text=self._get_text("Course Grade Point"), command=lambda : self.__sort("course_grade_point"))
+
+        # Configure columns.
+        self.display_treeview.column("_code", anchor="center")
+        self.display_treeview.column("_name", anchor="center", width=400)
+        self.display_treeview.column("_language", anchor="center")
+        self.display_treeview.column("_credit", anchor="center")
+        self.display_treeview.column("_grade", anchor="center")
+        self.display_treeview.column("_grade_point", anchor="center")
+
+        # Init Load call -> clean & insert data into treeview.
+        self.__update_program_display()
+        
+    def __load_program_output(self) -> None:
+        """
+        Loads program output to container.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
+        # Configure program output container.
+        self.program_output_container.grid_rowconfigure((0,1), weight=1)
+        self.program_output_container.grid_columnconfigure((0, 1, 2, 3), weight=1)
+        
+        # Set feature variables.
+        self.modes = ["BOTH", "MODIFIED"]
+        self.output_mode = "BOTH"
+
+        # Set class variables.
+        self.credits_attempted_output_text = ctk.StringVar()
+        self.credits_successful_output_text = ctk.StringVar()
+        self.credits_included_in_gpa_output_text = ctk.StringVar()
+        self.gpa_output_text = ctk.StringVar()
+        
+        # One init call -> it gets the data from the course list and updates the output labels.
+        self.__update_output_label()
+        
+        # Create output labels. & Set them to the container. & Place them.
+        self.credits_attempted_info_label = ctk.CTkLabel(self.program_output_container, text=self._get_text("Credits Attempted"),
+            text_color=GUI_DC.BUTTON_LIGHT_YELLOW,
+        )
+        self.credits_attempted_info_label.grid(row=0, column=0, sticky="nsew")
+        self.credits_attempted_output_label = ctk.CTkLabel(self.program_output_container, textvariable=self.credits_attempted_output_text,
+            text_color=GUI_DC.BUTTON_LIGHT_YELLOW_HOVER,
+        )
+        self.credits_attempted_output_label.grid(row=1, column=0, sticky="nsew")
+
+        self.credits_successful_info_label = ctk.CTkLabel(self.program_output_container, text=self._get_text("Credits Successful"),
+            text_color=GUI_DC.BUTTON_LIGHT_YELLOW,
+        )
+        self.credits_successful_info_label.grid(row=0, column=1, sticky="nsew")
+        self.credits_successful_output_label = ctk.CTkLabel(self.program_output_container, textvariable=self.credits_successful_output_text,
+            text_color=GUI_DC.BUTTON_LIGHT_YELLOW_HOVER,
+        )
+        self.credits_successful_output_label.grid(row=1, column=1, sticky="nsew")
+
+        self.credits_included_in_gpa_info_label = ctk.CTkLabel(self.program_output_container, text=self._get_text("Credits Included in GPA"),
+            text_color=GUI_DC.BUTTON_LIGHT_YELLOW,
+        )
+        self.credits_included_in_gpa_info_label.grid(row=0, column=2, sticky="nsew")
+        self.credits_included_in_gpa_output_label = ctk.CTkLabel(self.program_output_container, textvariable=self.credits_included_in_gpa_output_text,
+            text_color=GUI_DC.BUTTON_LIGHT_YELLOW_HOVER,
+        )
+        self.credits_included_in_gpa_output_label.grid(row=1, column=2, sticky="nsew")
+
+        self.gpa_info_label = ctk.CTkLabel(self.program_output_container, text=self._get_text("GPA"),
+            text_color=GUI_DC.BUTTON_LIGHT_YELLOW,
+        )
+        self.gpa_info_label.grid(row=0, column=3, sticky="nsew")
+        self.gpa_output_label = ctk.CTkLabel(self.program_output_container, textvariable=self.gpa_output_text,
+            text_color=GUI_DC.BUTTON_LIGHT_YELLOW_HOVER,
+        )
+        self.gpa_output_label.grid(row=1, column=3, sticky="nsew")
+
+        # Bind events. For each button in the container, bind the event to the switch output mode function. To make easier to click.
+        for widget in self.program_output_container.winfo_children() :
+            widget.bind("<Button-1>", self.__switch_output_mode)
+            widget.configure(
+                font=("Arial", 12, "bold"),
+                anchor="center",
+                corner_radius=0,
+                height=0,
+            )
+            widget.grid_configure(padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
+
+        # Bind the whole container to the switch output mode function. To make easier to click.
+        self.program_output_container.bind("<Button-1>", self.__switch_output_mode)
+
+        # An post_init call self.__update_output_label() to colorize labels.
+        self.__update_output_label()
+
 
     def __update_user_data(self) -> None:
         """
@@ -103,17 +358,17 @@ class GradeUpdater(ttk.Frame) :
         # If on init, load te original performance data too.
         if is_init :
             original_performance = calculate_performance(self.original_course_list)
-            self.original_credits_attempted = tk.IntVar(value=original_performance["credits_attempted"])
-            self.original_credits_successful = tk.IntVar(value=original_performance["credits_successful"])
-            self.original_credits_included_in_gpa = tk.IntVar(value=original_performance["credits_included_in_gpa"])
-            self.original_gpa = tk.DoubleVar(value=original_performance["gpa"])
+            self.original_credits_attempted = ctk.IntVar(value=original_performance["credits_attempted"])
+            self.original_credits_successful = ctk.IntVar(value=original_performance["credits_successful"])
+            self.original_credits_included_in_gpa = ctk.IntVar(value=original_performance["credits_included_in_gpa"])
+            self.original_gpa = ctk.DoubleVar(value=original_performance["gpa"])
         
         # Load modified performance data.
         modified_performance = calculate_performance(self.modified_course_list)
-        self.modified_credits_attempted = tk.IntVar(value=modified_performance["credits_attempted"])
-        self.modified_credits_successful = tk.IntVar(value=modified_performance["credits_successful"])
-        self.modified_credits_included_in_gpa = tk.IntVar(value=modified_performance["credits_included_in_gpa"])
-        self.modified_gpa = tk.DoubleVar(value=modified_performance["gpa"])
+        self.modified_credits_attempted = ctk.IntVar(value=modified_performance["credits_attempted"])
+        self.modified_credits_successful = ctk.IntVar(value=modified_performance["credits_successful"])
+        self.modified_credits_included_in_gpa = ctk.IntVar(value=modified_performance["credits_included_in_gpa"])
+        self.modified_gpa = ctk.DoubleVar(value=modified_performance["gpa"])
 
     def __create_user_data(self) -> dict:
         """
@@ -154,127 +409,6 @@ class GradeUpdater(ttk.Frame) :
         # Direct wrapper to parent's _get_text method.
         return self.parent._get_text(text, self.parsing_language)
 
-    def __load_containers(self) -> None:
-        """
-        Loads main containers into class fields.
-        @Parameters:
-            None
-        @Returns:
-            None
-        """
-        # Set main container.
-        self.container = ttk.Frame(self)
-        self.container.grid(row=0, column=0)
-        # Configure main container.
-        self.container.grid_rowconfigure((0,1,2), weight=1)
-        self.container.grid_columnconfigure(0, weight=1)
-
-        # Set sub containers.
-        self.program_buttons_container = ttk.Frame(self.container)
-        self.program_buttons_container.grid(row=0, column=0)
-
-        self.program_display_container = ttk.Frame(self.container)
-        self.program_display_container.grid(row=1, column=0)
-
-        self.program_output_container = ttk.Frame(self.container)
-        self.program_output_container.grid(row=2, column=0)
-
-    def __load_program_buttons(self) -> None:
-        """
-        Loads program buttons to container.
-        @Parameters:
-            None
-        @Returns:
-            None
-        """
-        # Configure program buttons container.
-        self.program_buttons_container.grid_rowconfigure((0,1), weight=1)
-        self.program_buttons_container.grid_columnconfigure((0,1,2,3,4,5,6,7,8,9,10,11), weight=1)
-
-        # Create program buttons. & Configure them. & Place them.
-        self.filter_button = ttk.Button(self.program_buttons_container, text=self._get_text("Filter Courses"), command=self.__filter)
-        self.filter_button.grid(row=0, column=0, columnspan=3)
-
-        self.update_course_button = ttk.Button(self.program_buttons_container, text=self._get_text("Update Course"), command=self.__update_course)
-        self.update_course_button.grid(row=0, column=3, columnspan=3)
-
-        self.add_course_button = ttk.Button(self.program_buttons_container, text=self._get_text("Add Course"), command=self.__add_course)
-        self.add_course_button.grid(row=0, column=6, columnspan=3)
-
-        self.remove_course_button = ttk.Button(self.program_buttons_container, text=self._get_text("Remove Course"), command=self.__remove_course)
-        self.remove_course_button.grid(row=0, column=9, columnspan=3)
-
-        self.sort_by_code_button = ttk.Button(self.program_buttons_container, text=self._get_text("Sort by Code"), command=lambda : self.__sort("course_code"))
-        self.sort_by_code_button.grid(row=1, column=0, columnspan=2)
-
-        self.sort_by_name_button = ttk.Button(self.program_buttons_container, text=self._get_text("Sort by Name"), command=lambda : self.__sort("course_name"))
-        self.sort_by_name_button.grid(row=1, column=2, columnspan=2)
-
-        self.sort_by_language_button = ttk.Button(self.program_buttons_container, text=self._get_text("Sort by Language"), command=lambda : self.__sort("course_lang"))
-        self.sort_by_language_button.grid(row=1, column=4, columnspan=2)
-
-        self.sort_by_credit_button = ttk.Button(self.program_buttons_container, text=self._get_text("Sort by Credit"), command=lambda : self.__sort("course_credit"))
-        self.sort_by_credit_button.grid(row=1, column=6, columnspan=2)
-
-        self.sort_by_grade_button = ttk.Button(self.program_buttons_container, text=self._get_text("Sort by Grade"), command=lambda : self.__sort("course_grade"))
-        self.sort_by_grade_button.grid(row=1, column=8, columnspan=2)
-
-        self.sort_by_grade_point_button = ttk.Button(self.program_buttons_container, text=self._get_text("Sort by Grade Point"), command=lambda : self.__sort("course_grade_point"))
-        self.sort_by_grade_point_button.grid(row=1, column=10, columnspan=2)
-
-        # This map is used to store the sorting history of the columns. EXMP: Double click on a sort button will reverse the sorting order.
-        self.sorting_reverse_history = {
-            "course_code" : False,
-            "course_name" : False,
-            "course_lang" : False,
-            "course_credit" : False,
-            "course_grade" : False,
-            "course_grade_point" : False
-        }
-
-    def __load_program_display(self) -> None:
-        """
-        Loads program display to container.
-        @Parameters:
-            None
-        @Returns:
-            None
-        """
-        # Configure program display container.
-        self.program_display_container.grid_columnconfigure((0,1), weight=1)
-        self.program_display_container.grid_rowconfigure((0), weight=1)
-
-        # Set a scrollbar for treeview.
-        self.treeview_scrollbar = ttk.Scrollbar(self.program_display_container, orient="vertical")
-        self.treeview_scrollbar.grid(row=0, column=1, sticky="ns")
-
-        # Openup main treeview table.
-        self.display_treeview = ttk.Treeview(self.program_display_container, height=15, show="headings", selectmode="browse", yscrollcommand=self.treeview_scrollbar.set)
-        self.display_treeview.grid(row=0, column=0)
-        # Configure scrollbar.
-        self.treeview_scrollbar.config(command=self.display_treeview.yview)
-
-        # Set columns
-        self.display_treeview["columns"] = ("_code", "_name", "_canguage", "_credit", "_crade", "_crade_point")
-
-        # Configure headings.
-        self.display_treeview.heading("_code", text=self._get_text("Course Code"))
-        self.display_treeview.heading("_name", text=self._get_text("Course Name"))
-        self.display_treeview.heading("_canguage", text=self._get_text("Course Language"))
-        self.display_treeview.heading("_credit", text=self._get_text("Course Credit"))
-        self.display_treeview.heading("_crade", text=self._get_text("Course Grade"))
-        self.display_treeview.heading("_crade_point", text=self._get_text("Course Grade Point"))
-
-        # Configure columns.
-        self.display_treeview.column("_code", anchor="center", width=120)
-        self.display_treeview.column("_name", anchor="center", width=120)
-        self.display_treeview.column("_canguage", anchor="center", width=120)
-        self.display_treeview.column("_credit", anchor="center", width=120)
-        self.display_treeview.column("_crade", anchor="center", width=120)
-        self.display_treeview.column("_crade_point", anchor="center", width=120)
-
-        # Init Load call -> clean & insert data into treeview.
-        self.__update_program_display()
 
     def __update_program_display(self) -> None:
         """
@@ -287,63 +421,28 @@ class GradeUpdater(ttk.Frame) :
         # Clear all data
         self.display_treeview.delete(*self.display_treeview.get_children())
 
+        # Get updated course codes to tick updated courses.
+        updated_course_codes = [course["course_code"] for course in self.updated_course_list]
+
+        # Get added course codes to tick added courses.
+        added_course_codes = [course["course_code"] for course in self.added_course_list]
+
         # Add current data
         for course in self.modified_course_list :
-            self.display_treeview.insert("", "end", values=(course["course_code"], course["course_name"], course["course_lang"], course["course_credit"], course["course_grade"], course["course_grade_point"]))
+            if course["course_code"] in updated_course_codes :
+                self.display_treeview.insert("", "end", values=(course["course_code"], course["course_name"], course["course_lang"], course["course_credit"], course["course_grade"], course["course_grade_point"]), tags=("updated",))
+            elif course["course_code"] in added_course_codes :
+                self.display_treeview.insert("", "end", values=(course["course_code"], course["course_name"], course["course_lang"], course["course_credit"], course["course_grade"], course["course_grade_point"]), tags=("added",))
+            else :
+                self.display_treeview.insert("", "end", values=(course["course_code"], course["course_name"], course["course_lang"], course["course_credit"], course["course_grade"], course["course_grade_point"]))
+        
+        # Make updated courses highlighted.
+        self.display_treeview.tag_configure("updated", background=GUI_DC.BUTTON_LIGHT_BLUE_HOVER, foreground=GUI_DC.DARK_TEXT_COLOR)
+
+        # Make added courses highlighted.
+        self.display_treeview.tag_configure("added", background=GUI_DC.BUTTON_LIGHT_ORANGE_HOVER, foreground=GUI_DC.DARK_TEXT_COLOR)
     
-    def __load_program_output(self) -> None:
-        """
-        Loads program output to container.
-        @Parameters:
-            None
-        @Returns:
-            None
-        """
-        # Configure program output container.
-        self.program_output_container.grid_rowconfigure((0,1), weight=1)
-        self.program_output_container.grid_columnconfigure((0, 1, 2, 3), weight=1)
-        
-        # Set feature variables.
-        self.modes = ["BOTH", "MODIFIED"]
-        self.output_mode = "BOTH"
-
-        # Set class variables.
-        self.credits_attempted_output_text = tk.StringVar()
-        self.credits_successful_output_text = tk.StringVar()
-        self.credits_included_in_gpa_output_text = tk.StringVar()
-        self.gpa_output_text = tk.StringVar()
-        
-        # One init call -> it gets the data from the course list and updates the output labels.
-        self.__update_output_label()
-        
-        # Create output labels. & Set them to the container. & Place them.
-        self.credits_attempted_info_label = ttk.Label(self.program_output_container, text=self._get_text("Credits Attempted"))
-        self.credits_attempted_info_label.grid(row=0, column=0)
-        self.credits_attempted_output_label = ttk.Label(self.program_output_container, textvariable=self.credits_attempted_output_text)
-        self.credits_attempted_output_label.grid(row=1, column=0)
-
-        self.credits_successful_info_label = ttk.Label(self.program_output_container, text=self._get_text("Credits Successful"))
-        self.credits_successful_info_label.grid(row=0, column=1)
-        self.credits_successful_output_label = ttk.Label(self.program_output_container, textvariable=self.credits_successful_output_text)
-        self.credits_successful_output_label.grid(row=1, column=1)
-
-        self.credits_included_in_gpa_info_label = ttk.Label(self.program_output_container, text=self._get_text("Credits Included in GPA"))
-        self.credits_included_in_gpa_info_label.grid(row=0, column=2)
-        self.credits_included_in_gpa_output_label = ttk.Label(self.program_output_container, textvariable=self.credits_included_in_gpa_output_text)
-        self.credits_included_in_gpa_output_label.grid(row=1, column=2)
-
-        self.gpa_info_label = ttk.Label(self.program_output_container, text=self._get_text("GPA"))
-        self.gpa_info_label.grid(row=0, column=3)
-        self.gpa_output_label = ttk.Label(self.program_output_container, textvariable=self.gpa_output_text)
-        self.gpa_output_label.grid(row=1, column=3)
-
-        # Bind events. For each button in the container, bind the event to the switch output mode function. To make easier to click.
-        for widget in self.program_output_container.winfo_children() :
-            widget.bind("<Button-1>", self.__switch_output_mode)
-        # Bind the whole container to the switch output mode function. To make easier to click.
-        self.program_output_container.bind("<Button-1>", self.__switch_output_mode)
-
-    def __switch_output_mode(self, event : tk.Event) -> None:
+    def __switch_output_mode(self, *args, **kwargs) -> None:
         """
         Switches output mode. If the output mode is BOTH, it switches to MODIFIED. If the output mode is MODIFIED, it switches to BOTH.
         @Parameters:
@@ -367,7 +466,7 @@ class GradeUpdater(ttk.Frame) :
         @Returns:
             None
         """
-        def ____reconfigure_output_text(modified : tk.StringVar, original : tk.StringVar = None) -> str:
+        def ____reconfigure_output_text(modified : ctk.StringVar, original : ctk.StringVar = None) -> str:
             """
             Reconfigures output text. It gets the data from the course list and updates the output labels. If only 1 parameter passes, than it doesn texarize the output text. It onyl returns the value.
             # Parameters:
@@ -397,6 +496,41 @@ class GradeUpdater(ttk.Frame) :
             self.credits_included_in_gpa_output_text.set(____reconfigure_output_text(self.modified_credits_included_in_gpa))
             self.gpa_output_text.set(____reconfigure_output_text(self.modified_gpa))
 
+        label_color_map = {
+            "increase" : GUI_DC.BUTTON_LIGHT_GREEN_HOVER,
+            "decrease" : GUI_DC.BUTTON_LIGHT_RED_HOVER,
+            "neutral" : GUI_DC.BUTTON_LIGHT_YELLOW_HOVER
+        }
+        get_stat = lambda modified_value_str_var, original_value_str_var : "increase" if float(modified_value_str_var.get()) > float(original_value_str_var.get()) else "decrease" if float(modified_value_str_var.get()) < float(original_value_str_var.get()) else "neutral"
+
+        # Update output label colors.
+        try :
+            self.credits_attempted_output_label.configure(text_color=label_color_map[get_stat(self.modified_credits_attempted, self.original_credits_attempted)])
+            self.credits_successful_output_label.configure(text_color=label_color_map[get_stat(self.modified_credits_successful, self.original_credits_successful)])
+            self.credits_included_in_gpa_output_label.configure(text_color=label_color_map[get_stat(self.modified_credits_included_in_gpa, self.original_credits_included_in_gpa)])
+            self.gpa_output_label.configure(text_color=label_color_map[get_stat(self.modified_gpa, self.original_gpa)])
+        except AttributeError :
+            # This means, it is not initialized yet. So, it is not updated.
+            pass
+
+    def ___update_program(self) -> None:
+        """
+        Updates Program by;
+            Shared Variables
+            Output Info 
+            Program Display
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
+        # Call update functions -> To take new operations to affect.
+        self.__update_user_data()
+        self.__load_output_info()
+        self.__update_output_label()
+        self.__update_program_display()
+
+
     def __filter(self) -> None:
         """
         Filters course list. It filters the course list by the selected filterings.
@@ -406,7 +540,7 @@ class GradeUpdater(ttk.Frame) :
             None
         """    
         # Disable filter button to prevent multiple filtering button handle.
-        self.filter_button.config(text=self._get_text("Filtering"), state="disabled")
+        self.filter_button.configure(text=self._get_text("Filtering"), state="disabled")
 
         # Set feature variables.
         available_filterings = {"course_lang" : [], "course_credit" : [], "course_grade" : [], "course_grade_point" : []}
@@ -470,7 +604,7 @@ class GradeUpdater(ttk.Frame) :
             self.modified_course_list = filter_by(self.modified_course_list, current_filter)
 
         # Fix the button, so user can filter again.
-        self.filter_button.config(text=self._get_text("Filter Courses"), state="normal")
+        self.filter_button.configure(text=self._get_text("Filter Courses"), state="normal")
 
         # Call update functions -> To take new operations to affect.
         self.___update_program()
@@ -490,7 +624,7 @@ class GradeUpdater(ttk.Frame) :
             selected_course_code = None
 
         # Disable update button to prevent multiple update button handle.
-        self.update_course_button.config(text=self._get_text("Updating"), state="disabled")
+        self.update_course_button.configure(text=self._get_text("Updating"), state="disabled")
 
         # Get course codes
         available_course_codes = []
@@ -501,12 +635,14 @@ class GradeUpdater(ttk.Frame) :
         obj = CourseUpdater(self, self.modified_course_list, available_course_codes, self.parsing_language, self.possibleNotations, self.weights, self.possibleCredits, selected_course_code)
         result = obj.get_result()
         if result is not None :
-            # Only if course selected, than do operation.
-            self.updated_course_list.append(result)
-            self.modified_course_list = update_course(self.modified_course_list, result)
+            # Check if user really changed something.
+            if result not in self.modified_course_list :
+                # Only if course selected, than do operation.
+                self.updated_course_list.append(result)
+                self.modified_course_list = update_course(self.modified_course_list, result)
 
         # Fix the button, so user can update again.
-        self.update_course_button.config(text=self._get_text("Update Course"), state="normal")
+        self.update_course_button.configure(text=self._get_text("Update Course"), state="normal")
 
         # Call update functions -> To take new operations to affect.
         self.___update_program()
@@ -520,7 +656,7 @@ class GradeUpdater(ttk.Frame) :
             None
         """
         # Disable add button to prevent multiple add button handle.
-        self.add_course_button.config(text=self._get_text("Adding"), state="disabled")
+        self.add_course_button.configure(text=self._get_text("Adding"), state="disabled")
 
         # Get course codes
         existing_course_codes = [course["course_code"] for course in self.modified_course_list]
@@ -534,7 +670,7 @@ class GradeUpdater(ttk.Frame) :
             self.modified_course_list = add_course(self.modified_course_list, result)
 
         # Fix the button, so user can add again.
-        self.add_course_button.config(text=self._get_text("Add Course"), state="normal")
+        self.add_course_button.configure(text=self._get_text("Add Course"), state="normal")
         
         # Call update functions -> To take new operations to affect.
         self.___update_program()
@@ -554,7 +690,7 @@ class GradeUpdater(ttk.Frame) :
             selected_course_code = None
 
         # Disable remove button to prevent multiple remove button handle.
-        self.remove_course_button.config(text=self._get_text("Removing"), state="disabled")
+        self.remove_course_button.configure(text=self._get_text("Removing"), state="disabled")
 
         # Get course codes
         existing_course_codes = [course["course_code"] for course in self.modified_course_list]
@@ -570,7 +706,7 @@ class GradeUpdater(ttk.Frame) :
             self.modified_course_list = subtract_course(self.modified_course_list, result["course_code"])
 
         # Fix the button, so user can remove again.
-        self.remove_course_button.config(text=self._get_text("Remove Course"), state="normal")
+        self.remove_course_button.configure(text=self._get_text("Remove Course"), state="normal")
 
         # Call update functions -> To take new operations to affect.
         self.___update_program()
@@ -599,20 +735,3 @@ class GradeUpdater(ttk.Frame) :
 
         # Call update functions -> To take new operations to affect.
         self.___update_program()
-
-    def ___update_program(self) -> None:
-        """
-        Updates Program by;
-            Shared Variables
-            Output Info 
-            Program Display
-        @Parameters:
-            None
-        @Returns:
-            None
-        """
-        # Call update functions -> To take new operations to affect.
-        self.__update_user_data()
-        self.__load_output_info()
-        self.__update_output_label()
-        self.__update_program_display()

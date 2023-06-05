@@ -1,12 +1,10 @@
-from    Environment import  ASSETS_DC, to_turkish # -> Environment variables
-from    tkinter     import  messagebox # -> Interract with user
-from    tkinter     import  Toplevel # -> Create new window
-from    tkinter     import  ttk # -> GUI
-import  tkinter     as      tk # -> GUI
+from    Environment     import  ASSETS_DC, GUI_DC, to_turkish # -> Environment variables
+from    tkinter         import  messagebox # -> Interract with user
+import  customtkinter   as      ctk # -> GUI
 
-class CourseUpdater(Toplevel) :
+class CourseUpdater(ctk.CTkToplevel) :
 
-    def __init__(self, master : ttk.Frame, modified_course_list : list, available_course_codes : list, parsing_language : str, possibleNotations : list, weights : dict, possibleCredits : list, selected_course_code : str) -> None:
+    def __init__(self, master : ctk.CTkFrame, modified_course_list : list, available_course_codes : list, parsing_language : str, possibleNotations : list, weights : dict, possibleCredits : list, selected_course_code : str) -> None:
         """
         Constructor method for CourseUpdater class. This class is used to update course information.
         @Parameters:
@@ -23,6 +21,8 @@ class CourseUpdater(Toplevel) :
         """
         # Initialize Toplevel class
         super().__init__(master)
+        self.grid_rowconfigure((0), weight=1)
+        self.grid_columnconfigure((0), weight=1)
 
         # Set program language
         self.parsing_language = parsing_language
@@ -41,8 +41,8 @@ class CourseUpdater(Toplevel) :
         self.result = None
 
         # Create the main container
-        self.container = ttk.Frame(self)
-        self.container.grid(row=0, column=0)
+        self.container = ctk.CTkFrame(self, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.container.grid(row=0, column=0, sticky="nsew")
         # Configure the main container
         self.container.grid_rowconfigure((0), weight=1)
         self.container.grid_columnconfigure((0), weight=1)
@@ -81,25 +81,47 @@ class CourseUpdater(Toplevel) :
             None
         """
         # Set the widget container.
-        self.widgets_conainer = ttk.Frame(self.container)
-        self.widgets_conainer.grid(row=0, column=0)
+        self.widgets_container = ctk.CTkFrame(self.container, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.widgets_container.grid(row=0, column=0, sticky="nsew")
         # Configure the widget container.
-        self.widgets_conainer.grid_rowconfigure((0, 1, 2), weight=1)
-        self.widgets_conainer.grid_columnconfigure((0, 1), weight=1)
+        self.widgets_container.grid_rowconfigure((0, 1, 2), weight=1)
+        self.widgets_container.grid_columnconfigure((0, 1), weight=1)
 
         # Create the widgets.
-        self.info_label = ttk.Label(self.widgets_conainer, text=self._get_text("Select and Update Course"))
+        self.info_label = ctk.CTkLabel(self.widgets_container, text=self._get_text("Select and Update Course"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 15, "bold"),
+            anchor="center",
+        )
         self.info_label.grid(row=0, column=0, columnspan=2)
 
-        self.updater_container = ttk.Frame(self.widgets_conainer)
-        self.updater_container.grid(row=1, column=0, columnspan=2)
+        self.updater_container = ctk.CTkFrame(self.widgets_container, fg_color=GUI_DC.DARK_BACKGROUND, bg_color=GUI_DC.DARK_BACKGROUND)
+        self.updater_container.grid(row=1, column=0, columnspan=2, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
         self._init_updates()
 
-        self.save_button = ttk.Button(self.widgets_conainer, text=self._get_text("Apply"), command=self.__save)
-        self.save_button.grid(row=2, column=0)
+        self.save_button = ctk.CTkButton(self.widgets_container, text=self._get_text("Apply"), command=self.__save,
+            fg_color=GUI_DC.LIGHT_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            hover_color=GUI_DC.SECONDARY_LIGHT_BACKGROUND,
+            text_color=GUI_DC.DARK_TEXT_COLOR,
+            text_color_disabled=GUI_DC.MEDIUM_TEXT_COLOR,
+            anchor="center",
+            font=("Arial", 12, "bold")
+        )
+        self.save_button.grid(row=2, column=0, pady=GUI_DC.INNER_PADDING, padx=GUI_DC.INNER_PADDING)
 
-        self.cancel_button = ttk.Button(self.widgets_conainer, text=self._get_text("Cancel"), command=self.__clean_exit)
-        self.cancel_button.grid(row=2, column=1)
+        self.cancel_button = ctk.CTkButton(self.widgets_container, text=self._get_text("Cancel"), command=self.__clean_exit,
+            fg_color=GUI_DC.LIGHT_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            hover_color=GUI_DC.SECONDARY_LIGHT_BACKGROUND,
+            text_color=GUI_DC.DARK_TEXT_COLOR,
+            text_color_disabled=GUI_DC.MEDIUM_TEXT_COLOR,
+            anchor="center",
+            font=("Arial", 12, "bold")
+        )
+        self.cancel_button.grid(row=2, column=1, pady=GUI_DC.INNER_PADDING, padx=GUI_DC.INNER_PADDING)
 
     def _init_updates(self) -> None:
         """
@@ -114,21 +136,31 @@ class CourseUpdater(Toplevel) :
         self.updater_container.grid_columnconfigure((0, 1, 2, 3, 4, 5), weight=1)
 
         # Create the widgets.
-        self.course_code_label = ttk.Label(self.updater_container, text=self._get_text("Course Code"))
-        self.course_code_label.grid(row=0, column=0, columnspan=5)
+        self.course_code_label = ctk.CTkLabel(self.updater_container, text=self._get_text("Course Code"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 13, "bold"),
+            anchor="center",
+        )
+        self.course_code_label.grid(row=0, column=0, columnspan=5, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
-        self.course_code_combobox = ttk.Combobox(self.updater_container, values=self.available_course_codes, state="readonly")
-        self.course_code_combobox.grid(row=1, column=0, columnspan=5)
+        self.binder_variable = ctk.StringVar()
+        self.course_code_combobox = ctk.CTkComboBox(self.updater_container, values=self.available_course_codes, variable=self.binder_variable,
+            justify="center",
+            state="readonly",
+        )
+        self.course_code_combobox.grid(row=1, column=0, columnspan=5, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
         # Add an handler for the combobox. To move on.
-        self.course_code_combobox.bind("<<ComboboxSelected>>", self.get_new_course_values)
+        self.binder_variable.trace_add("write", self.get_new_course_values)
 
         # If there is a selected course code, set it. And initialize the combobox bind.
-        if self.selected_course_code != None :
+        if self.selected_course_code is not None :
             self.course_code_combobox.set(self.selected_course_code)
             self.get_new_course_values(None)
             
-    def get_new_course_values(self, event : tk.Event) -> None:
+    def get_new_course_values(self, *args, **kwargs) -> None:
         """
         Gets the new course values.
         @Parameters:
@@ -148,40 +180,76 @@ class CourseUpdater(Toplevel) :
                 break
             
         # Set the new course values.
-        self.new_course_name = tk.StringVar(value=self.selected_course["course_name"])
-        self.new_course_lang = tk.StringVar(value=self.selected_course["course_lang"])
-        self.new_course_credit = tk.StringVar(value=self.selected_course["course_credit"])
-        self.new_course_grade = tk.StringVar(value=self.selected_course["course_grade"])
-        self.new_course_grade_point = tk.StringVar(value=self.selected_course["course_grade_point"])
+        self.new_course_name = ctk.StringVar(value=self.selected_course["course_name"])
+        self.new_course_lang = ctk.StringVar(value=self.selected_course["course_lang"])
+        self.new_course_credit = ctk.StringVar(value=self.selected_course["course_credit"])
+        self.new_course_grade = ctk.StringVar(value=self.selected_course["course_grade"])
+        self.new_course_grade_point = ctk.StringVar(value=self.selected_course["course_grade_point"])
 
         # Create the widgets. Use the new course values.
-        course_name_label = ttk.Label(self.updater_container, text=self._get_text("New Course Name"))
-        course_name_label.grid(row=0, column=1)
-        self.new_course_name_entry = ttk.Entry(self.updater_container, textvariable=self.new_course_name)
-        self.new_course_name_entry.grid(row=1, column=1)
+        course_name_label = ctk.CTkLabel(self.updater_container, text=self._get_text("New Course Name"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 13, "bold"),
+            anchor="center",
+        )
+        course_name_label.grid(row=0, column=1, padx=GUI_DC.INNER_PADDING)
+        self.new_course_name_entry = ctk.CTkEntry(self.updater_container, textvariable=self.new_course_name)
+        self.new_course_name_entry.grid(row=1, column=1, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
-        course_lang_label = ttk.Label(self.updater_container, text=self._get_text("New Course Language"))
-        course_lang_label.grid(row=0, column=2)
-        self.new_course_lang_entry = ttk.Entry(self.updater_container, textvariable=self.new_course_lang)
-        self.new_course_lang_entry.grid(row=1, column=2)
+        course_lang_label = ctk.CTkLabel(self.updater_container, text=self._get_text("New Course Language"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 13, "bold"),
+            anchor="center",
+        )
+        course_lang_label.grid(row=0, column=2, padx=GUI_DC.INNER_PADDING)
+        self.new_course_lang_entry = ctk.CTkEntry(self.updater_container, textvariable=self.new_course_lang)
+        self.new_course_lang_entry.grid(row=1, column=2, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
-        course_credit_label = ttk.Label(self.updater_container, text=self._get_text("New Course Credit"))
-        course_credit_label.grid(row=0, column=3)
+        course_credit_label = ctk.CTkLabel(self.updater_container, text=self._get_text("New Course Credit"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 13, "bold"),
+            anchor="center",
+        )
+        course_credit_label.grid(row=0, column=3, padx=GUI_DC.INNER_PADDING)
         # Use combobox for non validations.
-        self.new_course_credit_combobox = ttk.Combobox(self.updater_container, values=self.possibleCredits, state="readonly", textvariable=self.new_course_credit)
-        self.new_course_credit_combobox.grid(row=1, column=3)
+        self.new_course_credit_combobox = ctk.CTkComboBox(self.updater_container, values=[str(a) for a in self.possibleCredits], variable=self.new_course_credit,
+            justify="center",
+            state="readonly"
+        )
+        self.new_course_credit_combobox.grid(row=1, column=3, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
-        course_grade_label = ttk.Label(self.updater_container, text=self._get_text("New Course Grade"))
-        course_grade_label.grid(row=0, column=4)
+        course_grade_label = ctk.CTkLabel(self.updater_container, text=self._get_text("New Course Grade"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 13, "bold"),
+            anchor="center",
+        )
+        course_grade_label.grid(row=0, column=4, padx=GUI_DC.INNER_PADDING)
         # Use combobox for non validations.
-        self.new_course_grade_combobox = ttk.Combobox(self.updater_container, values=self.possibleNotations, state="readonly", textvariable=self.new_course_grade)
-        self.new_course_grade_combobox.grid(row=1, column=4)
+        self.new_course_grade_combobox = ctk.CTkComboBox(self.updater_container, values=self.possibleNotations, variable=self.new_course_grade,
+            justify="center",
+            state="readonly"
+        )
+        self.new_course_grade_combobox.grid(row=1, column=4, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
-        course_grade_point_label = ttk.Label(self.updater_container, text=self._get_text("New Course Grade Point"))
-        course_grade_point_label.grid(row=0, column=5)
+        course_grade_point_label = ctk.CTkLabel(self.updater_container, text=self._get_text("New Course Grade Point"),
+            fg_color=GUI_DC.DARK_BACKGROUND,
+            bg_color=GUI_DC.DARK_BACKGROUND,
+            text_color=GUI_DC.LIGHT_TEXT_COLOR,
+            font=("Arial", 13, "bold"),
+            anchor="center",
+        )
+        course_grade_point_label.grid(row=0, column=5, padx=GUI_DC.INNER_PADDING)
         # Disable the entry. To prevent direct input.
-        self.new_course_grade_point_entry = ttk.Entry(self.updater_container, textvariable=self.new_course_grade_point, state="disabled")
-        self.new_course_grade_point_entry.grid(row=1, column=5)
+        self.new_course_grade_point_entry = ctk.CTkEntry(self.updater_container, textvariable=self.new_course_grade_point, state="disabled", fg_color=GUI_DC.SECONDARY_DARK_BACKGROUND)
+        self.new_course_grade_point_entry.grid(row=1, column=5, padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
 
         # Add an handler for the new course credit and grade. To calculate the new course grade point.
         self.new_course_credit.trace_add("write", self.calculate_new_course_grade_point)
