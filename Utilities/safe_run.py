@@ -200,6 +200,11 @@ def safe_end() -> None:
 
     # Call all checkout methods in order
     __checkout_post_cache_cleanup_list()
-    __checkout_post_cleanup_list()
-
+    try :
+        __checkout_post_cleanup_list()
+    except PermissionError as e:
+        # This error occurs when the application is running in background and the user tries to delete the folder manually.
+        # In this case, the application will terminate without deleting the folder.
+        pass
+    
     if prints_enabled : print(colorama.Fore.MAGENTA, "\n Application terminated successfully", colorama.Fore.RESET)
