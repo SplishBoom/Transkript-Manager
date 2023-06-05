@@ -136,12 +136,12 @@ def safe_execute() -> None:
     try :
         # Call the mainloop() of TranscriptManager
         TranscriptManager(DEBUG=DEBUG).mainloop()
+        run_status = "successfully"
     except Exception as e:
+        run_status = "ineffectively"
         print(colorama.Fore.LIGHTRED_EX, colorama.Back.WHITE, ASCII_LOG["ERROR"], f"An error occured -> {e}", colorama.Fore.RESET, colorama.Back.RESET)
-        # Recursively call safe_execute() to restart the application
-        safe_execute()
 
-    if prints_enabled : print(colorama.Fore.LIGHTCYAN_EX, "Application executed successfully", colorama.Fore.RESET)
+    if prints_enabled : print(colorama.Fore.LIGHTCYAN_EX, f"Application executed {run_status}", colorama.Fore.RESET)
 
 def safe_end() -> None:
     """
