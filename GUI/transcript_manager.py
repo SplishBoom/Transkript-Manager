@@ -44,29 +44,11 @@ class TranscriptManager(ctk.CTk) :
         self.main_container.grid_rowconfigure(0, weight=1)
         self.main_container.grid_columnconfigure(0, weight=1)
 
-        if not self.DEBUG :
-            # Load the initial frame.
-            self.login_frame = LoginFrame(self.main_container, self, self.DEBUG)
-            # Grid the initial frame.
-            self.login_frame.grid(row=0, column=0, stick="nsew")
-        else :
-            # DEBUG MODE NO COMMENT
-            parser = OfflineParser(path_to_file=r"C:\GithubProjects\transkript-manager\Data\emir.pdf")
-            data = parser.get_transcript_data()
-            user_info_document, user_data_document = self.db_client.documentisize(data)
-            #self.db_client.user_info.push_init(user_info_document)
-            #self.db_client.user_data.push_init(user_data_document)
-            self.set_current_data(user_info_document, user_data_document)
-
-            is_user_authenticated = user_data_document["parsing_type"] != "offline"
-
-            self.set_authication_status(is_user_authenticated)
-
-            self.application_frame = ApplicationFrame(self.main_container, self, self.DEBUG)
-            self.application_frame.grid(row=0, column=0, stick="nsew")
-
-            self.after(100000, self.destroy)
-
+        # Load the initial frame.
+        self.login_frame = LoginFrame(self.main_container, self, self.DEBUG)
+        # Grid the initial frame.
+        self.login_frame.grid(row=0, column=0, stick="nsew")
+        
         # Set the termination protocol. To avoid the terminal crash.
         self.protocol("WM_DELETE_WINDOW", self.terminate)
 

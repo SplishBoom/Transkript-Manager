@@ -319,4 +319,4 @@ log_style = {
 ASCII_LOG = log_style["CONSOLE"] # You can change this to "ASCII_LOG" or "CONSOLE_LOG".
 
 # DEBUG option initialization.
-DEBUG = True
+DEBUG = None

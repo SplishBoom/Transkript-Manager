@@ -259,11 +259,8 @@ class LoginFrame(ctk.CTkFrame) :
         # Disable the buttons to prevent multiple file selection.
         self.offline_open_file_button.configure(state="disabled", text="Processing")
 
-        # DEBUG MODE NO COMMENT
-        if not self.DEBUG :
-            input_file_path = ctk.filedialog.askopenfile(initialdir = self.work_dir, title = "Select Transcript", filetypes = [('pdf files only', '*.pdf')])
-        else :
-            input_file_path = ctk.filedialog.askopenfile(initialdir = self.desktop_path, title = "Select Transcript", filetypes = [('pdf files only', '*.pdf')])
+        # Get the path to the transcript.
+        input_file_path = ctk.filedialog.askopenfile(initialdir = self.desktop_path, title = "Select Transcript", filetypes = [('pdf files only', '*.pdf')])
 
         # Set literal for user interraction
         file_selected = False
@@ -350,10 +347,8 @@ class LoginFrame(ctk.CTkFrame) :
                 parser = OnlineParser(username=self.username.get(), password=self.password.get())
             elif self.tab_view.get() == "Offline Login" :
                 parser = OfflineParser(path_to_file=self.path_to_transcript.get())
-                if not self.DEBUG :
-                    time.sleep(2.3) # Simulate a long process by fake sleeping for 3 seconds.
-                else :
-                    pass
+                # Simulate a long process by fake sleeping for 3 seconds.
+                time.sleep(2.3) 
             else :
                 raise ValueError("Invalid Execution Mode")
 
