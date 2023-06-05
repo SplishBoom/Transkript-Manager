@@ -1,3 +1,21 @@
-PDF ENTEGRATION
+==================================================================================================================================================
+TRANSCRIPT-MANAGER
+==================================================================================================================================================
+    PDF ENTEGRATION -> Get from workspace, embed into utilities.
 
-GUI STALIZATION
+    CROSS PLATFORM EXECUTION -> Change windows specific placeholder codes with platform.ops or sys or os.
+
+    NON-DATABASE EXECUTION -> In case of no database, inform user and do one of these.
+                                * Use a local database with json or xml.
+                                * Disable Load & Save features.
+                                
+    REWIRE OFFLINE EXECUTION LOGIC -> In case of no internet connection, inform user and Disable Load & Save features. Because of authentication.
+
+    DEPLOYMENT -> Create a deployment script that will create a standalone executable file for the application.
+                    * setup.exe
+                    * try to fix dockerfile
+
+    SET README -> Write a new readme file for the project.
+
+    SET LICENSE -> Get a new license file for the project.
+==================================================================================================================================================
