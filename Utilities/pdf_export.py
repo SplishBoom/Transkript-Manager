@@ -1,4 +1,4 @@
-from	Environment	import	ASSETS_DC, to_turkish # -> Environment variables
+from Environment import	ASSETS_DC, to_turkish # -> Environment variables
 
 def calculate_performance(course_list : list) -> dict:
 	"""

@@ -1,6 +1,6 @@
 from    Environment     import  GUI_DC, ASSETS_DC, to_turkish # -> Environment variables
 from    GUI             import  LoginFrame, ApplicationFrame # -> GUI
-from    Utilities       import  MongoClient, OfflineParser # -> Database and parsing
+from    Utilities       import  MongoClient # -> Database and parsing
 import  customtkinter   as      ctk # -> GUI
 
 class TranscriptManager(ctk.CTk) :
