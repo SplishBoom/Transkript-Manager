@@ -118,8 +118,8 @@ class LoginFrame(ctk.CTkFrame) :
                                        segmented_button_unselected_color=GUI_DC.DARK_BACKGROUND,
                                        segmented_button_unselected_hover_color=GUI_DC.SECONDARY_DARK_BACKGROUND,
                                        corner_radius=25,
-                                       width=0,
-                                       height=317
+                                       width=290,
+                                       height=350
         )
         self.tab_view.grid(row=1, column=0, sticky="nsew", padx=GUI_DC.INNER_PADDING, pady=GUI_DC.INNER_PADDING)
         ctk.CTkFrame(self.input_field_container, width=0, height=0, fg_color=GUI_DC.LIGHT_BACKGROUND, bg_color=GUI_DC.LIGHT_BACKGROUND).grid(row=2, column=0, pady=GUI_DC.INNER_PADDING//2, padx=GUI_DC.INNER_PADDING)
