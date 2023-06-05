@@ -5,11 +5,8 @@ import  colorama # -> Colorful terminal
 import  shutil # -> File operations
 import  os # -> Path operations
 
-# Apply the debug affect
-if not DEBUG :
-    prints_enabled = True
-else :
-    prints_enabled = False
+# Init module variables
+prints_enabled = True
 
 def safe_start() -> None:
     """
@@ -206,5 +203,5 @@ def safe_end() -> None:
         # This error occurs when the application is running in background and the user tries to delete the folder manually.
         # In this case, the application will terminate without deleting the folder.
         pass
-    
+
     if prints_enabled : print(colorama.Fore.MAGENTA, "\n Application terminated successfully", colorama.Fore.RESET)
