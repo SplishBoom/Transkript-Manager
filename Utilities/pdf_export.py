@@ -1,5 +1,5 @@
-from    abc     import  ABC, abstractmethod # -> Abstraction
-from    fpdf    import  FPDF # -> Generate PDF
+from abc  import ABC, abstractmethod # -> Abstraction
+from fpdf import FPDF # -> Generate PDF
 
 def calculate_perfornance(course_list : list, skip_retakens : bool = False) -> dict:
     """
@@ -839,7 +839,6 @@ class TranscriptReport(FPDF):
         """
         # Add a new page.
         self.add_page()
-
 
 def generate_pdf(user_info_document : dict, user_data_document : dict, user_photo_path : str, mef_logo_path : str, output_file_path : str) -> None:
     """
