@@ -115,12 +115,38 @@ def safe_start() -> None:
             if prints_enabled : print(colorama.Fore.RED, ASCII_LOG["ERROR"], f"Database connection failure -> {message}", colorama.Fore.RESET)
             exit()
 
+    def __checkout_post_cleanup_list() -> None:
+        """
+        Method to checkout_post_cleanup_list.
+        @Parameters:
+            None
+        @Returns:
+            None
+        """
+        # Check for folders that should be cleaned. If yes, clean them.
+        if prints_enabled : print(colorama.Fore.YELLOW, ASCII_LOG["PROCCESS"], f"Cleaning temp folders...", colorama.Fore.RESET)
+        post_cleanup_list_STATUS = []
+        for current_folder_path in EXECUTION_DC.POST_CLEANUP_LIST :
+            if os.path.exists(current_folder_path) :
+                post_cleanup_list_STATUS.append(os.path.basename(current_folder_path))
+                shutil.rmtree(current_folder_path)
+        if post_cleanup_list_STATUS :
+            if prints_enabled : print(colorama.Fore.GREEN, ASCII_LOG["SUCCESS"], f"The following folders cleaned -> {post_cleanup_list_STATUS}", colorama.Fore.RESET)
+        else :
+            if prints_enabled : print(colorama.Fore.GREEN, ASCII_LOG["SUCCESS"], f"All folders \"clean_approved\" -> {[os.path.basename(fname) for fname in EXECUTION_DC.POST_CLEANUP_LIST]}", colorama.Fore.RESET)
+
     # Call all checkout methods in order
     __checkout_pre_existing_checklist_must()
     __checkout_pre_existing_checklist_relative()
     __checkout_internet_connection()
     __checkout_chrome_driver()
     __checkout_database()
+    try :
+        __checkout_post_cleanup_list()
+    except PermissionError as e:
+        # This error occurs when the application is running in background and the user tries to delete the folder manually.
+        # In this case, the application will terminate without deleting the folder.
+        pass
 
 def safe_execute() -> None:
     """
