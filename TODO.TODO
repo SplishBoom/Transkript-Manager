@@ -1,8 +1,6 @@
 ==================================================================================================================================================
 TRANSCRIPT-MANAGER
 ==================================================================================================================================================
-    PDF ENTEGRATION -> Get from workspace, embed into utilities.
-
     CROSS PLATFORM EXECUTION -> Change windows specific placeholder codes with platform.ops or sys or os.
 
     NON-DATABASE EXECUTION -> In case of no database, inform user and do one of these.
