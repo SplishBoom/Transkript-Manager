@@ -1,8 +1,9 @@
-from    urllib.request  import  urlretrieve         as get_photo # -> Wrapped utility function for downloading photos from web
+from    urllib.request  import  urlretrieve as get_photo # -> Wrapped utility function for downloading photos from web
 from    abc             import  ABC, abstractmethod # -> Abstract class for creating abstract methods
 from    Environment     import  SELENIUM_DC # -> Selenium constants
 from    datetime        import  datetime # -> Datetime for timestamping
 from    Utilities       import  Web, By # -> Web class for web automation
+from    PIL             import  Image # -> Image for image processing
 import  PyPDF2          as      ppdf # -> PDF reader
 import  json # -> JSON for file I/O
 import  re # -> Regular expressions for parsing
@@ -97,6 +98,9 @@ class OnlineParser(Parser) :
 
         # Download user photo
         get_photo(user_photo_src, SELENIUM_DC.USER_PHOTO_OUTPUT_PATH)
+        # Convert the photo.
+        photo = Image.open(SELENIUM_DC.USER_PHOTO_OUTPUT_PATH)
+        photo.save(SELENIUM_DC.USER_PHOTO_OUTPUT_PATH, "PNG")
 
         # Get profile selection label and click to move on.
         profile_selection_label = client.create_element(SELENIUM_DC.OLEXER_PROFILE_SELECTION_XPATH)

@@ -669,6 +669,7 @@ class ApplicationFrame(ctk.CTkFrame) :
         # Get the output file path.
         output_file_folder = ctk.filedialog.asksaveasfilename(initialdir=self.desktop_path, initialfile=self.document_name, defaultextension=".pdf", filetypes=[("PDF File", "*.pdf")])
 
+        # Set a flag to check whether the export is successful or not.
         is_exported = False
 
         # Check if the user selected a folder.
@@ -681,14 +682,20 @@ class ApplicationFrame(ctk.CTkFrame) :
             current_user_data_document = self.__create_user_data()
 
             # Export the data. By direct call to utility method generate_pdf.
-            generate_pdf(
-                user_info_document = current_user_info_document, 
-                user_data_document = current_user_data_document, 
-                user_photo_path = self.current_user_photo_path,
-                output_file_path = output_file_path
-            )
-
-            is_exported = True
+            try :
+                generate_pdf(
+                    user_info_document = current_user_info_document, 
+                    user_data_document = current_user_data_document, 
+                    user_photo_path = self.current_user_photo_path,
+                    mef_logo_path = ASSETS_DC.LOGO_PATH,
+                    output_file_path = output_file_path
+                )
+                # Update the flag.
+                is_exported = True
+            except Exception as e :
+                # Update the flag.
+                is_exported = False
+                print("An undefined error occured on \"Data Export\", please contact with the developer.")
 
         # Fix the button and reset the ApplicationFrame to take effect. If not selected or selected, it does not matter.
         if is_exported :
