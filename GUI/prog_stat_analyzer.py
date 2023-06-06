@@ -428,9 +428,7 @@ class StatAnalyzer(ctk.CTkFrame) :
             None
         """
         # Get course list.
-        course_list = []
-        for semester in self.semesters :
-            course_list.extend(self.semesters[semester]["course_list"])
+        course_list = self.modified_course_list
 
         # Get performance.
         performance = calculate_performance(course_list, skip_retakens=True)
