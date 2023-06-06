@@ -1,12 +1,9 @@
-from    Util    import secureStart, secureFinish
-from    GUI     import Application
+from Utilities import safe_start, safe_execute, safe_end
 
 if __name__ == "__main__":
-    debug = False
+
+    safe_start()
     
-    secureStart(debug)
+    safe_execute()
 
-    app = Application(debug=debug)
-    app.mainloop()
-
-    secureFinish(debug)
+    safe_end()

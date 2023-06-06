@@ -3,19 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# Data files
-*.xlsx
-*.csv
-*.txt
-*.cfg
-*.json
-
-# Execution Missles
-*.pdf
-*.ecm
-
 # Executable
 /Sources
+/Data
+/Temp
 
 # C extensions
 *.so
