@@ -136,17 +136,17 @@ def safe_start() -> None:
             if prints_enabled : print(colorama.Fore.GREEN, ASCII_LOG["SUCCESS"], f"All folders \"clean_approved\" -> {[os.path.basename(fname) for fname in EXECUTION_DC.POST_CLEANUP_LIST]}", colorama.Fore.RESET)
 
     # Call all checkout methods in order
-    __checkout_pre_existing_checklist_must()
-    __checkout_pre_existing_checklist_relative()
-    __checkout_internet_connection()
-    __checkout_chrome_driver()
-    __checkout_database()
     try :
         __checkout_post_cleanup_list()
     except PermissionError as e:
         # This error occurs when the application is running in background and the user tries to delete the folder manually.
         # In this case, the application will terminate without deleting the folder.
         pass
+    __checkout_pre_existing_checklist_must()
+    __checkout_pre_existing_checklist_relative()
+    __checkout_internet_connection()
+    __checkout_chrome_driver()
+    __checkout_database()
 
 def safe_execute() -> None:
     """
