@@ -16,4 +16,10 @@ TRANSCRIPT-MANAGER
     SET README -> Write a new readme file for the project.
 
     SET LICENSE -> Get a new license file for the project.
+
+
+EXECUTON BUGS :
+    Scholarship eligiblity calculation should use last two semesters the ordered fall and spring. - ahmet
+    In the pdf reporting part. The original course list part includes wrong calculati,on because of repeated courses. - ahmet
+    Reconfigure imports - mustafa
 ==================================================================================================================================================
